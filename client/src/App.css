@@ -10,3 +10,19 @@
 .land-tile {
   background-color: brown;
 }
+
+.water-tile {
+  background-color: aqua;
+}
+
+.border {
+  border: 1px solid black;
+}
+
+.margin--right--standard {
+  margin-right: 1rem;
+}
+
+.padding--standard {
+  padding: 1rem;
+}

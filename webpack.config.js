@@ -16,10 +16,28 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
+      },
+      {
+        test: /\.svg$/,
+        loader: "svg-inline-loader",
+        options: { jsx: true }
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[path][name].[ext]"
+            }
+          }
+        ]
       }
     ]
   },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
+  resolve: {
+    extensions: ["*", ".js", ".jsx"]
+  },
   output: {
     path: path.resolve(__dirname, "dist/"),
     publicPath: "/dist/",
@@ -31,5 +49,6 @@ module.exports = {
     publicPath: "http://localhost:3000/dist/",
     hotOnly: true
   },
+
   plugins: [new webpack.HotModuleReplacementPlugin()]
 };
