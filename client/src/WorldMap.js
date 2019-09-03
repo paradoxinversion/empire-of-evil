@@ -1,32 +1,44 @@
 import React, { Component } from "react";
-import { makeMap } from "../../commonUtilities/map/map";
+import { makeMap } from "../../commonUtilities/map/gameMap";
 import Collapsable from "./Collapsable";
-
+import GameManager from "./containers/GameManager";
+import connect from "unstated-connect";
 class WorldMap extends Component {
   state = {
     tileSize: "32px",
     mapX: 10,
     mapY: 10,
-    gameMap: []
+    gameMap: [],
+    mapLoaded: false
   };
   componentDidMount() {
-    const gameMap = makeMap();
-    this.setState({
-      gameMap
-    });
+    // const [GameManager] = this.props.containers;
+    // const gameMap = makeMap();
+    // this.setState({
+    //   gameMap
+    // });
+    // GameManager.setGameMap(gameMap);
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    const [GameManager] = this.props.containers;
+    if (!this.state.mapLoaded && GameManager.state.gameMap.length > 0) {
+      this.setState({ mapLoaded: true });
+    }
+  }
+
   render() {
-    if (this.state.gameMap.length > 0) {
+    const [GameManager] = this.props.containers;
+    if (GameManager.state.gameMap.length > 0) {
       return (
         <Collapsable title="World Map">
           <div
             id="world-map"
             style={{
-              gridTemplateColumns: `repeat(${this.state.gameMap[0].length}, ${
-                this.state.tileSize
-              })`
-            }}>
-            {this.state.gameMap.map(yRow => {
+              gridTemplateColumns: `repeat(${GameManager.state.gameMap[0].length}, ${this.state.tileSize})`
+            }}
+          >
+            {GameManager.state.gameMap.map(yRow => {
               return yRow.map(tile => {
                 let tileClasses = [];
                 if (tile.land) {
@@ -58,4 +70,4 @@ class WorldMap extends Component {
   }
 }
 
-export default WorldMap;
+export default connect([GameManager])(WorldMap);

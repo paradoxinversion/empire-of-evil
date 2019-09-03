@@ -21,6 +21,10 @@ class Citizen {
     this.squadId = -1;
     this.nationId = -1;
   }
+
+  setNationId(id) {
+    this.nationId = id;
+  }
 }
 
 const agentRoles = {
@@ -38,6 +42,3 @@ const agentTestOptions = {
   administration: 7,
   role: agentRoles.recruit[0]
 };
-
-const t = new Citizen(agentTestOptions);
-console.log(t);

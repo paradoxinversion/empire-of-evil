@@ -1,15 +1,26 @@
-const { getRandomIntInclusive } = require("../commonUtilities");
+const { getUID } = require("../utilities");
+const {
+  getRandomIntInclusive
+} = require("../../commonUtilities/commonUtilities");
+const { getMapDimensions } = require("../../commonUtilities/commonUtilities");
 
-const mapX = 10;
-const mapY = 10;
-
+/**
+ * Represents a tile on the world map
+ */
 class Tile {
   constructor({ x, y, land = true }) {
+    this.id = getUID();
     this.x = x;
     this.y = y;
     this.land = land;
     this.tileWater; // for map gen
     this.waterInitialized = false;
+    this.nationId = null;
+  }
+
+  setNationId(id) {
+    console.log(".");
+    this.nationId = id;
   }
 
   getNeighbors(gameMap) {
@@ -48,52 +59,4 @@ class Tile {
   }
 }
 
-const createEmptyMap = () => {
-  let map = [];
-  for (let y = 0; y < mapY; y++) {
-    map[y] = [];
-    for (let x = 0; x < mapX; x++) {
-      tileArgs = {
-        x,
-        y
-      };
-
-      const newTile = new Tile(tileArgs);
-      map[y].push(newTile);
-    }
-  }
-
-  return map;
-};
-
-const makeWaterTiles = gameMap => {
-  const { height, width } = getMapDimensions(gameMap);
-  const majorWaterBodies = 5;
-  const maxBaseWater = 5000; // 100 is 'wet'
-  for (x = 0; x < majorWaterBodies; x++) {
-    const centerX = Math.floor(Math.random() * width);
-    const centerY = Math.floor(Math.random() * height);
-    const tile = gameMap[centerX][centerY];
-    // tile.land = false;
-    tile.initializeWater(gameMap, getRandomIntInclusive(500, maxBaseWater));
-  }
-
-  return gameMap;
-};
-
-const makeMap = () => {
-  const emptyMap = createEmptyMap();
-  const waterMap = makeWaterTiles(emptyMap);
-  const gameMap = waterMap;
-  return gameMap;
-};
-
-const getMapDimensions = gameMap => {
-  return {
-    height: gameMap.length,
-    width: gameMap[0].length
-  };
-};
-module.exports = {
-  makeMap
-};
+module.exports = Tile;
