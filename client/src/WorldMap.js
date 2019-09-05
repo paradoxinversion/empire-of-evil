@@ -36,8 +36,7 @@ class WorldMap extends Component {
             id="world-map"
             style={{
               gridTemplateColumns: `repeat(${GameManager.state.gameMap[0].length}, ${this.state.tileSize})`
-            }}
-          >
+            }}>
             {GameManager.state.gameMap.map(yRow => {
               return yRow.map(tile => {
                 let tileClasses = [];
@@ -45,6 +44,12 @@ class WorldMap extends Component {
                   tileClasses.push("land-tile");
                 } else {
                   tileClasses.push("water-tile");
+                }
+                if (
+                  GameManager.getEvilEmpire() &&
+                  tile.nationId === GameManager.getEvilEmpire().id
+                ) {
+                  tileClasses.push("evil-empire-tile");
                 }
                 return (
                   <div

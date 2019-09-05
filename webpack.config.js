@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  entry: "./client/src/index.js",
+  entry: ["@babel/polyfill", "./client/src/index.js"],
   mode: "development",
   devtool: "source-map",
   module: {

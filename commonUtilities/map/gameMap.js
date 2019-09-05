@@ -45,6 +45,18 @@ const makeMap = () => {
   return gameMap;
 };
 
+const getLandTiles = gameMap => {
+  const landTiles = gameMap.filter(tile => tile.land);
+  console.log(landtiles);
+  return landTiles;
+};
+
+const getRandomLandTile = landTileArray => {
+  return landTileArray[getRandomIntInclusive(0, landTileArray.length - 1)];
+};
+
 module.exports = {
-  makeMap
+  makeMap,
+  getLandTiles,
+  getRandomLandTile
 };
