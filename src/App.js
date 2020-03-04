@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
-import WorldMap from "./WorldMap";
-import CommandBar from "./CommandBar";
-import Agents from "./Agents";
+import WorldMap from "./components/WorldMap";
+import CommandBar from "./components/CommandBar";
+import Agents from "./components/Agents";
 import connect from "unstated-connect";
 import GameManager from "./containers/GameManager";
 class App extends Component {

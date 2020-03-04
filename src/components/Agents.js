@@ -1,6 +1,5 @@
 import React from "react";
 import Collapsable from "./Collapsable";
-import crosshair from "./crosshair.png";
 import Agent from "./Agent";
 
 const Agents = () => {

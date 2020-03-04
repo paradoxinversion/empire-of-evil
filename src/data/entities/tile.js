@@ -1,4 +1,4 @@
-const { getUID } = require("../utilities");
+const { getUID } = require("../../utilities");
 const {
   getRandomIntInclusive
 } = require("../../commonUtilities/commonUtilities");
@@ -19,7 +19,6 @@ class Tile {
   }
 
   setNationId(id) {
-    console.log(".");
     this.nationId = id;
   }
 

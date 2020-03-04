@@ -1,4 +1,4 @@
-const { getUID } = require("../utilities");
+const { getUID } = require("../../utilities");
 
 class Nation {
   constructor({ name, isEvilEmpire = false }) {

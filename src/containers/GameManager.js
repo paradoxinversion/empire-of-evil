@@ -1,10 +1,10 @@
 import { Container } from "unstated";
-import { createNation } from "../../../src/entities/nation";
+import { createNation } from "../data/entities/nation";
 import {
   makeMap,
   getLandTiles,
   getRandomLandTile
-} from "../../../commonUtilities/map/gameMap";
+} from "../commonUtilities/map/gameMap";
 class GameManager extends Container {
   state = {
     nations: [],
@@ -35,7 +35,6 @@ class GameManager extends Container {
     const evilEmpireIndex = this.state.nations.findIndex(
       nation => nation.isEvilEmpire
     );
-    console.log(evilEmpireIndex);
     return this.state.nations[evilEmpireIndex];
   }
 
@@ -43,13 +42,11 @@ class GameManager extends Container {
     const cpuNationIndex = this.state.nations.findIndex(
       nation => !nation.isEvilEmpire
     );
-    console.log(cpuNationIndex);
     return this.state.nations[cpuNationIndex];
   }
   async setUpGame() {
     await this.createMap();
     await this.createNations();
-    console.log(this.state.gameMap);
     const cpuNation = this.getCPUNation();
     const evilEmpire = this.getEvilEmpire();
     for (let y = 0; y < this.state.gameMap.length; y++) {

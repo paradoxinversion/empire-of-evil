@@ -2,7 +2,7 @@ const {
   getRandomIntInclusive,
   getMapDimensions
 } = require("../commonUtilities");
-const Tile = require("../../src/entities/tile");
+const Tile = require("../../data/entities/tile");
 const mapX = 10;
 const mapY = 10;
 
@@ -47,7 +47,6 @@ const makeMap = () => {
 
 const getLandTiles = gameMap => {
   const landTiles = gameMap.filter(tile => tile.land);
-  console.log(landtiles);
   return landTiles;
 };
 

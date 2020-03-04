@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { makeMap } from "../../commonUtilities/map/gameMap";
+import { makeMap } from "../commonUtilities/map/gameMap";
 import Collapsable from "./Collapsable";
-import GameManager from "./containers/GameManager";
+import GameManager from "../containers/GameManager";
 import connect from "unstated-connect";
 class WorldMap extends Component {
   state = {

@@ -1,0 +1,35 @@
+.App {
+  margin: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#world-map {
+  display: grid;
+}
+
+.land-tile {
+  background-color: brown;
+}
+
+.water-tile {
+  background-color: aqua;
+}
+
+.evil-empire-tile {
+  background: linear-gradient(transparent, red);
+}
+
+.border {
+  border: 1px solid black;
+}
+
+.margin--right--standard {
+  margin-right: 1rem;
+}
+
+.padding--standard {
+  padding: 1rem;
+}
+
+
+/*# sourceMappingURL=/src.e31bb0bc.css.map */
