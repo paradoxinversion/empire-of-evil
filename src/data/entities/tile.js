@@ -20,6 +20,7 @@ class Tile {
 
   setNationId(id) {
     this.nationId = id;
+    return this;
   }
 
   getNeighbors(gameMap) {

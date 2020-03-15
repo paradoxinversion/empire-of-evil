@@ -32,32 +32,30 @@ class GameManager extends Container {
   }
 
   getEvilEmpire() {
-    const evilEmpireIndex = this.state.nations.findIndex(
-      nation => nation.isEvilEmpire
-    );
-    return this.state.nations[evilEmpireIndex];
+    return this.state.nations.find(nation => nation.isEvilEmpire);
   }
 
   getCPUNation() {
-    const cpuNationIndex = this.state.nations.findIndex(
-      nation => !nation.isEvilEmpire
-    );
-    return this.state.nations[cpuNationIndex];
+    return this.state.nations.filter(nation => !nation.isEvilEmpire);
   }
   async setUpGame() {
     await this.createMap();
     await this.createNations();
     const cpuNation = this.getCPUNation();
     const evilEmpire = this.getEvilEmpire();
+    const gameMap = this.state.gameMap.slice(0);
     for (let y = 0; y < this.state.gameMap.length; y++) {
       for (let x = 0; x < this.state.gameMap[y].length; x++) {
-        this.state.gameMap[y][x].setNationId(cpuNation.id);
+        gameMap[y][x].setNationId(cpuNation.id);
       }
     }
-
-    const empireStartTile = getRandomLandTile(getLandTiles(this.state.gameMap));
-    debugger;
+    const landTiles = getLandTiles(this.state.gameMap)
+    const empireStartTile = getRandomLandTile(landTiles);
     empireStartTile.setNationId(evilEmpire.id);
+    console.log(empireStartTile)
+    gameMap[empireStartTile.y][empireStartTile.x] = empireStartTile;
+    this.setState({gameMap})
+    
   }
 }
 

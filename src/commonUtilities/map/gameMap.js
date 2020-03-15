@@ -46,7 +46,14 @@ const makeMap = () => {
 };
 
 const getLandTiles = gameMap => {
-  const landTiles = gameMap.filter(tile => tile.land);
+  // const landTiles = gameMap.filter(tile => tile.land);
+  const landTiles = [];
+  for (let y = 0; y < mapY; y++) {
+    for (let x = 0; x < mapX; x++) {
+      const tile = gameMap[x][y];
+      if (tile.land) landTiles.push(tile)
+    }
+  }
   return landTiles;
 };
 
