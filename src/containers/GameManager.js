@@ -5,57 +5,142 @@ import {
   getLandTiles,
   getRandomLandTile
 } from "../commonUtilities/map/gameMap";
+import { Citizen } from "../data/entities/citizen";
+import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
 class GameManager extends Container {
   state = {
-    nations: [],
-    gameMap: []
+    player: {
+      evilEmpire: null
+    },
+    nations: {},
+    citizens: {},
+    gameMap: [],
+    selectedTile: null,
+    gameReady: false
   };
-
-  async createMap() {
-    const gameMap = makeMap();
-    await this.setGameMap(gameMap);
+  createCitizen(x, y) {
+    const citizenAttributeMin = 1;
+    const citizenAttributeMax = 5;
+    const citizenAttributes = {
+      name: "Drone",
+      strength: getRandomIntInclusive(citizenAttributeMin, citizenAttributeMax),
+      intelligence: getRandomIntInclusive(
+        citizenAttributeMin,
+        citizenAttributeMax
+      ),
+      administration: getRandomIntInclusive(
+        citizenAttributeMin,
+        citizenAttributeMax
+      ),
+      role: 0,
+      x,
+      y
+    };
+    const newCitizen = new Citizen(citizenAttributes);
+    return newCitizen;
   }
-
-  async setGameMap(gameMap) {
-    await this.setState({
-      gameMap
-    });
-  }
-
+  /**
+   * Creates the nations that will be used in the game
+   */
   async createNations() {
     const evilEmpire = createNation("EVIL Empire", true);
+
     const cpuNation = createNation("CPU Nation", false);
-    await this.setState({
-      nations: [evilEmpire, cpuNation]
-    });
-    return this.state.nations;
+    const nations = {
+      [evilEmpire.id]: evilEmpire,
+      [cpuNation.id]: cpuNation
+    };
+    return { nations, evilEmpire };
   }
 
+  /**
+   * Returns the Player's empire.
+   */
   getEvilEmpire() {
-    return this.state.nations.find(nation => nation.isEvilEmpire);
+    return this.state.nations[this.state.player.evilEmpire.id];
+  }
+  /**
+   *
+   * @param {Array} nationsArray - An array of game nations
+   * @param {String} evilEmpireId - The evil empire id
+   */
+  getCPUNation(nationsArray, evilEmpireId) {
+    return Object.values(nationsArray).filter(
+      nation => nation.id !== evilEmpireId
+    );
+  }
+  getCitizensOnTile(tile, citizensMap) {
+    return Object.values(citizensMap).filter(
+      citizen =>
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+  }
+  /**
+   * Set a tile as the one currently selected (or set it null)
+   * @param {object} selectedTile - The tile to set, or null to unset
+   */
+  selectTile(selectedTile) {
+    this.setState({ selectedTile });
   }
 
-  getCPUNation() {
-    return this.state.nations.filter(nation => !nation.isEvilEmpire);
-  }
+  /**
+   * Runs initial game setup
+   */
   async setUpGame() {
-    await this.createMap();
-    await this.createNations();
-    const cpuNation = this.getCPUNation();
-    const evilEmpire = this.getEvilEmpire();
-    const gameMap = this.state.gameMap.slice(0);
-    for (let y = 0; y < this.state.gameMap.length; y++) {
-      for (let x = 0; x < this.state.gameMap[y].length; x++) {
+    // some constants
+    const cpuAgentsPerTile = 5;
+
+    const player = Object.assign({}, this.state.player);
+    // Create Map
+    const gameMap = await makeMap();
+
+    // Create nations to populate the map & set tile ownership
+    const { nations, evilEmpire } = await this.createNations();
+    const cpuNation = this.getCPUNation(nations, evilEmpire.id)[0];
+    console.log(cpuNation);
+    for (let y = 0; y < gameMap.length; y++) {
+      for (let x = 0; x < gameMap[y].length; x++) {
         gameMap[y][x].setNationId(cpuNation.id);
       }
     }
-    const landTiles = getLandTiles(this.state.gameMap)
+
+    // Set ownership for Evil Empire
+    const landTiles = getLandTiles(gameMap);
     const empireStartTile = getRandomLandTile(landTiles);
     empireStartTile.setNationId(evilEmpire.id);
-    console.log(empireStartTile)
     gameMap[empireStartTile.y][empireStartTile.x] = empireStartTile;
-    this.setState({gameMap})
-    
+
+    // Determine tile pops
+    const citizens = {};
+    for (let y = 0; y < gameMap.length; y++) {
+      for (let x = 0; x < gameMap[y].length; x++) {
+        const tile = gameMap[y][x];
+        if (tile.land) {
+          for (let c = 0; c < getRandomIntInclusive(25, 100); c++) {
+            const newCitizen = this.createCitizen(x, y);
+            newCitizen.setNationId(tile.nationId);
+            citizens[newCitizen.id] = newCitizen;
+          }
+        }
+      }
+    }
+
+    for (let y = 0; y < gameMap.length; y++) {
+      for (let x = 0; x < gameMap[y].length; x++) {
+        const tile = gameMap[y][x];
+        if (tile.land) {
+          const tileCitizens = this.getCitizensOnTile(tile, citizens);
+          for (let a = 0; a < cpuAgentsPerTile; a++) {
+            tileCitizens[a].role = 1;
+          }
+          console.log("Citizens on tile:");
+        }
+      }
+    }
+    // Set data
+    player.evilEmpire = evilEmpire;
+    this.setState({ player, nations, citizens, gameMap, gameReady: true });
   }
 }
 

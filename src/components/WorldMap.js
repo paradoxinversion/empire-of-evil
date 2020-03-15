@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { makeMap } from "../commonUtilities/map/gameMap";
 import Collapsable from "./Collapsable";
 import GameManager from "../containers/GameManager";
 import connect from "unstated-connect";
@@ -11,14 +10,6 @@ class WorldMap extends Component {
     gameMap: [],
     mapLoaded: false
   };
-  componentDidMount() {
-    // const [GameManager] = this.props.containers;
-    // const gameMap = makeMap();
-    // this.setState({
-    //   gameMap
-    // });
-    // GameManager.setGameMap(gameMap);
-  }
 
   componentDidUpdate(prevProps, prevState) {
     const [GameManager] = this.props.containers;
@@ -29,14 +20,15 @@ class WorldMap extends Component {
 
   render() {
     const [GameManager] = this.props.containers;
-    if (GameManager.state.gameMap.length > 0) {
+    if (GameManager.state.gameMap.length > 0 && GameManager.state.gameReady) {
       return (
         <Collapsable title="World Map">
           <div
             id="world-map"
             style={{
               gridTemplateColumns: `repeat(${GameManager.state.gameMap[0].length}, ${this.state.tileSize})`
-            }}>
+            }}
+          >
             {GameManager.state.gameMap.map(yRow => {
               return yRow.map(tile => {
                 let tileClasses = [];
@@ -61,6 +53,10 @@ class WorldMap extends Component {
                       width: this.state.tileSize,
                       height: this.state.tileSize,
                       border: "1px solid black"
+                    }}
+                    onClick={() => {
+                      console.log(tile.x, tile.y);
+                      GameManager.selectTile(tile);
                     }}
                   />
                 );

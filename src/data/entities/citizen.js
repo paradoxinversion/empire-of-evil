@@ -10,7 +10,16 @@ const { getUID } = require("../../utilities");
  * @param {string} param0.role - Agent role
  */
 class Citizen {
-  constructor({ name, strength, intelligence, administration, role }) {
+  constructor({
+    name,
+    strength,
+    intelligence,
+    administration,
+    role,
+    x,
+    y,
+    nationId
+  }) {
     this.id = getUID();
     this.name = name;
     this.strength = strength;
@@ -19,7 +28,12 @@ class Citizen {
     this.health = 10 + strength;
     this.role = role;
     this.squadId = -1;
-    this.nationId = -1;
+    this.nationId = nationId;
+    this.alive = true;
+    this.currentPosition = {
+      x,
+      y
+    };
   }
 
   setNationId(id) {
@@ -41,4 +55,8 @@ const agentTestOptions = {
   intelligence: 6,
   administration: 7,
   role: agentRoles.recruit[0]
+};
+module.exports = {
+  Citizen,
+  agentRoles
 };
