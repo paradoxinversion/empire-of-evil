@@ -20,8 +20,11 @@
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
+    "autoprefixer": "^9.7.4",
+    "postcss-nested": "^4.2.1",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "tailwindcss": "^1.2.0",
     "unstated": "^2.1.1",
     "unstated-connect": "^0.0.3"
   }

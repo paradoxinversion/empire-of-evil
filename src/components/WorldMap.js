@@ -55,7 +55,6 @@ class WorldMap extends Component {
                       border: "1px solid black"
                     }}
                     onClick={() => {
-                      console.log(tile.x, tile.y);
                       GameManager.selectTile(tile);
                     }}
                   />

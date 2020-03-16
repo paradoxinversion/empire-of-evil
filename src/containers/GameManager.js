@@ -19,7 +19,8 @@ class GameManager extends Container {
     gameMap: [],
     operations: {},
     selectedTile: null,
-    gameReady: false
+    gameReady: false,
+    currentScreen: "main"
   };
   createCitizen(x, y) {
     const citizenAttributeMin = 1;
@@ -63,11 +64,17 @@ class GameManager extends Container {
     return this.state.nations[this.state.player.evilEmpire.id];
   }
 
-  getEvilAgents(citizensMap, evilEmpireId) {
-    return Object.values(citizensMap).filter(
+  getEvilAgents(citizensMap, evilEmpireId, role) {
+    const allAgents = Object.values(citizensMap).filter(
       citizen => citizen.nationId === evilEmpireId && citizen.role > 0
     );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
   }
+
   /**
    *
    * @param {Array} nationsArray - An array of game nations
@@ -99,7 +106,9 @@ class GameManager extends Container {
     tile.hasEvilNeighbor = hasEvilNeighbor;
     this.setState({ selectedTile: tile });
   }
-
+  setScreen(currentScreen) {
+    this.setState({ currentScreen });
+  }
   /**
    * Runs initial game setup
    */
@@ -114,7 +123,6 @@ class GameManager extends Container {
     // Create nations to populate the map & set tile ownership
     const { nations, evilEmpire } = await this.createNations();
     const cpuNation = this.getCPUNation(nations, evilEmpire.id)[0];
-    console.log(cpuNation);
     for (let y = 0; y < gameMap.length; y++) {
       for (let x = 0; x < gameMap[y].length; x++) {
         gameMap[y][x].setNationId(cpuNation.id);
@@ -149,13 +157,19 @@ class GameManager extends Container {
         if (tile.land) {
           const tileCitizens = this.getCitizensOnTile(tile, citizens);
           for (let a = 0; a < cpuAgentsPerTile; a++) {
-            tileCitizens[a].role = 1;
+            if (a < 3) {
+              tileCitizens[a].role = 1;
+            } else if (a === 3) {
+              tileCitizens[a].role = 2;
+            } else if (a === 4) {
+              tileCitizens[a].role = 3;
+            }
           }
         }
       }
     }
 
-    console.log(this.getEvilAgents(citizens, evilEmpire.id));
+    // console.log(this.getEvilAgents(citizens, evilEmpire.id));
     // Set data
     player.evilEmpire = evilEmpire;
     this.setState({ player, nations, citizens, gameMap, gameReady: true });

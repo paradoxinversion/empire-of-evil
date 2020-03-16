@@ -8,14 +8,16 @@ class Collapsable extends React.Component {
   toggleCollapsedState() {
     this.setState({ collapsed: !this.state.collapsed });
   }
+
   render() {
     return (
-      <div style={{ display: "inline-block" }} className="collapsable">
+      <div className="flex flex-col" className="collapsable">
         <p
           style={{ backgroundColor: "grey" }}
           onClick={() => {
             this.toggleCollapsedState();
-          }}>
+          }}
+        >
           {this.props.title}
         </p>
         {!this.state.collapsed && this.props.children}

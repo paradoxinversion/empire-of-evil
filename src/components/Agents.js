@@ -1,6 +1,5 @@
 import React from "react";
 import Collapsable from "./Collapsable";
-import Agent from "./Agent";
 import GameManager from "../containers/GameManager";
 import connect from "unstated-connect";
 const Agents = props => {
@@ -11,18 +10,38 @@ const Agents = props => {
         {GameManager.state.player.evilEmpire &&
           GameManager.getEvilAgents(
             GameManager.state.citizens,
-            GameManager.state.player.evilEmpire.id
-          )
-            .filter(agent => agent.role === 1)
-            .map(agent => (
-              <div>
-                {agent.name} {agent.id}
-              </div>
-            ))}
+            GameManager.state.player.evilEmpire.id,
+            1
+          ).map(agent => (
+            <div>
+              {agent.name} {agent.id}
+            </div>
+          ))}
       </Collapsable>
-      {/* <Agent agent/> */}
-      <h2>Scientists</h2>
-      <h2>Adminstrators</h2>
+      <Collapsable title="Scientists">
+        {GameManager.state.player.evilEmpire &&
+          GameManager.getEvilAgents(
+            GameManager.state.citizens,
+            GameManager.state.player.evilEmpire.id,
+            2
+          ).map(agent => (
+            <div>
+              {agent.name} {agent.id}
+            </div>
+          ))}
+      </Collapsable>
+      <Collapsable title="Administrators">
+        {GameManager.state.player.evilEmpire &&
+          GameManager.getEvilAgents(
+            GameManager.state.citizens,
+            GameManager.state.player.evilEmpire.id,
+            3
+          ).map(agent => (
+            <div>
+              {agent.name} {agent.id}
+            </div>
+          ))}
+      </Collapsable>
     </Collapsable>
   );
 };

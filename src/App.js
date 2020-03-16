@@ -1,46 +1,29 @@
 import React, { Component } from "react";
 import "./App.css";
-import WorldMap from "./components/WorldMap";
-import CommandBar from "./components/CommandBar";
-import Agents from "./components/Agents";
+import "./output.css";
 import connect from "unstated-connect";
 import GameManager from "./containers/GameManager";
+import Main from "./components/UI/Main";
+import Empire from "./components/UI/Empire";
+import AgentsUI from "./components/UI/AgentsUI";
+
+const UIScreens = {
+  main: Main,
+  empire: Empire,
+  agents: AgentsUI
+};
+
 class App extends Component {
-  state = {
-    // nations: []
-  };
   componentDidMount() {
     const [GameManager] = this.props.containers;
     GameManager.setUpGame();
   }
   render() {
     const [GameManager] = this.props.containers;
+    const CurrentScreen = UIScreens[GameManager.state.currentScreen];
     return (
       <div className="App">
-        <h1> Empire Of Evil </h1>
-        <CommandBar />
-        <div id="game-area">
-          <div id="selected-tile">
-            {GameManager.state.selectedTile && (
-              <React.Fragment>
-                <p>
-                  Coordinates: {GameManager.state.selectedTile.tile.x},
-                  {GameManager.state.selectedTile.tile.y}
-                </p>
-                <p>
-                  Owner:{" "}
-                  {
-                    GameManager.state.nations[
-                      GameManager.state.selectedTile.tile.nationId
-                    ].name
-                  }{" "}
-                </p>
-              </React.Fragment>
-            )}
-          </div>
-          <WorldMap />
-          <Agents />
-        </div>
+        <CurrentScreen gameManager={GameManager} />
       </div>
     );
   }

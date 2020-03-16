@@ -28383,58 +28383,12 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/Collapsable.js":[function(require,module,exports) {
-"use strict";
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"output.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireWildcard(require("react"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-class Collapsable extends _react.default.Component {
-  constructor(...args) {
-    super(...args);
-
-    _defineProperty(this, "state", {
-      collapsed: false
-    });
-  }
-
-  toggleCollapsedState() {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
-
-  render() {
-    return _react.default.createElement("div", {
-      style: {
-        display: "inline-block"
-      },
-      className: "collapsable"
-    }, _react.default.createElement("p", {
-      style: {
-        backgroundColor: "grey"
-      },
-      onClick: () => {
-        this.toggleCollapsedState();
-      }
-    }, this.props.title), !this.state.collapsed && this.props.children);
-  }
-
-}
-
-var _default = Collapsable;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"../node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports) {
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports) {
 /** @license React v16.13.0
  * react-is.development.js
  *
@@ -29662,7 +29616,11 @@ var CONTAINER_DEBUG_CALLBACKS = []; // If your name isn't Sindre, this is not fo
 function __SUPER_SECRET_CONTAINER_DEBUG_HOOK__(callback) {
   CONTAINER_DEBUG_CALLBACKS.push(callback);
 }
-},{"react":"../node_modules/react/index.js","create-react-context":"../node_modules/create-react-context/lib/index.js"}],"utilities.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","create-react-context":"../node_modules/create-react-context/lib/index.js"}],"../node_modules/unstated-connect/dist/unstated-connect.min.js":[function(require,module,exports) {
+var define;
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t(require("react"),require("unstated")):"function"==typeof define&&define.amd?define(["react","unstated"],t):e["unstated-connect"]=t(e.React,null)}(this,function(o,t){"use strict";o=o&&o.hasOwnProperty("default")?o.default:o;var a=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e};return function(e){return function(u){return function(r){return o.createElement(t.Subscribe,{to:e},function(){for(var e=arguments.length,t=Array(e),n=0;n<e;n++)t[n]=arguments[n];return o.createElement(u,a({containers:t},r))})}}}});
+
+},{"react":"../node_modules/react/index.js","unstated":"../node_modules/unstated/lib/unstated.es.js"}],"utilities.js":[function(require,module,exports) {
 /**
  * Creates a unique ID for an object
  */
@@ -29991,7 +29949,8 @@ class GameManager extends _unstated.Container {
       gameMap: [],
       operations: {},
       selectedTile: null,
-      gameReady: false
+      gameReady: false,
+      currentScreen: "main"
     });
   }
 
@@ -30036,8 +29995,14 @@ class GameManager extends _unstated.Container {
     return this.state.nations[this.state.player.evilEmpire.id];
   }
 
-  getEvilAgents(citizensMap, evilEmpireId) {
-    return Object.values(citizensMap).filter(citizen => citizen.nationId === evilEmpireId && citizen.role > 0);
+  getEvilAgents(citizensMap, evilEmpireId, role) {
+    const allAgents = Object.values(citizensMap).filter(citizen => citizen.nationId === evilEmpireId && citizen.role > 0);
+
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
   }
   /**
    *
@@ -30068,6 +30033,12 @@ class GameManager extends _unstated.Container {
       selectedTile: tile
     });
   }
+
+  setScreen(currentScreen) {
+    this.setState({
+      currentScreen
+    });
+  }
   /**
    * Runs initial game setup
    */
@@ -30085,7 +30056,6 @@ class GameManager extends _unstated.Container {
       evilEmpire
     } = await this.createNations();
     const cpuNation = this.getCPUNation(nations, evilEmpire.id)[0];
-    console.log(cpuNation);
 
     for (let y = 0; y < gameMap.length; y++) {
       for (let x = 0; x < gameMap[y].length; x++) {
@@ -30124,13 +30094,19 @@ class GameManager extends _unstated.Container {
           const tileCitizens = this.getCitizensOnTile(tile, citizens);
 
           for (let a = 0; a < cpuAgentsPerTile; a++) {
-            tileCitizens[a].role = 1;
+            if (a < 3) {
+              tileCitizens[a].role = 1;
+            } else if (a === 3) {
+              tileCitizens[a].role = 2;
+            } else if (a === 4) {
+              tileCitizens[a].role = 3;
+            }
           }
         }
       }
-    }
+    } // console.log(this.getEvilAgents(citizens, evilEmpire.id));
+    // Set data
 
-    console.log(this.getEvilAgents(citizens, evilEmpire.id)); // Set data
 
     player.evilEmpire = evilEmpire;
     this.setState({
@@ -30147,11 +30123,56 @@ class GameManager extends _unstated.Container {
 var _default = new GameManager();
 
 exports.default = _default;
-},{"unstated":"../node_modules/unstated/lib/unstated.es.js","../data/entities/nation":"data/entities/nation.js","../commonUtilities/map/gameMap":"commonUtilities/map/gameMap.js","../data/entities/citizen":"data/entities/citizen.js","../commonUtilities/commonUtilities":"commonUtilities/commonUtilities.js"}],"../node_modules/unstated-connect/dist/unstated-connect.min.js":[function(require,module,exports) {
-var define;
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t(require("react"),require("unstated")):"function"==typeof define&&define.amd?define(["react","unstated"],t):e["unstated-connect"]=t(e.React,null)}(this,function(o,t){"use strict";o=o&&o.hasOwnProperty("default")?o.default:o;var a=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e};return function(e){return function(u){return function(r){return o.createElement(t.Subscribe,{to:e},function(){for(var e=arguments.length,t=Array(e),n=0;n<e;n++)t[n]=arguments[n];return o.createElement(u,a({containers:t},r))})}}}});
+},{"unstated":"../node_modules/unstated/lib/unstated.es.js","../data/entities/nation":"data/entities/nation.js","../commonUtilities/map/gameMap":"commonUtilities/map/gameMap.js","../data/entities/citizen":"data/entities/citizen.js","../commonUtilities/commonUtilities":"commonUtilities/commonUtilities.js"}],"components/Collapsable.js":[function(require,module,exports) {
+"use strict";
 
-},{"react":"../node_modules/react/index.js","unstated":"../node_modules/unstated/lib/unstated.es.js"}],"components/WorldMap.js":[function(require,module,exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class Collapsable extends _react.default.Component {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "state", {
+      collapsed: false
+    });
+  }
+
+  toggleCollapsedState() {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+  }
+
+  render() {
+    return _react.default.createElement("div", {
+      className: "flex flex-col",
+      className: "collapsable"
+    }, _react.default.createElement("p", {
+      style: {
+        backgroundColor: "grey"
+      },
+      onClick: () => {
+        this.toggleCollapsedState();
+      }
+    }, this.props.title), !this.state.collapsed && this.props.children);
+  }
+
+}
+
+var _default = Collapsable;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"components/WorldMap.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30234,7 +30255,6 @@ class WorldMap extends _react.Component {
               border: "1px solid black"
             },
             onClick: () => {
-              console.log(tile.x, tile.y);
               GameManager.selectTile(tile);
             }
           });
@@ -30262,37 +30282,17 @@ var _react = _interopRequireDefault(require("react"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const CommandBar = () => {
+const CommandBar = props => {
   return _react.default.createElement("div", {
     className: "border"
-  }, _react.default.createElement("span", null, "Wed, Nov 1, 2000"), _react.default.createElement("button", null, "Wait"), _react.default.createElement("button", null, "Empire"), _react.default.createElement("button", null, "Agents"));
+  }, _react.default.createElement("span", null, "Wed, Nov 1, 2000"), _react.default.createElement("button", null, "Wait"), _react.default.createElement("button", {
+    onClick: () => props.gameManager.setScreen("empire")
+  }, "Empire"), _react.default.createElement("button", {
+    onClick: () => props.gameManager.setScreen("agents")
+  }, "Agents"));
 };
 
 var _default = CommandBar;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"components/Agent.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const Agent = ({}) => {
-  return _react.default.createElement("div", {
-    className: "border padding--standard"
-  }, _react.default.createElement("div", null, _react.default.createElement("span", null, "Testy Testoffovich"), " ", _react.default.createElement("span", {
-    className: "margin--right--standard"
-  }, "999/999")), _react.default.createElement("div", null, _react.default.createElement("span", {
-    className: "margin--right--standard"
-  }, "B Squad")));
-};
-
-var _default = Agent;
 exports.default = _default;
 },{"react":"../node_modules/react/index.js"}],"components/Agents.js":[function(require,module,exports) {
 "use strict";
@@ -30306,8 +30306,6 @@ var _react = _interopRequireDefault(require("react"));
 
 var _Collapsable = _interopRequireDefault(require("./Collapsable"));
 
-var _Agent = _interopRequireDefault(require("./Agent"));
-
 var _GameManager = _interopRequireDefault(require("../containers/GameManager"));
 
 var _unstatedConnect = _interopRequireDefault(require("unstated-connect"));
@@ -30320,13 +30318,101 @@ const Agents = props => {
     title: "EVIL Agents"
   }, _react.default.createElement(_Collapsable.default, {
     title: "Soldiers"
-  }, GameManager.state.player.evilEmpire && GameManager.getEvilAgents(GameManager.state.citizens, GameManager.state.player.evilEmpire.id).filter(agent => agent.role === 1).map(agent => _react.default.createElement("div", null, agent.name, " ", agent.id))), _react.default.createElement("h2", null, "Scientists"), _react.default.createElement("h2", null, "Adminstrators"));
+  }, GameManager.state.player.evilEmpire && GameManager.getEvilAgents(GameManager.state.citizens, GameManager.state.player.evilEmpire.id, 1).map(agent => _react.default.createElement("div", null, agent.name, " ", agent.id))), _react.default.createElement(_Collapsable.default, {
+    title: "Scientists"
+  }, GameManager.state.player.evilEmpire && GameManager.getEvilAgents(GameManager.state.citizens, GameManager.state.player.evilEmpire.id, 2).map(agent => _react.default.createElement("div", null, agent.name, " ", agent.id))), _react.default.createElement(_Collapsable.default, {
+    title: "Administrators"
+  }, GameManager.state.player.evilEmpire && GameManager.getEvilAgents(GameManager.state.citizens, GameManager.state.player.evilEmpire.id, 3).map(agent => _react.default.createElement("div", null, agent.name, " ", agent.id))));
 };
 
 var _default = (0, _unstatedConnect.default)([_GameManager.default])(Agents);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./Collapsable":"components/Collapsable.js","./Agent":"components/Agent.js","../containers/GameManager":"containers/GameManager.js","unstated-connect":"../node_modules/unstated-connect/dist/unstated-connect.min.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./Collapsable":"components/Collapsable.js","../containers/GameManager":"containers/GameManager.js","unstated-connect":"../node_modules/unstated-connect/dist/unstated-connect.min.js"}],"components/UI/Main.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _WorldMap = _interopRequireDefault(require("../WorldMap"));
+
+var _CommandBar = _interopRequireDefault(require("../CommandBar"));
+
+var _Agents = _interopRequireDefault(require("../Agents"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const Main = props => {
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("h1", null, " Empire Of Evil "), _react.default.createElement(_CommandBar.default, {
+    gameManager: props.gameManager
+  }), _react.default.createElement("div", {
+    id: "game-area"
+  }, _react.default.createElement("div", {
+    id: "selected-tile"
+  }, props.gameManager.state.selectedTile && _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("p", null, "Coordinates: ", props.gameManager.state.selectedTile.tile.x, ",", props.gameManager.state.selectedTile.tile.y), _react.default.createElement("p", null, "Owner:", " ", props.gameManager.state.nations[props.gameManager.state.selectedTile.tile.nationId].name, " "), _react.default.createElement("p", null, props.gameManager.state.selectedTile.hasEvilNeighbor ? "yes" : "no"))), _react.default.createElement(_WorldMap.default, null), _react.default.createElement(_Agents.default, null)));
+};
+
+var _default = Main;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../WorldMap":"components/WorldMap.js","../CommandBar":"components/CommandBar.js","../Agents":"components/Agents.js"}],"components/UI/Empire.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const Empire = props => {
+  // const [GameManager] = this.props.containers;
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("button", {
+    onClick: () => props.gameManager.setScreen("main")
+  }, "Back"), _react.default.createElement("h1", null, " Empire "), _react.default.createElement("p", null, "EVIL: ", 1), _react.default.createElement("p", null, "Cash: ", 1));
+};
+
+var _default = Empire;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"components/UI/AgentsUI.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _Agents = _interopRequireDefault(require("../Agents"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const AgentsUI = props => {
+  // const [GameManager] = this.props.containers;
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("button", {
+    onClick: () => props.gameManager.setScreen("main")
+  }, "Back"), _react.default.createElement("h1", null, " AgentsUI "), _react.default.createElement(_Agents.default, null));
+};
+
+var _default = AgentsUI;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../Agents":"components/Agents.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30338,15 +30424,17 @@ var _react = _interopRequireWildcard(require("react"));
 
 require("./App.css");
 
-var _WorldMap = _interopRequireDefault(require("./components/WorldMap"));
-
-var _CommandBar = _interopRequireDefault(require("./components/CommandBar"));
-
-var _Agents = _interopRequireDefault(require("./components/Agents"));
+require("./output.css");
 
 var _unstatedConnect = _interopRequireDefault(require("unstated-connect"));
 
 var _GameManager = _interopRequireDefault(require("./containers/GameManager"));
+
+var _Main = _interopRequireDefault(require("./components/UI/Main"));
+
+var _Empire = _interopRequireDefault(require("./components/UI/Empire"));
+
+var _AgentsUI = _interopRequireDefault(require("./components/UI/AgentsUI"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30354,16 +30442,13 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+const UIScreens = {
+  main: _Main.default,
+  empire: _Empire.default,
+  agents: _AgentsUI.default
+};
 
 class App extends _react.Component {
-  constructor(...args) {
-    super(...args);
-
-    _defineProperty(this, "state", {// nations: []
-    });
-  }
-
   componentDidMount() {
     const [GameManager] = this.props.containers;
     GameManager.setUpGame();
@@ -30371,13 +30456,12 @@ class App extends _react.Component {
 
   render() {
     const [GameManager] = this.props.containers;
+    const CurrentScreen = UIScreens[GameManager.state.currentScreen];
     return _react.default.createElement("div", {
       className: "App"
-    }, _react.default.createElement("h1", null, " Empire Of Evil "), _react.default.createElement(_CommandBar.default, null), _react.default.createElement("div", {
-      id: "game-area"
-    }, _react.default.createElement("div", {
-      id: "selected-tile"
-    }, GameManager.state.selectedTile && _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("p", null, "Coordinates: ", GameManager.state.selectedTile.tile.x, ",", GameManager.state.selectedTile.tile.y), _react.default.createElement("p", null, "Owner:", " ", GameManager.state.nations[GameManager.state.selectedTile.tile.nationId].name, " "))), _react.default.createElement(_WorldMap.default, null), _react.default.createElement(_Agents.default, null)));
+    }, _react.default.createElement(CurrentScreen, {
+      gameManager: GameManager
+    }));
   }
 
 }
@@ -30385,7 +30469,7 @@ class App extends _react.Component {
 var _default = (0, _unstatedConnect.default)([_GameManager.default])(App);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./App.css":"App.css","./components/WorldMap":"components/WorldMap.js","./components/CommandBar":"components/CommandBar.js","./components/Agents":"components/Agents.js","unstated-connect":"../node_modules/unstated-connect/dist/unstated-connect.min.js","./containers/GameManager":"containers/GameManager.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./App.css":"App.css","./output.css":"output.css","unstated-connect":"../node_modules/unstated-connect/dist/unstated-connect.min.js","./containers/GameManager":"containers/GameManager.js","./components/UI/Main":"components/UI/Main.js","./components/UI/Empire":"components/UI/Empire.js","./components/UI/AgentsUI":"components/UI/AgentsUI.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -30427,7 +30511,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52800" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53706" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
