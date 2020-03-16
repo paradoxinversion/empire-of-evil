@@ -34,6 +34,13 @@ class Tile {
     return neighbors;
   }
 
+  hasEvilNeighbor(gameMap, evilEmpireId) {
+    const neighbors = this.getNeighbors(gameMap);
+    return Object.values(neighbors).some(
+      neighbor => neighbor && neighbor.nationId === evilEmpireId
+    );
+  }
+
   initializeWater(gameMap, tileWater) {
     if (!this.waterInitialized) {
       this.waterInitialized = true;

@@ -29782,6 +29782,11 @@ class Tile {
     return neighbors;
   }
 
+  hasEvilNeighbor(gameMap, evilEmpireId) {
+    const neighbors = this.getNeighbors(gameMap);
+    return Object.values(neighbors).some(neighbor => neighbor && neighbor.nationId === evilEmpireId);
+  }
+
   initializeWater(gameMap, tileWater) {
     if (!this.waterInitialized) {
       this.waterInitialized = true;
@@ -29984,6 +29989,7 @@ class GameManager extends _unstated.Container {
       nations: {},
       citizens: {},
       gameMap: [],
+      operations: {},
       selectedTile: null,
       gameReady: false
     });
@@ -30029,6 +30035,10 @@ class GameManager extends _unstated.Container {
   getEvilEmpire() {
     return this.state.nations[this.state.player.evilEmpire.id];
   }
+
+  getEvilAgents(citizensMap, evilEmpireId) {
+    return Object.values(citizensMap).filter(citizen => citizen.nationId === evilEmpireId && citizen.role > 0);
+  }
   /**
    *
    * @param {Array} nationsArray - An array of game nations
@@ -30050,8 +30060,12 @@ class GameManager extends _unstated.Container {
 
 
   selectTile(selectedTile) {
+    const tile = {};
+    const hasEvilNeighbor = selectedTile.hasEvilNeighbor(this.state.gameMap, this.getEvilEmpire().id);
+    tile.tile = selectedTile;
+    tile.hasEvilNeighbor = hasEvilNeighbor;
     this.setState({
-      selectedTile
+      selectedTile: tile
     });
   }
   /**
@@ -30099,7 +30113,8 @@ class GameManager extends _unstated.Container {
           }
         }
       }
-    }
+    } // Set agent statuses
+
 
     for (let y = 0; y < gameMap.length; y++) {
       for (let x = 0; x < gameMap[y].length; x++) {
@@ -30111,12 +30126,11 @@ class GameManager extends _unstated.Container {
           for (let a = 0; a < cpuAgentsPerTile; a++) {
             tileCitizens[a].role = 1;
           }
-
-          console.log("Citizens on tile:");
         }
       }
-    } // Set data
+    }
 
+    console.log(this.getEvilAgents(citizens, evilEmpire.id)); // Set data
 
     player.evilEmpire = evilEmpire;
     this.setState({
@@ -30294,17 +30308,25 @@ var _Collapsable = _interopRequireDefault(require("./Collapsable"));
 
 var _Agent = _interopRequireDefault(require("./Agent"));
 
+var _GameManager = _interopRequireDefault(require("../containers/GameManager"));
+
+var _unstatedConnect = _interopRequireDefault(require("unstated-connect"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const Agents = () => {
+const Agents = props => {
+  const [GameManager] = props.containers;
   return _react.default.createElement(_Collapsable.default, {
     title: "EVIL Agents"
-  }, _react.default.createElement("h2", null, "Soldiers"), _react.default.createElement("h2", null, "Scientists"), _react.default.createElement("h2", null, "Adminstrators"));
+  }, _react.default.createElement(_Collapsable.default, {
+    title: "Soldiers"
+  }, GameManager.state.player.evilEmpire && GameManager.getEvilAgents(GameManager.state.citizens, GameManager.state.player.evilEmpire.id).filter(agent => agent.role === 1).map(agent => _react.default.createElement("div", null, agent.name, " ", agent.id))), _react.default.createElement("h2", null, "Scientists"), _react.default.createElement("h2", null, "Adminstrators"));
 };
 
-var _default = Agents;
+var _default = (0, _unstatedConnect.default)([_GameManager.default])(Agents);
+
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./Collapsable":"components/Collapsable.js","./Agent":"components/Agent.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./Collapsable":"components/Collapsable.js","./Agent":"components/Agent.js","../containers/GameManager":"containers/GameManager.js","unstated-connect":"../node_modules/unstated-connect/dist/unstated-connect.min.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30355,7 +30377,7 @@ class App extends _react.Component {
       id: "game-area"
     }, _react.default.createElement("div", {
       id: "selected-tile"
-    }, GameManager.state.selectedTile && _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("p", null, "Coordinates: ", GameManager.state.selectedTile.x, ",", GameManager.state.selectedTile.y), _react.default.createElement("p", null, "Owner:", " ", GameManager.state.nations[GameManager.state.selectedTile.nationId].name, " "))), _react.default.createElement(_WorldMap.default, null), _react.default.createElement(_Agents.default, null)));
+    }, GameManager.state.selectedTile && _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("p", null, "Coordinates: ", GameManager.state.selectedTile.tile.x, ",", GameManager.state.selectedTile.tile.y), _react.default.createElement("p", null, "Owner:", " ", GameManager.state.nations[GameManager.state.selectedTile.tile.nationId].name, " "))), _react.default.createElement(_WorldMap.default, null), _react.default.createElement(_Agents.default, null)));
   }
 
 }
@@ -30405,7 +30427,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65479" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52800" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

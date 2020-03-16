@@ -24,14 +24,14 @@ class App extends Component {
             {GameManager.state.selectedTile && (
               <React.Fragment>
                 <p>
-                  Coordinates: {GameManager.state.selectedTile.x},
-                  {GameManager.state.selectedTile.y}
+                  Coordinates: {GameManager.state.selectedTile.tile.x},
+                  {GameManager.state.selectedTile.tile.y}
                 </p>
                 <p>
                   Owner:{" "}
                   {
                     GameManager.state.nations[
-                      GameManager.state.selectedTile.nationId
+                      GameManager.state.selectedTile.tile.nationId
                     ].name
                   }{" "}
                 </p>

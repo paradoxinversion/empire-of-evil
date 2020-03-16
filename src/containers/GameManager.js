@@ -1,3 +1,5 @@
+// TODO: move functions that create data/entities to those files & out of here
+
 import { Container } from "unstated";
 import { createNation } from "../data/entities/nation";
 import {
@@ -15,6 +17,7 @@ class GameManager extends Container {
     nations: {},
     citizens: {},
     gameMap: [],
+    operations: {},
     selectedTile: null,
     gameReady: false
   };
@@ -59,6 +62,12 @@ class GameManager extends Container {
   getEvilEmpire() {
     return this.state.nations[this.state.player.evilEmpire.id];
   }
+
+  getEvilAgents(citizensMap, evilEmpireId) {
+    return Object.values(citizensMap).filter(
+      citizen => citizen.nationId === evilEmpireId && citizen.role > 0
+    );
+  }
   /**
    *
    * @param {Array} nationsArray - An array of game nations
@@ -81,7 +90,14 @@ class GameManager extends Container {
    * @param {object} selectedTile - The tile to set, or null to unset
    */
   selectTile(selectedTile) {
-    this.setState({ selectedTile });
+    const tile = {};
+    const hasEvilNeighbor = selectedTile.hasEvilNeighbor(
+      this.state.gameMap,
+      this.getEvilEmpire().id
+    );
+    tile.tile = selectedTile;
+    tile.hasEvilNeighbor = hasEvilNeighbor;
+    this.setState({ selectedTile: tile });
   }
 
   /**
@@ -126,6 +142,7 @@ class GameManager extends Container {
       }
     }
 
+    // Set agent statuses
     for (let y = 0; y < gameMap.length; y++) {
       for (let x = 0; x < gameMap[y].length; x++) {
         const tile = gameMap[y][x];
@@ -134,10 +151,11 @@ class GameManager extends Container {
           for (let a = 0; a < cpuAgentsPerTile; a++) {
             tileCitizens[a].role = 1;
           }
-          console.log("Citizens on tile:");
         }
       }
     }
+
+    console.log(this.getEvilAgents(citizens, evilEmpire.id));
     // Set data
     player.evilEmpire = evilEmpire;
     this.setState({ player, nations, citizens, gameMap, gameReady: true });
