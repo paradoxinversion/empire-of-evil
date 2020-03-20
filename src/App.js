@@ -6,11 +6,17 @@ import GameManager from "./containers/GameManager";
 import Main from "./components/UI/Main";
 import Empire from "./components/UI/Empire";
 import AgentsUI from "./components/UI/AgentsUI";
+import EmpireOrganizationUI from "./components/UI/EmpireOrganizationUI";
+import EmpireOperationsUI from "./components/UI/EmpireOperationsUI";
+import EmpireResearchUI from "./components/UI/EmpireResearchUI";
 
 const UIScreens = {
   main: Main,
   empire: Empire,
-  agents: AgentsUI
+  agents: AgentsUI,
+  "empire-organization": EmpireOrganizationUI,
+  "empire-operations": EmpireOperationsUI,
+  "empire-research": EmpireResearchUI
 };
 
 class App extends Component {

@@ -5,6 +5,8 @@ class Nation {
     this.id = getUID();
     this.name = name;
     this.isEvilEmpire = isEvilEmpire;
+    this.cash = 10000;
+    this.nationalControl = 100;
   }
 }
 

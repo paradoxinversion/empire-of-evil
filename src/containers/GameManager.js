@@ -8,7 +8,10 @@ import {
   getRandomLandTile
 } from "../commonUtilities/map/gameMap";
 import { Citizen } from "../data/entities/citizen";
+import { Squad } from "../data/entities/squads";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
+import faker from "faker";
+
 class GameManager extends Container {
   state = {
     player: {
@@ -18,15 +21,17 @@ class GameManager extends Container {
     citizens: {},
     gameMap: [],
     operations: {},
+    squads: {},
     selectedTile: null,
     gameReady: false,
     currentScreen: "main"
   };
+
   createCitizen(x, y) {
     const citizenAttributeMin = 1;
     const citizenAttributeMax = 5;
     const citizenAttributes = {
-      name: "Drone",
+      name: faker.name.findName(),
       strength: getRandomIntInclusive(citizenAttributeMin, citizenAttributeMax),
       intelligence: getRandomIntInclusive(
         citizenAttributeMin,
@@ -43,6 +48,7 @@ class GameManager extends Container {
     const newCitizen = new Citizen(citizenAttributes);
     return newCitizen;
   }
+
   /**
    * Creates the nations that will be used in the game
    */
@@ -58,12 +64,65 @@ class GameManager extends Container {
   }
 
   /**
+   * Form a new squas
+   * @param {String} name - the new squad's name
+   * @param {Array} members - an array of agent ids, including squad leader
+   * @param {String} leader - the id of the squad leader
+   */
+  createSquad(nationId, name, members, leader, role) {
+    // Set squad data
+    const squad = {
+      nationId,
+      name,
+      members, //array of integers?
+      leader, //id
+      role
+    };
+
+    // Create Squad
+    const newSquad = new Squad(squad);
+
+    // Prepare updated squad info
+    const squads = Object.assign({}, this.state.squads);
+    squads[newSquad.id] = newSquad;
+
+    // Prepare updated citizen info
+    const citizens = Object.assign({}, this.state.citizens);
+    members.forEach(memberId => {
+      citizens[memberId].setSquadId(newSquad.id);
+    });
+
+    // Update info
+    this.setState({ squads, citizens });
+    return newSquad;
+  }
+
+  disbandSquad(squadId) {
+    // Reset squad member's associatons
+    const citizens = Object.assign({}, this.state.citizens);
+    this.state.squads[squadId].members.forEach(memberId => {
+      citizens[memberId].setSquadId(-1);
+    });
+
+    const squads = Object.assign({}, this.state.squads);
+    delete squads[squadId];
+
+    this.setState({ citizens, squads });
+  }
+
+  /**
    * Returns the Player's empire.
    */
   getEvilEmpire() {
     return this.state.nations[this.state.player.evilEmpire.id];
   }
 
+  /**
+   *
+   * @param {Object} citizensMap - A map of all game citizens that are Agents of of the evil empire
+   * @param {String} evilEmpireId - The string ID of the evil empire
+   * @param {String} role - The string role (0, 1, 2, or <falsey>) of the citizen to find, falsey values get ALL agents
+   */
   getEvilAgents(citizensMap, evilEmpireId, role) {
     const allAgents = Object.values(citizensMap).filter(
       citizen => citizen.nationId === evilEmpireId && citizen.role > 0
@@ -75,6 +134,41 @@ class GameManager extends Container {
     }
   }
 
+  getAgents(citizensMap, nationId, role) {
+    const allAgents = Object.values(citizensMap).filter(
+      citizen => citizen.nationId === nationId && citizen.role > 0
+    );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
+  }
+
+  getSquadlessAgents(citizensMap, nationId, role) {
+    return this.getAgents(citizensMap, nationId, role).filter(
+      agent => agent.squadId === -1
+    );
+  }
+
+  getSquads(squadsMap, nationId, squadRole) {
+    const allSquads = Object.values(squadsMap).filter(
+      squad => squad.nationId === nationId
+    );
+    if (!squadRole) {
+      return allSquads;
+    } else {
+      return allSquads.filter(squad => squad.role === squadRole);
+    }
+  }
+
+  /**
+   * Return all game citizens.
+   */
+  getCitizens = () => {
+    return this.state.citizens;
+  };
+
   /**
    *
    * @param {Array} nationsArray - An array of game nations
@@ -85,13 +179,16 @@ class GameManager extends Container {
       nation => nation.id !== evilEmpireId
     );
   }
+
   getCitizensOnTile(tile, citizensMap) {
+    if (!citizensMap) citizensMap = this.state.citizens;
     return Object.values(citizensMap).filter(
       citizen =>
         citizen.currentPosition.x === tile.x &&
         citizen.currentPosition.y === tile.y
     );
   }
+
   /**
    * Set a tile as the one currently selected (or set it null)
    * @param {object} selectedTile - The tile to set, or null to unset
@@ -104,17 +201,19 @@ class GameManager extends Container {
     );
     tile.tile = selectedTile;
     tile.hasEvilNeighbor = hasEvilNeighbor;
+    tile.citizens = this.getCitizensOnTile(selectedTile, this.state.citizens);
     this.setState({ selectedTile: tile });
   }
   setScreen(currentScreen) {
     this.setState({ currentScreen });
   }
+
   /**
    * Runs initial game setup
    */
   async setUpGame() {
     // some constants
-    const cpuAgentsPerTile = 5;
+    const cpuAgentsPerTile = 8;
 
     const player = Object.assign({}, this.state.player);
     // Create Map
@@ -141,7 +240,7 @@ class GameManager extends Container {
       for (let x = 0; x < gameMap[y].length; x++) {
         const tile = gameMap[y][x];
         if (tile.land) {
-          for (let c = 0; c < getRandomIntInclusive(25, 100); c++) {
+          for (let c = 0; c < getRandomIntInclusive(25, 150); c++) {
             const newCitizen = this.createCitizen(x, y);
             newCitizen.setNationId(tile.nationId);
             citizens[newCitizen.id] = newCitizen;

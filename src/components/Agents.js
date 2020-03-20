@@ -2,6 +2,7 @@ import React from "react";
 import Collapsable from "./Collapsable";
 import GameManager from "../containers/GameManager";
 import connect from "unstated-connect";
+import Agent from "./Agent";
 const Agents = props => {
   const [GameManager] = props.containers;
   return (
@@ -12,11 +13,7 @@ const Agents = props => {
             GameManager.state.citizens,
             GameManager.state.player.evilEmpire.id,
             1
-          ).map(agent => (
-            <div>
-              {agent.name} {agent.id}
-            </div>
-          ))}
+          ).map(agent => <Agent agent={agent} gameManager={GameManager} />)}
       </Collapsable>
       <Collapsable title="Scientists">
         {GameManager.state.player.evilEmpire &&
@@ -24,11 +21,7 @@ const Agents = props => {
             GameManager.state.citizens,
             GameManager.state.player.evilEmpire.id,
             2
-          ).map(agent => (
-            <div>
-              {agent.name} {agent.id}
-            </div>
-          ))}
+          ).map(agent => <Agent agent={agent} gameManager={GameManager} />)}
       </Collapsable>
       <Collapsable title="Administrators">
         {GameManager.state.player.evilEmpire &&
@@ -36,11 +29,7 @@ const Agents = props => {
             GameManager.state.citizens,
             GameManager.state.player.evilEmpire.id,
             3
-          ).map(agent => (
-            <div>
-              {agent.name} {agent.id}
-            </div>
-          ))}
+          ).map(agent => <Agent agent={agent} gameManager={GameManager} />)}
       </Collapsable>
     </Collapsable>
   );

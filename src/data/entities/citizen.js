@@ -26,18 +26,24 @@ class Citizen {
     this.intelligence = intelligence;
     this.administration = administration;
     this.health = 10 + strength;
+    this.currentHealth = this.health;
     this.role = role;
     this.squadId = -1;
     this.nationId = nationId;
     this.alive = true;
+    this.nationalLoyalty = 25;
     this.currentPosition = {
       x,
       y
     };
+    this.experiencePoints = 0;
   }
 
   setNationId(id) {
     this.nationId = id;
+  }
+  setSquadId(squadId) {
+    this.squadId = squadId;
   }
 }
 

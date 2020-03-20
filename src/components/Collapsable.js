@@ -11,7 +11,7 @@ class Collapsable extends React.Component {
 
   render() {
     return (
-      <div className="flex flex-col" className="collapsable">
+      <div className="collapsable w-auto flex flex-col">
         <p
           style={{ backgroundColor: "grey" }}
           onClick={() => {

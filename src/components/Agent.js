@@ -1,14 +1,17 @@
 import React from "react";
 
-const Agent = ({}) => {
+const Agent = ({ agent, gameManager }) => {
   return (
-    <div className="border padding--standard">
+    <div className="border p-1">
       <div>
-        <span>Testy Testoffovich</span>{" "}
-        <span className="margin--right--standard">999/999</span>
-      </div>
-      <div>
-        <span className="margin--right--standard">B Squad</span>
+        <span className="mr-4">{agent.name}</span>{" "}
+        <span className="mr-4">HP: {agent.currentHealth}</span>
+        <span className="mr-4">
+          {agent.squadId !== -1
+            ? gameManager.state.squads[agent.squadId].name
+            : "No Squad"}
+        </span>
+        <span className="mr-4">EXP: {agent.experiencePoints}</span>
       </div>
     </div>
   );
