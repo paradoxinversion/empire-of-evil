@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
 import Modal from "../../Modal";
 
-const MoveOperation = ({ gameManager, operationData, next }) => {
+const AttackOperation = ({ gameManager, operationData, next }) => {
   useEffect(() => {
     const targetTile = gameManager.getTileById(operationData.targetTileId);
-    operationData.squads.forEach(squad => {
-      gameManager.setSquadLocation(targetTile.x, targetTile.y, squad.id);
-    });
+    gameManager.doTileCombat(targetTile, gameManager.getEvilEmpire().id);
   }, [gameManager]);
   return (
     <Modal>
@@ -18,4 +16,4 @@ const MoveOperation = ({ gameManager, operationData, next }) => {
   );
 };
 
-export default MoveOperation;
+export default AttackOperation;

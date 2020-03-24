@@ -167,7 +167,14 @@ class GameManager extends Container {
         agent.currentPosition.y === tile.tile.y
     ));
   }
-
+  getAllAgentsOnTile(tile) {
+    return Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role > 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+  }
   getSquadlessAgents(citizensMap, nationId, role) {
     return this.getAgents(citizensMap, nationId, role).filter(
       agent => agent.squadId === -1
@@ -333,9 +340,58 @@ class GameManager extends Container {
       currentScreen: "operation-resolution"
     });
   }
+
+  /**
+   *
+   * @param {*} combatantList
+   * @param {*} nationId - the nation id of this agent
+   */
+  getEnemyCombatant(combatantList, nationId) {
+    const enemies = combatantList.filter(agent => agent.nationId !== nationId);
+    return enemies[getRandomIntInclusive(0, enemies.length - 1)];
+  }
+  /**
+   * Execute tile combat between the EoE and other nations
+   * @param {*} tile
+   */
+  doTileCombat(tile, attackerId) {
+    const citizens = Object.assign({}, this.state.citizens);
+    // Gather combatants
+    // const combatants = this.getAllAgentsOnTile(tile).reduce(
+    //   (acc, combatant) => {
+    //     let key = combatant.nationId;
+    //     if (!acc[key]) {
+    //       acc[key] = [];
+    //     }
+    //     acc[key].push(combatant);
+    //     return acc;
+    //   },
+    //   {}
+    // );
+
+    const combatants = this.getAllAgentsOnTile(tile);
+    console.log(combatants);
+
+    // Execute attacks for each character
+    combatants.forEach(combatant => {
+      const target = this.getEnemyCombatant(combatants, combatant.nationId);
+      target.currentHealth -= combatant.strength;
+      console.log(
+        `${combatant.name} targets ${target.name} (targeh hp: ${target.currentHealth}/${target.health})`
+      );
+      citizens[target.id] = target;
+    });
+
+    // update agents in container
+    this.setState({
+      citizens
+    });
+  }
+
   clearOperations() {
     this.state.operations = [];
   }
+
   /**
    * Runs initial game setup
    */

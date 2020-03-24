@@ -20,6 +20,15 @@ const operationTypes = {
     squadMemberLimit: 4,
     maxSquads: 1,
     targetTileId: null
+  },
+  attack: {
+    name: "Attack",
+    operationType: "attack",
+    description: "Attack the current tile.",
+    squadMemberLimit: null,
+    maxSquads: null,
+    targetTileId: null,
+    targetType: "selected-tile"
   }
 };
 

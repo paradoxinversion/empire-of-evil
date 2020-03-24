@@ -56,7 +56,7 @@ const Main = props => {
 
         <div id="selected-tile" className="border">
           {props.gameManager.state.selectedTile && (
-            <React.Fragment>
+            <div>
               <p>
                 Coordinates: {props.gameManager.state.selectedTile.tile.x},
                 {props.gameManager.state.selectedTile.tile.y}
@@ -101,7 +101,6 @@ const Main = props => {
                                 modalType: "operation",
                                 operationType: "move"
                               });
-                              console.log("modal", modal);
                             }}
                           >
                             Move Squad
@@ -110,13 +109,31 @@ const Main = props => {
                       ))}
                     </div>
                   ))}
+
+                  {props.gameManager.getSquadsOnTile(
+                    props.gameManager.getEvilEmpire().id,
+                    props.gameManager.state.selectedTile.tile
+                  ).length > 0 && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setModal({
+                            modalType: "operation",
+                            operationType: "attack"
+                          });
+                        }}
+                      >
+                        Attack
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <p>
                   Citizens:{" "}
                   {props.gameManager.state.selectedTile.citizens.length}
                 </p>
                 <p>Agents: {}?</p>
-
+                {/* 
                 <div>
                   <button
                     onClick={() => {
@@ -129,9 +146,9 @@ const Main = props => {
                     Scout
                   </button>
                   <button>Attack</button>
-                </div>
+                </div> */}
               </div>
-            </React.Fragment>
+            </div>
           )}
         </div>
       </div>
