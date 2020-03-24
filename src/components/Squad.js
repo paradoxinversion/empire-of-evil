@@ -1,6 +1,7 @@
 import React from "react";
 
 const Squad = ({ squad }) => {
+  console.log(squad);
   return (
     <div className="border p-1">
       <div>

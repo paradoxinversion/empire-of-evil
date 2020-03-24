@@ -5,24 +5,53 @@ import Agents from "../Agents";
 import Modal from "../Modal";
 import Operation from "../Operation";
 import { operationTypes } from "../../data/operation";
+import FormSquad from "../FormSquad";
+import Squad from "../Squad";
+
+// modal info will be something like
+// {
+//   modalType, // string, 'operation', 'form-squad'
+// }
+
+/**
+ * This is the primary screen component for EoE. It's used
+ * for the main interface, as well as encounters, menus, etc.
+ * @param {} props
+ */
 const Main = props => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalOperation, setModalOperation] = useState("");
+  const [modal, setModal] = useState(null);
+
   return (
     <React.Fragment>
-      {modalOpen && (
+      {modal && (
         <Modal>
           {/* Operation Modal example */}
-          <Operation
-            operation={operationTypes[modalOperation]}
-            setModalOpen={setModalOpen}
-          />
+          {modal.modalType === "operation" ? (
+            <Operation
+              operation={operationTypes[modal.operationType]}
+              setModalOpen={setModal}
+              gameManager={props.gameManager}
+            />
+          ) : (
+            <FormSquad
+              gameManager={props.gameManager}
+              setModalOpen={setModal}
+            />
+          )}
         </Modal>
       )}
       <div className="mb-4">
         <span> Empire Of Evil </span>
         <div>
           <CommandBar gameManager={props.gameManager} />
+          <div>
+            <p>Current Operations</p>
+            {props.gameManager.getOperations().map(operation => (
+              <div>
+                <p>{operation.operationType.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div id="selected-tile" className="border">
@@ -47,6 +76,41 @@ const Main = props => {
               </p>
               <div className="border">
                 <p>Tile Info</p>
+                <div>
+                  <button
+                    className="border rounded"
+                    onClick={() => {
+                      setModal({
+                        modalType: "form-squad"
+                      });
+                    }}
+                  >
+                    Form Squad/Team Here
+                  </button>
+                  {Object.values(
+                    props.gameManager.state.selectedTile.adjacentSquads
+                  ).map(adjacentSquads => (
+                    <div>
+                      <p>Adjacent Squads</p>
+                      {adjacentSquads.map(squad => (
+                        <div>
+                          <Squad squad={squad} />
+                          <button
+                            onClick={() => {
+                              setModal({
+                                modalType: "operation",
+                                operationType: "move"
+                              });
+                              console.log("modal", modal);
+                            }}
+                          >
+                            Move Squad
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <p>
                   Citizens:{" "}
                   {props.gameManager.state.selectedTile.citizens.length}
@@ -56,8 +120,10 @@ const Main = props => {
                 <div>
                   <button
                     onClick={() => {
-                      setModalOpen(true);
-                      setModalOperation("scout");
+                      setModal({
+                        modalType: "operation",
+                        operationType: "scout"
+                      });
                     }}
                   >
                     Scout

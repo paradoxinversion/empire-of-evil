@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import SquadSelect from "./SquadSelect";
 
-const Operation = ({ operation, setModalOpen }) => {
+const Operation = ({ operation, setModalOpen, gameManager }) => {
+  const [selectedSquads, setSelectedSquads] = useState([]);
   return (
     <div className="fixed top-0 left-0 bg-gray-600 h-screen w-screen flex justify-center items-center">
       <div id="operation-scout" className="absolute border bg-white p-4">
@@ -8,12 +10,21 @@ const Operation = ({ operation, setModalOpen }) => {
         <p>{operation.description}</p>
         <p>Max Squads: {operation.maxSquads}</p>
         <p>Squad Member Limit: {operation.squadMemberLimit}</p>
-        <div className="operation-prep">
-          <select>
-            <option value="">Select Squads</option>
-          </select>
-        </div>
-        <button className="border rounded p-1">Prepare Mission</button>
+        <SquadSelect
+          gameManager={gameManager}
+          selectedSquads={selectedSquads}
+          setSelectedSquads={setSelectedSquads}
+        />
+        <button
+          className="border rounded p-1"
+          onClick={() => {
+            // ! Defaulting targetid
+            gameManager.addOperation(operation, selectedSquads);
+            setModalOpen(false);
+          }}
+        >
+          Prepare Mission
+        </button>
         <button
           className="border rounded p-1"
           onClick={() => setModalOpen(false)}

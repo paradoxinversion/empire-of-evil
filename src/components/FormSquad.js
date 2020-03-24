@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import Squads from "./Squads";
 import Agent from "./Agent";
-import Agents from "./Agents";
 
-const FormSquad = ({ gameManager }) => {
+const FormSquad = ({ gameManager, setModalOpen }) => {
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [squadLeader, setSquadLeader] = useState(null);
   return (
-    <div>
+    <div className="bg-white p-4">
       <div>
         <button>Form Squad/Team</button>
       </div>
@@ -47,9 +45,11 @@ const FormSquad = ({ gameManager }) => {
         <div id="form-squad-members">
           <div className="border">
             {gameManager
-              .getSquadlessAgents(
+              .getSquadlessAgentsOnTile(
                 gameManager.state.citizens,
-                gameManager.getEvilEmpire().id
+                gameManager.getEvilEmpire().id,
+                undefined,
+                gameManager.state.selectedTile
               )
               .filter(
                 agent =>
@@ -133,22 +133,25 @@ const FormSquad = ({ gameManager }) => {
               </p>
             </div>
             <button
-              onClick={e => {
+              onClick={async e => {
                 e.preventDefault();
 
-                gameManager.createSquad(
+                await gameManager.createSquad(
                   gameManager.getEvilEmpire().id,
                   "Testoresto",
                   selectedAgents.concat(squadLeader),
                   squadLeader,
-                  0
+                  0,
+                  gameManager.state.selectedTile.tile
                 );
+                setModalOpen(false);
               }}
             >
               Confirm and Form
             </button>
           </React.Fragment>
         )}
+        <button onClick={() => setModalOpen(false)}>Close</button>
       </form>
     </div>
   );

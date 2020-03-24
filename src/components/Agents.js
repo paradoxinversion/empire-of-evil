@@ -7,7 +7,7 @@ const Agents = props => {
   const [GameManager] = props.containers;
   return (
     <Collapsable title="EVIL Agents">
-      <Collapsable title="Soldiers">
+      <Collapsable title="Squadless EVIL Agents">
         {GameManager.state.player.evilEmpire &&
           GameManager.getEvilAgents(
             GameManager.state.citizens,

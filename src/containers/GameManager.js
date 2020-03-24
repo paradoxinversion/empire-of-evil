@@ -9,6 +9,7 @@ import {
 } from "../commonUtilities/map/gameMap";
 import { Citizen } from "../data/entities/citizen";
 import { Squad } from "../data/entities/squads";
+import { Operation } from "../data/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
 import faker from "faker";
 
@@ -20,7 +21,7 @@ class GameManager extends Container {
     nations: {},
     citizens: {},
     gameMap: [],
-    operations: {},
+    operations: [],
     squads: {},
     selectedTile: null,
     gameReady: false,
@@ -69,14 +70,16 @@ class GameManager extends Container {
    * @param {Array} members - an array of agent ids, including squad leader
    * @param {String} leader - the id of the squad leader
    */
-  createSquad(nationId, name, members, leader, role) {
+  async createSquad(nationId, name, members, leader, role, tile) {
     // Set squad data
     const squad = {
       nationId,
       name,
       members, //array of integers?
       leader, //id
-      role
+      role,
+      x: tile.x,
+      y: tile.y
     };
 
     // Create Squad
@@ -93,8 +96,18 @@ class GameManager extends Container {
     });
 
     // Update info
-    this.setState({ squads, citizens });
+    await this.setState({ squads, citizens });
     return newSquad;
+  }
+
+  getAdjacentSquads(nationId, tile) {
+    // look at each neighboring tile
+    const neighbors = tile.getNeighbors(this.state.gameMap);
+    for (neighbor in neighbors) {
+      // check squad positions against neighbor tile position
+    }
+    // if the tile has a squad, add it to an array inside of a map
+    // map keys are n/e/s/w, depending on what tiles have squads
   }
 
   disbandSquad(squadId) {
@@ -145,10 +158,30 @@ class GameManager extends Container {
     }
   }
 
+  getAgentsOnTile(citizensMap, nationId, role, tile) {
+    return (nationAgents = this.getAgents(citizensMap, nationId, role).filter(
+      agent =>
+        agent.currentPosition.x === tile.tile.x &&
+        agent.currentPosition.y === tile.tile.y
+    ));
+  }
+
   getSquadlessAgents(citizensMap, nationId, role) {
     return this.getAgents(citizensMap, nationId, role).filter(
       agent => agent.squadId === -1
     );
+  }
+
+  getSquadlessAgentsOnTile(citizensMap, nationId, role, tile) {
+    const t = this.getSquadlessAgents(citizensMap, nationId, role).filter(
+      agent => {
+        return (
+          agent.currentPosition.y === tile.tile.y &&
+          agent.currentPosition.x === tile.tile.x
+        );
+      }
+    );
+    return t;
   }
 
   getSquads(squadsMap, nationId, squadRole) {
@@ -162,11 +195,76 @@ class GameManager extends Container {
     }
   }
 
+  getSquadsOnTile(nationId, tile) {
+    const squads = this.getSquads(this.state.squads, nationId).filter(squad => {
+      return (
+        squad.currentPosition.x === tile.x && squad.currentPosition.y === tile.y
+      );
+    });
+    return squads;
+  }
+
+  getFreeSquads(nationId) {
+    const allSquads = this.getSquads(this.state.squads, nationId);
+    // filter squads where squad id is not present in squad list of any operations
+    const freeSquads = allSquads.filter(squad => {
+      // is the squad id in any of the operations?
+      for (let x = 0; x < this.state.operations.length; x++) {
+        if (this.state.operations[x].squads.includes(squad.id)) return false;
+      }
+      return true;
+    });
+    return freeSquads;
+  }
+
+  addOperation(operationType, squads, targetTile) {
+    let targetTileId = "";
+    switch (operationType.targetType) {
+      case "selected-tile":
+        targetTileId = this.state.selectedTile.tile.id;
+        break;
+
+      default:
+        targetTileId = targetTile.tile.id;
+        break;
+    }
+
+    const operation = {
+      squads,
+      operationType,
+      targetTileId
+    };
+    const newOperation = new Operation(operation);
+    const operations = this.state.operations.slice(0);
+    operations.push(newOperation);
+    this.setState({ operations });
+  }
+
+  setSquadLocation(x, y, squadId) {
+    // set the squad's location
+    const squads = Object.assign({}, this.state.squads);
+    squad[squadId].currentLocation.x = x;
+    squad[squadId].currentLocation.y = y;
+
+    // set the location of each member in the squad
+    const citizens = Object.assign({}, this.state.citizens);
+    for (let citizenId in squad[squadId].members) {
+      citizens[citizenId].currentLocation.x = x;
+      citizens[citizenId].currentLocation.y = y;
+    }
+
+    this.setState({ squads, citizens });
+  }
+
   /**
    * Return all game citizens.
    */
   getCitizens = () => {
     return this.state.citizens;
+  };
+
+  getOperations = () => {
+    return this.state.operations;
   };
 
   /**
@@ -202,11 +300,32 @@ class GameManager extends Container {
     tile.tile = selectedTile;
     tile.hasEvilNeighbor = hasEvilNeighbor;
     tile.citizens = this.getCitizensOnTile(selectedTile, this.state.citizens);
+    tile.neighbors = selectedTile.getNeighbors(this.state.gameMap);
+    tile.adjacentSquads = {};
+    for (let neighbor in tile.neighbors) {
+      let squads = [];
+      let squadsOnTile = [];
+      const currentTile = tile.neighbors[neighbor];
+      if (!currentTile) continue;
+      for (let squad in this.state.squads) {
+        squadsOnTile = this.getSquadsOnTile(
+          this.getEvilEmpire().id,
+          tile.neighbors[neighbor]
+        );
+
+        // squads = squads.concat(squadsOnTile);
+        // squads.push(squadsOnTile);
+      }
+      if (squadsOnTile.length > 0) tile.adjacentSquads[neighbor] = squadsOnTile;
+    }
     this.setState({ selectedTile: tile });
   }
+
   setScreen(currentScreen) {
     this.setState({ currentScreen });
   }
+
+  waitAndExecuteOperations() {}
 
   /**
    * Runs initial game setup
@@ -256,19 +375,12 @@ class GameManager extends Container {
         if (tile.land) {
           const tileCitizens = this.getCitizensOnTile(tile, citizens);
           for (let a = 0; a < cpuAgentsPerTile; a++) {
-            if (a < 3) {
-              tileCitizens[a].role = 1;
-            } else if (a === 3) {
-              tileCitizens[a].role = 2;
-            } else if (a === 4) {
-              tileCitizens[a].role = 3;
-            }
+            tileCitizens[a].role = 1;
           }
         }
       }
     }
 
-    // console.log(this.getEvilAgents(citizens, evilEmpire.id));
     // Set data
     player.evilEmpire = evilEmpire;
     this.setState({ player, nations, citizens, gameMap, gameReady: true });
