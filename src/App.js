@@ -9,6 +9,7 @@ import AgentsUI from "./components/UI/AgentsUI";
 import EmpireOrganizationUI from "./components/UI/EmpireOrganizationUI";
 import EmpireOperationsUI from "./components/UI/EmpireOperationsUI";
 import EmpireResearchUI from "./components/UI/EmpireResearchUI";
+import OperationResolution from "./components/UI/OperationResolution";
 
 const UIScreens = {
   main: Main,
@@ -16,7 +17,8 @@ const UIScreens = {
   agents: AgentsUI,
   "empire-organization": EmpireOrganizationUI,
   "empire-operations": EmpireOperationsUI,
-  "empire-research": EmpireResearchUI
+  "empire-research": EmpireResearchUI,
+  "operation-resolution": OperationResolution
 };
 
 class App extends Component {

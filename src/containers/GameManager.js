@@ -27,7 +27,9 @@ class GameManager extends Container {
     gameReady: false,
     currentScreen: "main"
   };
-
+  getTileById(tileID) {
+    return this.state.gameMap.flat().find(tile => tile.id === tileID);
+  }
   createCitizen(x, y) {
     const citizenAttributeMin = 1;
     const citizenAttributeMax = 5;
@@ -243,14 +245,15 @@ class GameManager extends Container {
   setSquadLocation(x, y, squadId) {
     // set the squad's location
     const squads = Object.assign({}, this.state.squads);
-    squad[squadId].currentLocation.x = x;
-    squad[squadId].currentLocation.y = y;
+    squads[squadId].currentPosition.x = x;
+    squads[squadId].currentPosition.y = y;
 
     // set the location of each member in the squad
     const citizens = Object.assign({}, this.state.citizens);
-    for (let citizenId in squad[squadId].members) {
-      citizens[citizenId].currentLocation.x = x;
-      citizens[citizenId].currentLocation.y = y;
+    for (let citizenId in squads[squadId].members) {
+      debugger;
+      citizens[squads[squadId].members[citizenId]].currentPosition.x = x;
+      citizens[squads[squadId].members[citizenId]].currentPosition.y = y;
     }
 
     this.setState({ squads, citizens });
@@ -325,8 +328,14 @@ class GameManager extends Container {
     this.setState({ currentScreen });
   }
 
-  waitAndExecuteOperations() {}
-
+  async waitAndExecuteOperations() {
+    await this.setState({
+      currentScreen: "operation-resolution"
+    });
+  }
+  clearOperations() {
+    this.state.operations = [];
+  }
   /**
    * Runs initial game setup
    */
