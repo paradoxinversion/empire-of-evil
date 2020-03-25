@@ -127,6 +127,28 @@ const Main = props => {
                       </button>
                     </div>
                   )}
+                  {/* no enemy agents + squads? */}
+                  {props.gameManager.getCPUAgentsOnTile(
+                    props.gameManager.state.selectedTile.tile
+                  ).length > 0 &&
+                    props.gameManager.getSquadsOnTile(
+                      props.gameManager.getEvilEmpire().id,
+                      props.gameManager.state.selectedTile.tile
+                    ).length > 0 && (
+                      <div>
+                        <button
+                          className="border"
+                          onClick={() => {
+                            setModal({
+                              modalType: "operation",
+                              operationType: "takeover"
+                            });
+                          }}
+                        >
+                          take over
+                        </button>
+                      </div>
+                    )}
                 </div>
                 <p>
                   Citizens:{" "}

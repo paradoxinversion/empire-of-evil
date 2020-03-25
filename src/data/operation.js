@@ -29,6 +29,15 @@ const operationTypes = {
     maxSquads: null,
     targetTileId: null,
     targetType: "selected-tile"
+  },
+  takeover: {
+    name: "Take Over",
+    operationType: "takeover",
+    description: "Secure the current tile for the EVIL empire",
+    squadMemberLimit: null,
+    maxSquads: null,
+    targetTileId: null,
+    targetType: "selected-tile"
   }
 };
 

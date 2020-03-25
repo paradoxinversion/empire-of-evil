@@ -150,6 +150,7 @@ class GameManager extends Container {
   }
 
   getAgents(citizensMap, nationId, role) {
+    if (!citizensMap) citizensMap = this.state.citizens;
     const allAgents = Object.values(citizensMap).filter(
       citizen => citizen.nationId === nationId && citizen.role > 0
     );
@@ -161,11 +162,20 @@ class GameManager extends Container {
   }
 
   getAgentsOnTile(citizensMap, nationId, role, tile) {
-    return (nationAgents = this.getAgents(citizensMap, nationId, role).filter(
+    return this.getAgents(citizensMap, nationId, role).filter(
       agent =>
         agent.currentPosition.x === tile.tile.x &&
         agent.currentPosition.y === tile.tile.y
-    ));
+    );
+  }
+
+  getCPUAgentsOnTile(tile) {
+    return Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.nationId !== this.getEvilEmpire().id &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
   }
   getAllAgentsOnTile(tile) {
     return Object.values(this.state.citizens).filter(
@@ -347,7 +357,10 @@ class GameManager extends Container {
    * @param {*} nationId - the nation id of this agent
    */
   getEnemyCombatant(combatantList, nationId) {
-    const enemies = combatantList.filter(agent => agent.nationId !== nationId);
+    const enemies = combatantList.filter(
+      agent => agent.nationId !== nationId && agent.alive
+    );
+    if (enemies.length === 0) return false;
     return enemies[getRandomIntInclusive(0, enemies.length - 1)];
   }
   /**
@@ -373,13 +386,21 @@ class GameManager extends Container {
     console.log(combatants);
 
     // Execute attacks for each character
+    // super simple combat for now
     combatants.forEach(combatant => {
-      const target = this.getEnemyCombatant(combatants, combatant.nationId);
-      target.currentHealth -= combatant.strength;
-      console.log(
-        `${combatant.name} targets ${target.name} (targeh hp: ${target.currentHealth}/${target.health})`
-      );
-      citizens[target.id] = target;
+      if (combatant.alive) {
+        const target = this.getEnemyCombatant(combatants, combatant.nationId);
+        if (target) {
+          target.currentHealth -= combatant.strength;
+          if (target.currentHealth <= 0) {
+            target.alive = false;
+          }
+          console.log(
+            `${combatant.name} targets ${target.name} (target hp: ${target.currentHealth}/${target.health})`
+          );
+          citizens[target.id] = target;
+        }
+      }
     });
 
     // update agents in container
@@ -391,7 +412,9 @@ class GameManager extends Container {
   clearOperations() {
     this.state.operations = [];
   }
-
+  changeTileOwner(tile, newOwnerId) {
+    tile.setNationId(newOwnerId);
+  }
   /**
    * Runs initial game setup
    */
