@@ -65,7 +65,6 @@ const EmpireOrganizationUI = ({ gameManager }) => {
         )}
         {organizationContext === "squads" && (
           <div>
-            <FormSquad gameManager={gameManager} />
             <Squads showSquadOptions={true} />
           </div>
         )}

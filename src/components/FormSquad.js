@@ -189,7 +189,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             </span>
           </div>
 
-          <div className="border mt-4 mb-2 h-24 p-2">
+          <div className="border mt-4 mb-2 h-32 p-2">
             <p>Selected Member Info</p>
             {selectedAgent && <Agent agent={selectedAgent} />}
           </div>

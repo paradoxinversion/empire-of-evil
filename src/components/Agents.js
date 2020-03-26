@@ -7,10 +7,12 @@ const Agents = props => {
   const [GameManager] = props.containers;
   return (
     <Collapsable title="EVIL Agents">
-      {GameManager.state.player.evilEmpire &&
-        GameManager.getEvilAgents(1).map(agent => (
-          <Agent agent={agent} gameManager={GameManager} />
-        ))}
+      <div className="h-64 overflow-y-scroll">
+        {GameManager.state.player.evilEmpire &&
+          GameManager.getEvilAgents(1).map(agent => (
+            <Agent agent={agent} gameManager={GameManager} />
+          ))}
+      </div>
     </Collapsable>
   );
 };

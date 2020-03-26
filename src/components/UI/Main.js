@@ -7,6 +7,7 @@ import Operation from "../Operation";
 import { operationTypes } from "../../data/operation";
 import FormSquad from "../FormSquad";
 import SelectedTile from "../SelectedTile";
+import Squads from "../Squads";
 
 /**
  * This is the primary screen component for EoE. It's used
@@ -50,8 +51,13 @@ const Main = ({ gameManager }) => {
 
       <div id="game-area" className="flex flex-wrap">
         <WorldMap />
-        <SelectedTile gameManager={gameManager} setModal={setModal} />
-        <Agents />
+        {gameManager.state.gameReady && (
+          <React.Fragment>
+            <SelectedTile gameManager={gameManager} setModal={setModal} />
+            <Agents />
+            <Squads gameManager={gameManager} />
+          </React.Fragment>
+        )}
       </div>
     </React.Fragment>
   );

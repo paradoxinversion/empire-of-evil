@@ -4,21 +4,24 @@ import GameManager from "../containers/GameManager";
 import connect from "unstated-connect";
 import Squad from "./Squad";
 const Squads = props => {
-  const [GameManager] = props.containers;
   return (
     <Collapsable title="EVIL Squads and Teams">
       <Collapsable title="Squads">
-        {GameManager.getSquads(GameManager.getEvilEmpire().id, 0).map(squad => (
-          <Squad squad={squad} />
-        ))}
+        {props.gameManager
+          .getSquads(props.gameManager.getEvilEmpire().id, 0)
+          .map(squad => (
+            <Squad squad={squad} />
+          ))}
       </Collapsable>
       <Collapsable title="Research Teams">
-        {GameManager.getSquads(GameManager.getEvilEmpire().id, 1).map(squad => (
-          <Squad squad={squad} />
-        ))}
+        {props.gameManager
+          .getSquads(props.gameManager.getEvilEmpire().id, 1)
+          .map(squad => (
+            <Squad squad={squad} />
+          ))}
       </Collapsable>
     </Collapsable>
   );
 };
 
-export default connect([GameManager])(Squads);
+export default Squads;
