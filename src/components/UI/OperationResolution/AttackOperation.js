@@ -8,7 +8,7 @@ const AttackOperation = ({ gameManager, operationData, next }) => {
   }, [gameManager]);
   return (
     <Modal>
-      <div>
+      <div className="bg-white w-1/4 p-4">
         <p>COMBAT!</p>
         <button onClick={() => next()}>Next</button>
       </div>

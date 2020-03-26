@@ -8,20 +8,12 @@ const Squads = props => {
   return (
     <Collapsable title="EVIL Squads and Teams">
       <Collapsable title="Squads">
-        {GameManager.getSquads(
-          GameManager.state.squads,
-          GameManager.getEvilEmpire().id,
-          0
-        ).map(squad => (
+        {GameManager.getSquads(GameManager.getEvilEmpire().id, 0).map(squad => (
           <Squad squad={squad} />
         ))}
       </Collapsable>
       <Collapsable title="Research Teams">
-        {GameManager.getSquads(
-          GameManager.state.squads,
-          GameManager.getEvilEmpire().id,
-          1
-        ).map(squad => (
+        {GameManager.getSquads(GameManager.getEvilEmpire().id, 1).map(squad => (
           <Squad squad={squad} />
         ))}
       </Collapsable>

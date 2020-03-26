@@ -11,9 +11,13 @@ class Collapsable extends React.Component {
 
   render() {
     return (
-      <div className="collapsable w-auto flex flex-col">
+      <div
+        className={`collapsable flex flex-col${
+          this.props.width ? ` w-${this.props.width}` : ""
+        }`}
+      >
         <p
-          style={{ backgroundColor: "grey" }}
+          className="bg-black text-white"
           onClick={() => {
             this.toggleCollapsedState();
           }}

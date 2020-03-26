@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import MoveOperation from "./OperationResolution/MoveOperation";
-import AttackOperation from "./OperationResolution/AttackOperation";
-import TakeOverOperation from "./OperationResolution/TakeOverOperation";
-
+// import MoveOperation from "./OperationResolution/MoveOperation";
+// import AttackOperation from "./OperationResolution/AttackOperation";
+// import TakeOverOperation from "./OperationResolution/TakeOverOperation";
+import {
+  MoveOperation,
+  AttackOperation,
+  TakeOverOperation
+} from "./OperationResolution/index";
 const resolutionTypes = {
   move: MoveOperation,
   attack: AttackOperation,

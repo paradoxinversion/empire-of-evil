@@ -1,8 +1,8 @@
 import React from "react";
 
-const Agent = ({ agent, gameManager }) => {
+const Agent = ({ agent, gameManager, border }) => {
   return (
-    <div className="border p-1">
+    <div className={`${border ? " border" : ""}`}>
       <div>
         <span className="mr-4">{agent.name}</span>{" "}
         <span className="mr-4">HP: {agent.currentHealth}</span>

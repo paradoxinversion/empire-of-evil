@@ -8,23 +8,25 @@ const Operation = ({ operation, setModalOpen, gameManager }) => {
       <div id="operation-scout" className="absolute border bg-white p-4">
         <p>Operation: {operation.name}</p>
         <p>{operation.description}</p>
-        <p>Max Squads: {operation.maxSquads}</p>
-        <p>Squad Member Limit: {operation.squadMemberLimit}</p>
+        <p>Max Squads: {operation.maxSquads || "Unlimited"}</p>
+        <p>Squad Member Limit: {operation.squadMemberLimit || "Unlimited"}</p>
         <SquadSelect
           gameManager={gameManager}
           selectedSquads={selectedSquads}
           setSelectedSquads={setSelectedSquads}
         />
-        <button
-          className="border rounded p-1"
-          onClick={() => {
-            // ! Defaulting targetid
-            gameManager.addOperation(operation, selectedSquads);
-            setModalOpen(false);
-          }}
-        >
-          Prepare Mission
-        </button>
+        {selectedSquads.length > 0 && (
+          <button
+            className="border rounded p-1"
+            onClick={() => {
+              // ! Defaulting targetid
+              gameManager.addOperation(operation, selectedSquads);
+              setModalOpen(false);
+            }}
+          >
+            Prepare Mission
+          </button>
+        )}
         <button
           className="border rounded p-1"
           onClick={() => setModalOpen(false)}

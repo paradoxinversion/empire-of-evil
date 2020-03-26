@@ -1,28 +1,28 @@
 import React from "react";
 
-const CommandBar = props => {
+const CommandBar = ({ gameManager }) => {
   return (
-    <span>
+    <div id="command-bar" className="mb-2">
       <span className="mr-4">Wed, Nov 1, 2000</span>
       <button
-        className="border p-1 mr-2 rounded"
-        onClick={() => props.gameManager.waitAndExecuteOperations()}
+        className="border px-1 mr-2 rounded"
+        onClick={() => gameManager.waitAndExecuteOperations()}
       >
         Wait
       </button>
       <button
-        className="border p-1 mr-2 rounded"
-        onClick={() => props.gameManager.setScreen("empire")}
+        className="border px-1 mr-2 rounded"
+        onClick={() => gameManager.setScreen("empire")}
       >
         Empire
       </button>
       <button
-        className="border p-1 mr-2 rounded"
-        onClick={() => props.gameManager.setScreen("agents")}
+        className="border px-1 mr-2 rounded"
+        onClick={() => gameManager.setScreen("agents")}
       >
         Agents
       </button>
-    </span>
+    </div>
   );
 };
 

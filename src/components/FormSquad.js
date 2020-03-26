@@ -1,77 +1,124 @@
 import React, { useState } from "react";
 import Agent from "./Agent";
+import Faker from "faker";
 
 const FormSquad = ({ gameManager, setModalOpen }) => {
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [squadLeader, setSquadLeader] = useState(null);
+  const color = Faker.commerce.color();
+  const word = Faker.random.word();
+  const [squadName, setSquadName] = useState(
+    `${color[0].toUpperCase() + color.slice(1)} ${word[0].toUpperCase() +
+      word.slice(1)}`
+  );
+  const [squadtype, setSquadType] = useState("");
   return (
-    <div className="bg-white p-4">
-      <div>
-        <button>Form Squad/Team</button>
-      </div>
+    <div className="bg-white p-4 w-3/4">
       <form>
-        <p>New Squad/Team</p>
-        <label htmlFor="form-squad-name">Squad Name</label>
-        <input type="text" />
-        <label htmlFor="form-squad-type">Squad Type</label>
-        <select id="form-squad-type">
-          <option value={0}>Soldiers</option>
-          <option value={1}>Researchers</option>
-        </select>
-        <label htmlFor="form-squad-leader">Squad Leader</label>
-        <select
-          id="form-squad-leader"
-          onChange={e => {
-            setSquadLeader(e.target.value);
-            setSelectedAgent(null);
-          }}
-        >
-          <option value="">Select a Leader</option>
-          {gameManager
-            .getSquadlessAgents(
-              gameManager.state.citizens,
-              gameManager.getEvilEmpire().id
-            )
-            .filter(
-              agent =>
-                !selectedAgents.includes(agent.id) && agent.id !== squadLeader
-            )
-            .map(agent => (
-              <option value={agent.id}>{agent.name}</option>
-            ))}
-        </select>
+        <p className="mb-4">
+          <strong>Forming a New Squad/Team</strong>
+        </p>
+        <div className="mb-2">
+          <label className="mr-2" htmlFor="form-squad-name">
+            Squad Name
+          </label>
+          <input
+            className="border border-grey-400"
+            type="text"
+            value={squadName}
+            onChange={e => setSquadName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label className="mr-2" htmlFor="form-squad-type">
+            Squad Type
+          </label>
+          <select
+            id="form-squad-type"
+            className="border border-gray-400"
+            value={squadtype}
+            onChange={e => setSquadType(e.target.value)}
+          >
+            <option value="">Select Type</option>
+            <option value={0}>Soldier Squad</option>
+            <option value={1}>Research Team</option>
+          </select>
+        </div>
+
+        <div className="mb-2">
+          {!squadLeader ? (
+            <React.Fragment>
+              <label className="mr-2" htmlFor="form-squad-leader">
+                Squad Leader
+              </label>
+              <select
+                id="form-squad-leader"
+                className="border border-gray-400"
+                onChange={e => {
+                  setSquadLeader(e.target.value);
+                  setSelectedAgent(null);
+                }}
+              >
+                <option value="">Select a Leader</option>
+                {gameManager
+                  .getSquadlessAgents(gameManager.getEvilEmpire().id)
+                  .filter(
+                    agent =>
+                      !selectedAgents.includes(agent.id) &&
+                      agent.id !== squadLeader
+                  )
+                  .map(agent => (
+                    <option key={`leader-select-${agent.id}`} value={agent.id}>
+                      {agent.name}
+                    </option>
+                  ))}
+              </select>
+            </React.Fragment>
+          ) : (
+            <p>
+              Squad Leader is{" "}
+              <strong>{gameManager.state.citizens[squadLeader].name}</strong>
+              <button
+                className="ml-4 border px-2"
+                onClick={() => setSquadLeader(null)}
+              >
+                Clear Leader
+              </button>
+            </p>
+          )}
+        </div>
 
         <div id="form-squad-members">
-          <div className="border">
-            {gameManager
-              .getSquadlessAgentsOnTile(
-                gameManager.state.citizens,
-                gameManager.getEvilEmpire().id,
-                undefined,
-                gameManager.state.selectedTile
-              )
-              .filter(
-                agent =>
-                  !selectedAgents.includes(agent.id) && agent.id !== squadLeader
-              )
-              .map(agent => (
-                <div
-                  onClick={() => {
-                    setSelectedAgent(agent);
-                  }}
-                >
-                  {agent.name}
-                </div>
-              ))}
-          </div>
-          <div>
-            <p>Selected Member Info</p>
-            {selectedAgent && <Agent agent={selectedAgent} />}
-          </div>
-          {squadLeader && (
-            <React.Fragment>
+          <div className="flex">
+            <div className="border w-1/2 p-2">
+              {gameManager
+                .getSquadlessAgentsOnTile(
+                  gameManager.getEvilEmpire().id,
+
+                  gameManager.state.selectedTile
+                )
+                .filter(
+                  agent =>
+                    !selectedAgents.includes(agent.id) &&
+                    agent.id !== squadLeader
+                )
+                .map(agent => (
+                  <div
+                    key={`agent-select-add-${agent.id}`}
+                    className="hover:bg-gray-300"
+                    onClick={() => {
+                      setSelectedAgent(agent);
+                    }}
+                  >
+                    {agent.name}
+                  </div>
+                ))}
+            </div>
+            <div className="flex flex-col justify-center">
               <button
+                className="border p-1 mx-2 mb-4"
                 onClick={e => {
                   e.preventDefault();
                   const selectedMembers = selectedAgents.slice(0);
@@ -80,9 +127,10 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                   setSelectedAgent(null);
                 }}
               >
-                Add member
+                Add
               </button>
               <button
+                className="border p-1 mx-2"
                 onClick={e => {
                   e.preventDefault();
                   const selectedMembers = selectedAgents.slice(0);
@@ -93,65 +141,85 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                   setSelectedAgent(null);
                 }}
               >
-                Remove member
+                Remove
               </button>
-              <div className="border">
-                {selectedAgents.map(agentId => (
-                  <div
-                    onClick={() => {
-                      setSelectedAgent(gameManager.state.citizens[agentId]);
-                    }}
-                  >
-                    {gameManager.state.citizens[agentId].name}
-                  </div>
-                ))}
-              </div>
+            </div>
+            <div className="border w-1/2 p-2">
+              {selectedAgents.map(agentId => (
+                <div
+                  key={`agent-select-remove-${agentId}`}
+                  className="hover:bg-gray-300"
+                  onClick={() => {
+                    setSelectedAgent(gameManager.state.citizens[agentId]);
+                  }}
+                >
+                  {gameManager.state.citizens[agentId].name}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div id="form-squad-info">
+            <span className="mr-4">
+              Strength Potential:{" "}
+              {selectedAgents.length > 0 || squadLeader
+                ? selectedAgents.reduce((accumulator, agentId) => {
+                    return (
+                      accumulator + gameManager.state.citizens[agentId].strength
+                    );
+                  }, 0) +
+                  (squadLeader
+                    ? gameManager.state.citizens[squadLeader].strength
+                    : 0)
+                : 0}
+            </span>
+            <span>
+              Research Potential:{" "}
+              {selectedAgents.length > 0 || squadLeader
+                ? selectedAgents.reduce((accumulator, agentId) => {
+                    return (
+                      accumulator +
+                      gameManager.state.citizens[agentId].intelligence
+                    );
+                  }, 0) +
+                  (squadLeader
+                    ? gameManager.state.citizens[squadLeader].intelligence
+                    : 0)
+                : 0}{" "}
+            </span>
+          </div>
+
+          <div className="border mt-4 mb-2 h-24 p-2">
+            <p>Selected Member Info</p>
+            {selectedAgent && <Agent agent={selectedAgent} />}
+          </div>
+        </div>
+        <div className="flex justify-between">
+          {squadLeader && squadName && squadtype && (
+            <React.Fragment>
+              <button
+                className="border px-1"
+                onClick={async e => {
+                  e.preventDefault();
+                  await gameManager.createSquad(
+                    gameManager.getEvilEmpire().id,
+                    squadName,
+                    selectedAgents.concat(squadLeader),
+                    squadLeader,
+                    0,
+                    gameManager.state.selectedTile.tile
+                  );
+                  setModalOpen(false);
+                }}
+              >
+                Confirm and Form
+              </button>
             </React.Fragment>
           )}
+          <button className="border px-1" onClick={() => setModalOpen(false)}>
+            Close
+          </button>
         </div>
-
-        {squadLeader && (
-          <React.Fragment>
-            <div id="form-squad-info">
-              <p>
-                Strength Potential:{" "}
-                {selectedAgents.reduce((accumulator, agentId) => {
-                  return (
-                    accumulator + gameManager.state.citizens[agentId].strength
-                  );
-                }, 0) + gameManager.state.citizens[squadLeader].strength}
-              </p>
-              <p>
-                Research Potential:{" "}
-                {selectedAgents.reduce((accumulator, agentId) => {
-                  return (
-                    accumulator +
-                    gameManager.state.citizens[agentId].intelligence
-                  );
-                }, 0) +
-                  gameManager.state.citizens[squadLeader].intelligence}{" "}
-              </p>
-            </div>
-            <button
-              onClick={async e => {
-                e.preventDefault();
-
-                await gameManager.createSquad(
-                  gameManager.getEvilEmpire().id,
-                  "Testoresto",
-                  selectedAgents.concat(squadLeader),
-                  squadLeader,
-                  0,
-                  gameManager.state.selectedTile.tile
-                );
-                setModalOpen(false);
-              }}
-            >
-              Confirm and Form
-            </button>
-          </React.Fragment>
-        )}
-        <button onClick={() => setModalOpen(false)}>Close</button>
       </form>
     </div>
   );

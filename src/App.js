@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
-import "./output.css";
 import connect from "unstated-connect";
 import GameManager from "./containers/GameManager";
 import Main from "./components/UI/Main";
@@ -10,6 +8,8 @@ import EmpireOrganizationUI from "./components/UI/EmpireOrganizationUI";
 import EmpireOperationsUI from "./components/UI/EmpireOperationsUI";
 import EmpireResearchUI from "./components/UI/EmpireResearchUI";
 import OperationResolution from "./components/UI/OperationResolution";
+import "./App.css";
+import "./output.css";
 
 const UIScreens = {
   main: Main,
@@ -30,9 +30,9 @@ class App extends Component {
     const [GameManager] = this.props.containers;
     const CurrentScreen = UIScreens[GameManager.state.currentScreen];
     return (
-      <div className="App">
+      <main className="App">
         <CurrentScreen gameManager={GameManager} />
-      </div>
+      </main>
     );
   }
 }

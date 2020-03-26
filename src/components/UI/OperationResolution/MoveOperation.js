@@ -10,9 +10,11 @@ const MoveOperation = ({ gameManager, operationData, next }) => {
   }, [gameManager]);
   return (
     <Modal>
-      <div>
+      <div className="bg-white w-1/4 p-4">
         <p>Moving {operationData.squads.length} squads</p>
-        <button onClick={() => next()}>Next</button>
+        <button className="border px-1" onClick={() => next()}>
+          Next
+        </button>
       </div>
     </Modal>
   );
