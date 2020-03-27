@@ -78,6 +78,23 @@ const SelectedTile = ({ gameManager, setModal }) => {
                 </Collapsable>
               )
             )}
+            <Collapsable title="Tile Squads">
+              {gameManager
+                .getSquadsOnTile(
+                  gameManager.getEvilEmpire().id,
+                  gameManager.state.selectedTile.tile
+                )
+                .map(squad => (
+                  <Collapsable title={squad.name}>
+                    <Squad squad={squad} />
+                    <div id={`${squad.name}-actions`} className="px-1">
+                      {Object.keys(gameManager.getOccupiedSquads()).includes(
+                        squad.id
+                      ) === false && <button onClick={() => {}}>Action</button>}
+                    </div>
+                  </Collapsable>
+                ))}
+            </Collapsable>
 
             {gameManager.getSquadsOnTile(
               gameManager.getEvilEmpire().id,
