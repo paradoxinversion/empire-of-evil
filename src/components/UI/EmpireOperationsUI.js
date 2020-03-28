@@ -19,11 +19,15 @@ const EmpireOperationsUI = ({ gameManager }) => {
               <SelectAgents
                 gameManager={gameManager}
                 setModalOpen={setModal}
-                callback={list => {
+                callback={async list => {
                   console.log(list);
-                  list.forEach(agentId => {
-                    gameManager.setAgentActivity(agentId, modal.activityType);
-                  });
+
+                  for (let x = 0; x < list.length; x++) {
+                    await gameManager.setAgentActivity(
+                      list[x],
+                      modal.activityType
+                    );
+                  }
                 }}
               />
             )}
@@ -51,7 +55,7 @@ const EmpireOperationsUI = ({ gameManager }) => {
         </div>
         <div>
           <div>
-            <p>Activitie</p>
+            <p>Activities</p>
             {Object.keys(activityTypes).map(activityTypeKey => (
               <div>
                 <p>{activityTypes[activityTypeKey].name}</p>

@@ -6,7 +6,7 @@ class Nation {
     this.name = name;
     this.isEvilEmpire = isEvilEmpire;
     this.cash = 10000;
-    this.nationalControl = 100;
+    this.nationalControl = 100; // or, EVIL for the Empire
   }
 }
 

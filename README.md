@@ -15,3 +15,22 @@ The main gameplay screen
 ### Empire
 
 The empire details screen
+
+## Operations & Activities
+
+### Operations
+
+Operations are executed by squads
+
+### Activities
+
+Activities are executed by individuals
+
+#### Activity Effects
+
+0 - Gain EVIL
+1 - Gain Money
+
+#### Activity Min/Max
+
+Activities also have a min and max value that determines the reward range for each activity.

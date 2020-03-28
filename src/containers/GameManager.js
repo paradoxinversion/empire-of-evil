@@ -42,11 +42,12 @@ class GameManager extends Container {
       selectedSquad: { squadData: squad }
     });
   }
-  setAgentActivity(agentId, activity) {
+  async setAgentActivity(agentId, activity) {
     const activities = Object.assign({}, this.state.activities);
     if (!activities[activity]) activities[activity] = [];
     activities[activity].push(agentId);
-    this.setState({ activities });
+    debugger;
+    return this.setState({ activities });
   }
 
   clearAgentActivity(agentId) {
@@ -359,7 +360,6 @@ class GameManager extends Container {
 
   getOccupiedSquads() {
     const squads = this.state.operations.reduce((accumulator, operation) => {
-      debugger;
       operation.squads.forEach(squad => {
         if (!accumulator[squad.id]) {
           accumulator[squad.id] = operation.name;
@@ -492,8 +492,38 @@ class GameManager extends Container {
 
   async waitAndExecuteOperations() {
     // if (this.state.operations.le)
+    this.executeActivities();
     await this.setState({
       currentScreen: "operation-resolution"
+    });
+  }
+
+  executeActivities() {
+    function getActivityReward(activityType) {
+      const reward = getRandomIntInclusive(activityType.min, activityType.max);
+      return { reward, rewardType: activityType.effect };
+    }
+    const rewards = {};
+    for (let activityType in this.state.activities) {
+      // For now, just get the rewards for each member
+      // ! In the future, there should be a 'fail' chance before reward (and possible none if failure occurs)
+      this.state.activities[activityType].forEach(citizen => {
+        const { reward, rewardType } = getActivityReward(
+          activityTypes[activityType]
+        );
+        if (!rewards[rewardType]) {
+          rewards[rewardType] = reward;
+        } else {
+          rewards[rewardType] += reward;
+        }
+      });
+    }
+    console.log(rewards);
+    const evilEmpire = this.getEvilEmpire();
+    if (rewards["0"]) evilEmpire.nationalControl += rewards[0];
+    if (rewards["1"]) evilEmpire.cash += rewards[1];
+    this.setState({
+      nations: { ...this.state.nations, [evilEmpire.id]: evilEmpire }
     });
   }
 

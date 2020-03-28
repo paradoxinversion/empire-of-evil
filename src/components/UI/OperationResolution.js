@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-// import MoveOperation from "./OperationResolution/MoveOperation";
-// import AttackOperation from "./OperationResolution/AttackOperation";
-// import TakeOverOperation from "./OperationResolution/TakeOverOperation";
+
 import {
   MoveOperation,
   AttackOperation,
   TakeOverOperation,
   NoOperations
 } from "./OperationResolution/index";
+
 const resolutionTypes = {
   move: MoveOperation,
   attack: AttackOperation,
   takeover: TakeOverOperation
 };
+
 const OperationResolution = ({ gameManager }) => {
   if (gameManager.state.operations.length > 0) {
     const [currentOperationIndex, setCurrentOperationIndex] = useState(0);

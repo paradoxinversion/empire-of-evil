@@ -5,7 +5,6 @@ const Squad = ({ squad, showDisband, gameManager }) => {
     <div
       className="border p-1"
       onClick={() => {
-        debugger;
         gameManager.selectSquad(squad);
         gameManager.setScreen("profile-squad");
       }}>
