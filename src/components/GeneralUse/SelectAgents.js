@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Agent from "./Agent";
-import Faker from "faker";
+import { Agent } from "../Tiles/index";
 
 /**
  * Select agents to do a thing

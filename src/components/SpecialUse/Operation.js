@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SquadSelect from "./SquadSelect";
+import { SquadSelect } from "../GeneralUse";
 
 const Operation = ({ operation, setModalOpen, gameManager }) => {
   const [selectedSquads, setSelectedSquads] = useState([]);
@@ -22,15 +22,13 @@ const Operation = ({ operation, setModalOpen, gameManager }) => {
               // ! Defaulting targetid
               gameManager.addOperation(operation, selectedSquads);
               setModalOpen(false);
-            }}
-          >
+            }}>
             Prepare Mission
           </button>
         )}
         <button
           className="border rounded p-1"
-          onClick={() => setModalOpen(false)}
-        >
+          onClick={() => setModalOpen(false)}>
           Close Modal
         </button>
       </div>

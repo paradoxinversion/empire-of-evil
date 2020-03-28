@@ -2,6 +2,20 @@
 
 EoE is a turn-based web browser game in which you take over the world (or, all of the tiles on the map).
 
+## Project Structure
+
+### Components
+
+#### General Use
+
+This is where components that get reused a lot for nonspecific purposes go.
+
+#### Special Use
+
+This is where compoents that serve a very limited set of purposes go, such unique UI elemets
+
+TODO: Finish this
+
 ## Screens
 
 Screens are collections of UI components that make up the interface. Each screen has a different purpose.

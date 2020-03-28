@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Agent from "./Agent";
+import { Agent } from "../Tiles/index";
 import Faker from "faker";
 
 const FormSquad = ({ gameManager, setModalOpen }) => {
@@ -39,8 +39,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             id="form-squad-type"
             className="border border-gray-400"
             value={squadtype}
-            onChange={e => setSquadType(e.target.value)}
-          >
+            onChange={e => setSquadType(e.target.value)}>
             <option value="">Select Type</option>
             <option value={0}>Soldier Squad</option>
             <option value={1}>Research Team</option>
@@ -59,8 +58,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                 onChange={e => {
                   setSquadLeader(e.target.value);
                   setSelectedAgent(null);
-                }}
-              >
+                }}>
                 <option value="">Select a Leader</option>
                 {gameManager
                   .getSquadlessAgents(gameManager.getEvilEmpire().id)
@@ -82,8 +80,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
               <strong>{gameManager.state.citizens[squadLeader].name}</strong>
               <button
                 className="ml-4 border px-2"
-                onClick={() => setSquadLeader(null)}
-              >
+                onClick={() => setSquadLeader(null)}>
                 Clear Leader
               </button>
             </p>
@@ -110,8 +107,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                     className="hover:bg-gray-300"
                     onClick={() => {
                       setSelectedAgent(agent);
-                    }}
-                  >
+                    }}>
                     {agent.name}
                   </div>
                 ))}
@@ -125,8 +121,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                   selectedMembers.push(selectedAgent.id);
                   setSelectedAgents(selectedMembers);
                   setSelectedAgent(null);
-                }}
-              >
+                }}>
                 Add
               </button>
               <button
@@ -139,8 +134,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                   const t = selectedMembers.splice(memberIndex, 1);
                   setSelectedAgents(selectedMembers);
                   setSelectedAgent(null);
-                }}
-              >
+                }}>
                 Remove
               </button>
             </div>
@@ -151,8 +145,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                   className="hover:bg-gray-300"
                   onClick={() => {
                     setSelectedAgent(gameManager.state.citizens[agentId]);
-                  }}
-                >
+                  }}>
                   {gameManager.state.citizens[agentId].name}
                 </div>
               ))}
@@ -210,8 +203,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                     gameManager.state.selectedTile.tile
                   );
                   setModalOpen(false);
-                }}
-              >
+                }}>
                 Confirm and Form
               </button>
             </React.Fragment>

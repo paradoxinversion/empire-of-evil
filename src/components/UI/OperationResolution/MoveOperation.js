@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Modal from "../../Modal";
+import { Modal } from "../../GeneralUse/index";
 
 const MoveOperation = ({ gameManager, operationData, next }) => {
   useEffect(() => {

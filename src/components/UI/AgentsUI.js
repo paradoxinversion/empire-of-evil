@@ -1,5 +1,5 @@
 import React from "react";
-import Agents from "../Agents";
+import { Agents } from "../TileGroups/index";
 import PropTypes from "prop-types";
 
 const AgentsUI = ({ gameManager }) => {

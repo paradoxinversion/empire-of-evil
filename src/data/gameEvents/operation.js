@@ -1,7 +1,7 @@
 //operation target types
 // selected-tile (target is the currently selected tile)
 
-const operationTypes = {
+export const operationTypes = {
   move: {
     name: "Move",
     operationType: "move",
@@ -41,9 +41,9 @@ const operationTypes = {
   }
 };
 
-const { getUID } = require("../utilities");
+const { getUID } = require("../../utilities");
 
-class Operation {
+export class Operation {
   constructor({ squads, operationType, targetTileId }) {
     this.id = getUID();
     this.squads = squads;
@@ -51,8 +51,3 @@ class Operation {
     this.targetTileId = targetTileId;
   }
 }
-
-module.exports = {
-  Operation,
-  operationTypes
-};

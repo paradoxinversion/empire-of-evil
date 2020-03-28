@@ -1,6 +1,6 @@
 import React from "react";
-import Collapsable from "./Collapsable";
-import Squad from "./Squad";
+import { Collapsable } from "../GeneralUse/index";
+import { Squad } from "../Tiles/index";
 import PropTypes from "prop-types";
 const Squads = ({ gameManager, showDisband }) => {
   return (

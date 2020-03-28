@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import Operation from "../Operation";
-import { operationTypes } from "../../data/operation";
-import { activityTypes } from "../../data/activity";
-import Modal from "../Modal";
-import Collapsable from "../Collapsable";
-import Squad from "../Squad";
-import Agent from "../Agent";
-import SelectAgents from "../SelectAgents";
+import { activityTypes } from "../../data/gameEvents/activity";
+import { Collapsable, Modal } from "../GeneralUse";
+import { Agent, Squad } from "../Tiles/index";
+import { SelectAgents } from "../GeneralUse/index";
 const EmpireOperationsUI = ({ gameManager }) => {
   const [modal, setModal] = useState(null);
   return (

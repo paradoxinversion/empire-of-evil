@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Squad from "./Squad";
+import { Squad } from "../Tiles/index";
 
 const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
   // const [selectedSquads, setSelectedSquads] = useState([]);
@@ -32,8 +32,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
                 <div
                   onClick={() => {
                     setSelectedSquad(squad);
-                  }}
-                >
+                  }}>
                   {squad.name}
                 </div>
               ))}
@@ -46,8 +45,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
                 console.log(!!!selectedSquad);
                 addSquad(selectedSquad);
               }}
-              disabled={!!!selectedSquad}
-            >
+              disabled={!!!selectedSquad}>
               Add
             </button>
             <button
@@ -56,8 +54,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
                 e.preventDefault();
                 removeSquad(selectedSquad);
               }}
-              disabled={!!!selectedSquad}
-            >
+              disabled={!!!selectedSquad}>
               Remove
             </button>
           </div>
@@ -66,8 +63,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
               <div
                 onClick={() => {
                   setSelectedSquad(squad);
-                }}
-              >
+                }}>
                 {squad.name}
               </div>
             ))}

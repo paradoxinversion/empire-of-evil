@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Agents from "../Agents";
-import Squads from "../Squads";
+import { Agents, Squads } from "../TileGroups/index";
 
 const EmpireOrganizationUI = ({ gameManager }) => {
   const [organizationContext, setOrganizationContext] = useState("agents");

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import Collapsable from "../Collapsable";
-import Squad from "../Squad";
+import React from "react";
+import { Squad } from "../Tiles/index";
 
 const Agent = ({ gameManager }) => {
   const agent = gameManager.state.selectedAgent.agentData;

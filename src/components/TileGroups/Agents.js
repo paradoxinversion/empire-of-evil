@@ -1,8 +1,8 @@
 import React from "react";
-import Collapsable from "./Collapsable";
-import GameManager from "../containers/GameManager";
+import { Collapsable } from "../GeneralUse/index";
+import GameManager from "../../containers/GameManager";
 import connect from "unstated-connect";
-import Agent from "./Agent";
+import { Agent } from "../Tiles";
 import PropTypes from "prop-types";
 const Agents = ({ gameManager }) => {
   return (

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Collapsable from "../Collapsable";
+import { Collapsable } from "../GeneralUse/index";
 
 const Empire = props => {
   return (
@@ -7,26 +7,22 @@ const Empire = props => {
       <div>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-organization")}
-        >
+          onClick={() => props.gameManager.setScreen("empire-organization")}>
           Organization
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-research")}
-        >
+          onClick={() => props.gameManager.setScreen("empire-research")}>
           Research
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-operations")}
-        >
+          onClick={() => props.gameManager.setScreen("empire-operations")}>
           Operations
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("main")}
-        >
+          onClick={() => props.gameManager.setScreen("main")}>
           Back
         </button>
       </div>

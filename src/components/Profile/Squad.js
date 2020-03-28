@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Collapsable from "../Collapsable";
-import Agent from "../Agent";
+import { Agent } from "../Tiles/index";
 import PropTypes from "prop-types";
 const Squad = ({ gameManager }) => {
   const squad = gameManager.state.selectedSquad.squadData;

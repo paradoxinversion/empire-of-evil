@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Collapsable from "./Collapsable";
-import GameManager from "../containers/GameManager";
+import { Collapsable } from "../GeneralUse/index";
+import GameManager from "../../containers/GameManager";
 import connect from "unstated-connect";
 class WorldMap extends Component {
   state = {
@@ -27,8 +27,7 @@ class WorldMap extends Component {
             id="world-map"
             style={{
               gridTemplateColumns: `repeat(${GameManager.state.gameMap[0].length}, ${this.state.tileSize})`
-            }}
-          >
+            }}>
             {GameManager.state.gameMap.map(yRow => {
               return yRow.map(tile => {
                 let tileClasses = [];

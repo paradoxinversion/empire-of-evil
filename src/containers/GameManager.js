@@ -9,13 +9,14 @@ import {
 } from "../commonUtilities/map/gameMap";
 import { Citizen } from "../data/entities/citizen";
 import { Squad } from "../data/entities/squads";
-import { Operation } from "../data/operation";
+import { Operation } from "../data/gameEvents/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
-import { activityTypes } from "../data/activity";
+import { activityTypes } from "../data/gameEvents/activity";
 import faker from "faker";
-
+import moment from "moment";
 class GameManager extends Container {
   state = {
+    gameDate: moment("2000-1-1"),
     player: {
       evilEmpire: null
     },
@@ -31,6 +32,18 @@ class GameManager extends Container {
     gameReady: false,
     currentScreen: "main"
   };
+
+  // Date Functions
+  getFormattedDate() {
+    return this.state.gameDate.format("dddd, MMMM Do YYYY");
+  }
+
+  advanceDay() {
+    const gameDate = this.state.gameDate.add(1, "days");
+    this.setState({
+      gameDate
+    });
+  }
   async selectAgent(agent) {
     await this.setState({
       selectedAgent: { agentData: agent }
@@ -496,6 +509,11 @@ class GameManager extends Container {
     await this.setState({
       currentScreen: "operation-resolution"
     });
+    await this.advanceDay();
+    if (this.state.gameDate.date() === 1) {
+      // handle monthly expenses here
+      console.log("first of the month");
+    }
   }
 
   executeActivities() {
