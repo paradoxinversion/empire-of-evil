@@ -1,15 +1,19 @@
-import React, { Component } from "react";
+import React from "react";
 import Agents from "../Agents";
+import PropTypes from "prop-types";
 
-const AgentsUI = props => {
-  // const [GameManager] = this.props.containers;
+const AgentsUI = ({ gameManager }) => {
   return (
     <React.Fragment>
-      <button onClick={() => props.gameManager.setScreen("main")}>Back</button>
+      <button onClick={() => gameManager.setScreen("main")}>Back</button>
       <h1> AgentsUI </h1>
-      <Agents />
+      <Agents gameManager={gameManager} />
     </React.Fragment>
   );
+};
+
+AgentsUI.propTypes = {
+  gameManager: PropTypes.object
 };
 
 export default AgentsUI;

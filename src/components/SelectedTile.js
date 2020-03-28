@@ -1,7 +1,7 @@
 import React from "react";
 import Collapsable from "./Collapsable";
 import Squad from "./Squad";
-
+import PropTypes from "prop-types";
 const SelectedTile = ({ gameManager, setModal }) => {
   return (
     <Collapsable title="Selected Tile" width="1/2">
@@ -55,7 +55,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
                 <Collapsable title="Adjacent Squads">
                   {adjacentSquads.map(squad => (
                     <Collapsable title={squad.name}>
-                      <Squad squad={squad} />
+                      <Squad squad={squad} gameManager={gameManager} />
                       <div id={`${squad.name}-actions`} className="px-1">
                         {Object.keys(gameManager.getOccupiedSquads()).includes(
                           squad.id
@@ -84,7 +84,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
                 )
                 .map(squad => (
                   <Collapsable title={squad.name}>
-                    <Squad squad={squad} />
+                    <Squad squad={squad} gameManager={gameManager} />
                     <div id={`${squad.name}-actions`} className="px-1">
                       {!Object.keys(gameManager.getOccupiedSquads()).includes(
                         squad.id
@@ -140,6 +140,11 @@ const SelectedTile = ({ gameManager, setModal }) => {
       )}
     </Collapsable>
   );
+};
+
+SelectedTile.propTypes = {
+  gameManager: PropTypes.object.isRequired,
+  setModal: PropTypes.func
 };
 
 export default SelectedTile;

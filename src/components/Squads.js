@@ -1,33 +1,35 @@
 import React from "react";
 import Collapsable from "./Collapsable";
 import Squad from "./Squad";
-const Squads = props => {
+import PropTypes from "prop-types";
+const Squads = ({ gameManager, showDisband }) => {
   return (
     <Collapsable title="EVIL Squads and Teams">
       <Collapsable title="Squads">
-        {props.gameManager
-          .getSquads(props.gameManager.getEvilEmpire().id, 0)
-          .map(squad => (
-            <Squad
-              squad={squad}
-              showDisband={props.showDisband}
-              gameManager={props.gameManager}
-            />
-          ))}
+        {gameManager.getSquads(gameManager.getEvilEmpire().id, 0).map(squad => (
+          <Squad
+            squad={squad}
+            showDisband={showDisband}
+            gameManager={gameManager}
+          />
+        ))}
       </Collapsable>
       <Collapsable title="Research Teams">
-        {props.gameManager
-          .getSquads(props.gameManager.getEvilEmpire().id, 1)
-          .map(squad => (
-            <Squad
-              squad={squad}
-              showDisband={props.showDisband}
-              gameManager={props.gameManager}
-            />
-          ))}
+        {gameManager.getSquads(gameManager.getEvilEmpire().id, 1).map(squad => (
+          <Squad
+            squad={squad}
+            showDisband={showDisband}
+            gameManager={gameManager}
+          />
+        ))}
       </Collapsable>
     </Collapsable>
   );
+};
+
+Squads.propTypes = {
+  gameManager: PropTypes.object.isRequired,
+  showDisband: PropTypes.bool
 };
 
 export default Squads;

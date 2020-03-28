@@ -2,11 +2,18 @@ import React from "react";
 
 const Squad = ({ squad, showDisband, gameManager }) => {
   return (
-    <div className="border p-1">
+    <div
+      className="border p-1"
+      onClick={() => {
+        debugger;
+        gameManager.selectSquad(squad);
+        gameManager.setScreen("profile-squad");
+      }}>
       <div>
-        <span className="mr-4">{squad.name}</span>{" "}
+        <p className="mr-4">
+          <strong>{squad.name}</strong>
+        </p>{" "}
         <span className="mr-4">Members: {squad.members.length}</span>
-        <span className="mr-4">{squad.leader}</span>
         {showDisband && (
           <button onClick={() => gameManager.disbandSquad(squad.id)}>
             Disband

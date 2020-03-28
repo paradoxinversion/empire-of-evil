@@ -8,7 +8,7 @@ import EmpireOrganizationUI from "./components/UI/EmpireOrganizationUI";
 import EmpireOperationsUI from "./components/UI/EmpireOperationsUI";
 import EmpireResearchUI from "./components/UI/EmpireResearchUI";
 import OperationResolution from "./components/UI/OperationResolution";
-import { AgentProfile } from "./components/Profile/index";
+import { AgentProfile, SquadProfile } from "./components/Profile/index";
 import "./App.css";
 import "./output.css";
 
@@ -20,7 +20,8 @@ const UIScreens = {
   "empire-operations": EmpireOperationsUI,
   "empire-research": EmpireResearchUI,
   "operation-resolution": OperationResolution,
-  "profile-agent": AgentProfile
+  "profile-agent": AgentProfile,
+  "profile-squad": SquadProfile
 };
 
 class App extends Component {

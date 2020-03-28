@@ -54,7 +54,7 @@ const Main = ({ gameManager }) => {
         {gameManager.state.gameReady && (
           <React.Fragment>
             <SelectedTile gameManager={gameManager} setModal={setModal} />
-            <Agents />
+            <Agents gameManager={gameManager} />
             <Squads gameManager={gameManager} />
           </React.Fragment>
         )}

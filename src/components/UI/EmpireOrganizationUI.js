@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Agents from "../Agents";
 import Squads from "../Squads";
-import FormSquad from "../FormSquad";
 
 const EmpireOrganizationUI = ({ gameManager }) => {
   const [organizationContext, setOrganizationContext] = useState("agents");
@@ -57,7 +56,7 @@ const EmpireOrganizationUI = ({ gameManager }) => {
         {organizationContext === "agents" && (
           <div>
             <button>Transfer to Squad?</button>
-            <Agents />
+            <Agents gameManager={gameManager} />
           </div>
         )}
         {organizationContext === "squads" && (

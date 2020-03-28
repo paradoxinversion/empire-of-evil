@@ -27,6 +27,7 @@ class GameManager extends Container {
     squads: {},
     selectedTile: null,
     selectedAgent: null,
+    selectedSquad: null,
     gameReady: false,
     currentScreen: "main"
   };
@@ -36,6 +37,11 @@ class GameManager extends Container {
     });
   }
 
+  selectSquad(squad) {
+    this.setState({
+      selectedSquad: { squadData: squad }
+    });
+  }
   setAgentActivity(agentId, activity) {
     const activities = Object.assign({}, this.state.activities);
     if (!activities[activity]) activities[activity] = [];
@@ -63,14 +69,14 @@ class GameManager extends Container {
     const activities = Object.assign({}, this.state.activities);
     let act = "";
     for (let activity in activities) {
-      debugger;
       const agentIndex = activities[activity].findIndex(
         agent => agent === agentId
       );
       if (agentIndex !== -1) act = activity;
     }
     console.log("ACT", act);
-    return activityTypes[act].name;
+    if (act) return activityTypes[act].name;
+    return null;
   }
 
   /**
@@ -189,7 +195,9 @@ class GameManager extends Container {
 
     this.setState({ citizens, squads });
   }
-
+  getCitizens() {
+    return this.state.citizens;
+  }
   /**
    * Returns the Player's empire.
    */
