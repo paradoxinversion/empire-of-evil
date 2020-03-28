@@ -45,8 +45,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
                     setModal({
                       modalType: "form-squad"
                     });
-                  }}
-                >
+                  }}>
                   Form Squad/Team Here
                 </button>
               )}
@@ -67,8 +66,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
                                 modalType: "operation",
                                 operationType: "move"
                               });
-                            }}
-                          >
+                            }}>
                             Move Squad
                           </button>
                         )}
@@ -88,31 +86,31 @@ const SelectedTile = ({ gameManager, setModal }) => {
                   <Collapsable title={squad.name}>
                     <Squad squad={squad} />
                     <div id={`${squad.name}-actions`} className="px-1">
-                      {Object.keys(gameManager.getOccupiedSquads()).includes(
+                      {!Object.keys(gameManager.getOccupiedSquads()).includes(
                         squad.id
-                      ) === false && <button onClick={() => {}}>Action</button>}
+                      ) && (
+                        <div>
+                          {gameManager.getSelectedTile().tile.nationId !==
+                            gameManager.getEvilEmpire().id && (
+                            <div>
+                              <button
+                                onClick={() => {
+                                  setModal({
+                                    modalType: "operation",
+                                    operationType: "attack"
+                                  });
+                                }}>
+                                Attack
+                              </button>
+                            </div>
+                          )}
+                          <button onClick={() => {}}>Action</button>
+                        </div>
+                      )}
                     </div>
                   </Collapsable>
                 ))}
             </Collapsable>
-
-            {gameManager.getSquadsOnTile(
-              gameManager.getEvilEmpire().id,
-              gameManager.state.selectedTile.tile
-            ).length > 0 && (
-              <div>
-                <button
-                  onClick={() => {
-                    setModal({
-                      modalType: "operation",
-                      operationType: "attack"
-                    });
-                  }}
-                >
-                  Attack
-                </button>
-              </div>
-            )}
 
             {gameManager.getCPUAgentsOnTile(gameManager.state.selectedTile.tile)
               .length > 0 &&
@@ -128,8 +126,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
                         modalType: "operation",
                         operationType: "takeover"
                       });
-                    }}
-                  >
+                    }}>
                     take over
                   </button>
                 </div>

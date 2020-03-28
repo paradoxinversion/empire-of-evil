@@ -15,20 +15,17 @@ const EmpireOrganizationUI = ({ gameManager }) => {
       <div>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("empire-research")}
-        >
+          onClick={() => gameManager.setScreen("empire-research")}>
           Research
         </button>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("empire-operations")}
-        >
+          onClick={() => gameManager.setScreen("empire-operations")}>
           Operations
         </button>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("main")}
-        >
+          onClick={() => gameManager.setScreen("main")}>
           Back
         </button>
         <div>
@@ -65,7 +62,11 @@ const EmpireOrganizationUI = ({ gameManager }) => {
         )}
         {organizationContext === "squads" && (
           <div>
-            <Squads showSquadOptions={true} />
+            <Squads
+              showSquadOptions={true}
+              gameManager={gameManager}
+              showDisband={true}
+            />
           </div>
         )}
       </div>

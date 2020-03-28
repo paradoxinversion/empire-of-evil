@@ -336,7 +336,12 @@ class GameManager extends Container {
     operations.push(newOperation);
     this.setState({ operations });
   }
-
+  cancelOperation(operationId) {
+    const operations = this.state.operations.filter(
+      operation => operation.id !== operationId
+    );
+    this.setState({ operations });
+  }
   setSquadLocation(x, y, squadId) {
     // set the squad's location
     const squads = Object.assign({}, this.state.squads);
