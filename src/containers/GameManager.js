@@ -11,6 +11,7 @@ import { Citizen } from "../data/entities/citizen";
 import { Squad } from "../data/entities/squads";
 import { Operation } from "../data/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
+import { activityTypes } from "../data/activity";
 import faker from "faker";
 
 class GameManager extends Container {
@@ -22,11 +23,66 @@ class GameManager extends Container {
     citizens: {},
     gameMap: [],
     operations: [],
+    activities: {}, // a map with activity type keys and citizen id arrays
     squads: {},
     selectedTile: null,
+    selectedAgent: null,
     gameReady: false,
     currentScreen: "main"
   };
+  async selectAgent(agent) {
+    await this.setState({
+      selectedAgent: { agentData: agent }
+    });
+  }
+
+  setAgentActivity(agentId, activity) {
+    const activities = Object.assign({}, this.state.activities);
+    if (!activities[activity]) activities[activity] = [];
+    activities[activity].push(agentId);
+    this.setState({ activities });
+  }
+
+  clearAgentActivity(agentId) {
+    const activities = Object.assign({}, this.state.activities);
+
+    for (let activity in activities) {
+      const agentIndex = activities[activity].findIndex(
+        agent => (agent.id = agentId)
+      );
+      if (agentIndex) {
+        activities[activities].splice(agentIndex, 1);
+      }
+    }
+    this.setState({
+      activities
+    });
+  }
+
+  getAgentActivity(agentId) {
+    const activities = Object.assign({}, this.state.activities);
+    let act = "";
+    for (let activity in activities) {
+      debugger;
+      const agentIndex = activities[activity].findIndex(
+        agent => agent === agentId
+      );
+      if (agentIndex !== -1) act = activity;
+    }
+    console.log("ACT", act);
+    return activityTypes[act].name;
+  }
+
+  /**
+   * Return agents that are busy because they are engaged in activities
+   */
+  getBusyAgents() {
+    let busyAgents = [];
+    for (let activity in this.state.activities) {
+      busyAgents = busyAgents.concat(this.state.activities[activity]);
+    }
+    return busyAgents;
+  }
 
   /**
    * Retrieve a tile from the map by its ID
@@ -427,6 +483,7 @@ class GameManager extends Container {
   }
 
   async waitAndExecuteOperations() {
+    // if (this.state.operations.le)
     await this.setState({
       currentScreen: "operation-resolution"
     });

@@ -2,7 +2,12 @@ import React from "react";
 
 const Agent = ({ agent, gameManager, border }) => {
   return (
-    <div className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}>
+    <div
+      className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}
+      onClick={() => {
+        gameManager.selectAgent(agent);
+        gameManager.setScreen("profile-agent");
+      }}>
       <p className="mr-4">
         <strong>{agent.name}</strong>
       </p>{" "}
