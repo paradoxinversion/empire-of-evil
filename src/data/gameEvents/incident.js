@@ -3,7 +3,12 @@
 // 2 - Gain Evil
 // 3 - Lose Evil
 
-const incidentTypes = {
+export const incidentTypes = {
+  nothing: {
+    name: "Nothing",
+    description: "Nothing happens. The player won't even see this.",
+    effect: "no-effect"
+  },
   "evil-apprentice": {
     name: "EVIL Appretice",
     description:
@@ -18,4 +23,10 @@ const incidentTypes = {
     effect: 1,
     amount: 1
   }
+};
+
+export const incidentFrequency = {
+  nothing: 1,
+  "evil-apprentice": 1,
+  "change-of-heart": 1
 };

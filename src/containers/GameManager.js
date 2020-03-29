@@ -12,6 +12,8 @@ import { Squad } from "../data/entities/squads";
 import { Operation } from "../data/gameEvents/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
 import { activityTypes } from "../data/gameEvents/activity";
+import { incidentTypes, incidentFrequency } from "../data/gameEvents/incident";
+import { Shufflebag } from "../utilities";
 import faker from "faker";
 import moment from "moment";
 class GameManager extends Container {
@@ -31,7 +33,8 @@ class GameManager extends Container {
     selectedSquad: null,
     gameReady: false,
     currentScreen: "main",
-    incidents: []
+    incidents: [],
+    incidentShuffle: Shufflebag(incidentFrequency)
   };
 
   // Date Functions
@@ -501,13 +504,20 @@ class GameManager extends Container {
     this.setState({ currentScreen });
   }
 
+  generateIncidents() {
+    // const options = Object.keys(incidentTypes);
+    // const incident = options[getRandomIntInclusive(0, options.length - 1)];
+    // console.log(incidentTypes[incident]);
+  }
+
   async waitAndExecuteOperations() {
+    this.state.incidentShuffle.next();
     // if (this.state.operations.le)
     this.executeActivities();
     await this.setState({
       currentScreen: "operation-resolution"
     });
-
+    this.generateIncidents();
     await this.advanceDay();
     if (this.state.gameDate.date() === 1) {
       // handle monthly expenses here
