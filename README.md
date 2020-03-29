@@ -16,6 +16,10 @@ This is where compoents that serve a very limited set of purposes go, such uniqu
 
 TODO: Finish this
 
+## Game State
+
+### State Variables
+
 ## Screens
 
 Screens are collections of UI components that make up the interface. Each screen has a different purpose.

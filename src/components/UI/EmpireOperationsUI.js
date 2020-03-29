@@ -16,8 +16,6 @@ const EmpireOperationsUI = ({ gameManager }) => {
                 gameManager={gameManager}
                 setModalOpen={setModal}
                 callback={async list => {
-                  console.log(list);
-
                   for (let x = 0; x < list.length; x++) {
                     await gameManager.setAgentActivity(
                       list[x],

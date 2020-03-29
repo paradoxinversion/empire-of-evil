@@ -42,7 +42,6 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
               className="disabled:cursor-not-allowed border p-1 mx-2 mb-4"
               onClick={e => {
                 e.preventDefault();
-                console.log(!!!selectedSquad);
                 addSquad(selectedSquad);
               }}
               disabled={!!!selectedSquad}>

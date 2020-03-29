@@ -4,7 +4,7 @@ import { Squad } from "../Tiles/index";
 import PropTypes from "prop-types";
 const SelectedTile = ({ gameManager, setModal }) => {
   return (
-    <Collapsable title="Selected Tile" width="1/2">
+    <Collapsable title="Selected Tile" width="1/4">
       {gameManager.state.selectedTile ? (
         <div className="p-1">
           <h2>

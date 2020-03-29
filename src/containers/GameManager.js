@@ -30,7 +30,8 @@ class GameManager extends Container {
     selectedAgent: null,
     selectedSquad: null,
     gameReady: false,
-    currentScreen: "main"
+    currentScreen: "main",
+    incidents: []
   };
 
   // Date Functions
@@ -88,7 +89,6 @@ class GameManager extends Container {
       );
       if (agentIndex !== -1) act = activity;
     }
-    console.log("ACT", act);
     if (act) return activityTypes[act].name;
     return null;
   }
@@ -362,7 +362,6 @@ class GameManager extends Container {
       // is the squad id in any of the operations?
       for (let x = 0; x < this.state.operations.length; x++) {
         if (this.state.operations[x].squads.includes(squad.id)) {
-          console.log("squad in op");
           return false;
         }
       }
@@ -381,7 +380,6 @@ class GameManager extends Container {
 
       return accumulator;
     }, {});
-    console.log(squads);
     return squads;
   }
 
@@ -509,6 +507,7 @@ class GameManager extends Container {
     await this.setState({
       currentScreen: "operation-resolution"
     });
+
     await this.advanceDay();
     if (this.state.gameDate.date() === 1) {
       // handle monthly expenses here
@@ -536,7 +535,6 @@ class GameManager extends Container {
         }
       });
     }
-    console.log(rewards);
     const evilEmpire = this.getEvilEmpire();
     if (rewards["0"]) evilEmpire.nationalControl += rewards[0];
     if (rewards["1"]) evilEmpire.cash += rewards[1];
@@ -577,7 +575,6 @@ class GameManager extends Container {
     // );
 
     const combatants = this.getAllAgentsOnTile(tile);
-    console.log(combatants);
 
     // Execute attacks for each character
     // super simple combat for now
