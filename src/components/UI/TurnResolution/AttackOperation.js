@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Modal } from "../../GeneralUse/index";
 
-const AttackOperation = ({ gameManager, operationData, next }) => {
+const AttackOperation = ({ gameManager, currentGameEvent, next }) => {
   useEffect(() => {
-    const targetTile = gameManager.getTileById(operationData.targetTileId);
+    const targetTile = gameManager.getTileById(currentGameEvent.targetTileId);
     gameManager.doTileCombat(targetTile, gameManager.getEvilEmpire().id);
   }, [gameManager]);
   return (

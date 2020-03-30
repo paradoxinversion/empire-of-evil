@@ -20,6 +20,8 @@ TODO: Finish this
 
 ### State Variables
 
+#### operations
+
 ## Screens
 
 Screens are collections of UI components that make up the interface. Each screen has a different purpose.

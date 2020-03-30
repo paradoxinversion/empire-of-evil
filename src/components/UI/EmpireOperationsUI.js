@@ -84,7 +84,7 @@ const EmpireOperationsUI = ({ gameManager }) => {
           <Collapsable title="Current Ops">
             {gameManager.state.operations.map(operation => (
               <div>
-                <p>{operation.operationType.name}</p>
+                <p>{operation.gameEventData.name}</p>
                 <p>Squads</p>
                 {operation.squads.map(squad => (
                   <Squad squad={squad} />

@@ -8,6 +8,7 @@ const Squads = ({ gameManager, showDisband }) => {
       <Collapsable title="Squads">
         {gameManager.getSquads(gameManager.getEvilEmpire().id, 0).map(squad => (
           <Squad
+            key={`squads-${squad.id}`}
             squad={squad}
             showDisband={showDisband}
             gameManager={gameManager}

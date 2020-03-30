@@ -4,7 +4,7 @@
 export const operationTypes = {
   move: {
     name: "Move",
-    operationType: "move",
+    eventType: "move",
     description: "Move squads from the current tile to a new adjacent tile.",
     // no limits for squads/membership
     squadMemberLimit: null,
@@ -14,7 +14,7 @@ export const operationTypes = {
   },
   scout: {
     name: "Scout",
-    operationType: "scout",
+    eventType: "scout",
     description:
       "Scout the area to get a more accurate count of defenses and possibilities.",
     squadMemberLimit: 4,
@@ -23,7 +23,7 @@ export const operationTypes = {
   },
   attack: {
     name: "Attack",
-    operationType: "attack",
+    eventType: "attack",
     description: "Attack the current tile.",
     squadMemberLimit: null,
     maxSquads: null,
@@ -32,7 +32,7 @@ export const operationTypes = {
   },
   takeover: {
     name: "Take Over",
-    operationType: "takeover",
+    eventType: "takeover",
     description: "Secure the current tile for the EVIL empire",
     squadMemberLimit: null,
     maxSquads: null,
@@ -44,10 +44,10 @@ export const operationTypes = {
 const { getUID } = require("../../utilities");
 
 export class Operation {
-  constructor({ squads, operationType, targetTileId }) {
+  constructor({ squads, gameEventData, targetTileId }) {
     this.id = getUID();
     this.squads = squads;
-    this.operationType = operationType;
+    this.gameEventData = gameEventData;
     this.targetTileId = targetTileId;
   }
 }

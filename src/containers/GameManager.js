@@ -27,6 +27,7 @@ class GameManager extends Container {
     gameMap: [],
     operations: [],
     activities: {}, // a map with activity type keys and citizen id arrays
+    activityConsequences: [],
     squads: {},
     selectedTile: null,
     selectedAgent: null,
@@ -63,7 +64,6 @@ class GameManager extends Container {
     const activities = Object.assign({}, this.state.activities);
     if (!activities[activity]) activities[activity] = [];
     activities[activity].push(agentId);
-    debugger;
     return this.setState({ activities });
   }
 
@@ -388,13 +388,13 @@ class GameManager extends Container {
 
   /**
    * Add a new operation to the execution list
-   * @param {*} operationType
+   * @param {*} gameEventData
    * @param {*} squads
    * @param {*} targetTile
    */
-  addOperation(operationType, squads, targetTile) {
+  addOperation(gameEventData, squads, targetTile) {
     let targetTileId = "";
-    switch (operationType.targetType) {
+    switch (gameEventData.targetType) {
       case "selected-tile":
         targetTileId = this.state.selectedTile.tile.id;
         break;
@@ -406,7 +406,7 @@ class GameManager extends Container {
 
     const operation = {
       squads,
-      operationType,
+      gameEventData,
       targetTileId
     };
     const newOperation = new Operation(operation);
@@ -515,7 +515,7 @@ class GameManager extends Container {
     // if (this.state.operations.le)
     this.executeActivities();
     await this.setState({
-      currentScreen: "operation-resolution"
+      currentScreen: "turn-resolution"
     });
     this.generateIncidents();
     await this.advanceDay();
@@ -525,31 +525,51 @@ class GameManager extends Container {
     }
   }
 
-  executeActivities() {
-    function getActivityReward(activityType) {
-      const reward = getRandomIntInclusive(activityType.min, activityType.max);
-      return { reward, rewardType: activityType.effect };
+  async executeActivities() {
+    function getActivityReward(activityType, agent) {
+      const isConsequence = true;
+      let reward = 0;
+      if (isConsequence) {
+        const incidentData = incidentTypes[activityType.consequenceIncident];
+        const incident = {
+          name: incidentData.name,
+          agent,
+          gameEventData: incidentData
+        };
+        return { reward, rewardType: activityType.effect, incident };
+      } else {
+        reward = getRandomIntInclusive(activityType.min, activityType.max);
+        return { reward, rewardType: activityType.effect, incident: null };
+      }
     }
     const rewards = {};
+    const incidents = [];
     for (let activityType in this.state.activities) {
       // For now, just get the rewards for each member
       // ! In the future, there should be a 'fail' chance before reward (and possible none if failure occurs)
-      this.state.activities[activityType].forEach(citizen => {
-        const { reward, rewardType } = getActivityReward(
-          activityTypes[activityType]
+      this.state.activities[activityType].forEach(citizenId => {
+        const agent = this.state.citizens[citizenId];
+        const { reward, rewardType, incident } = getActivityReward(
+          activityTypes[activityType],
+          agent
         );
-        if (!rewards[rewardType]) {
-          rewards[rewardType] = reward;
+        if (!incident) {
+          if (!rewards[rewardType]) {
+            rewards[rewardType] = reward;
+          } else {
+            rewards[rewardType] += reward;
+          }
         } else {
-          rewards[rewardType] += reward;
+          incidents.push(incident);
         }
       });
     }
     const evilEmpire = this.getEvilEmpire();
     if (rewards["0"]) evilEmpire.nationalControl += rewards[0];
     if (rewards["1"]) evilEmpire.cash += rewards[1];
-    this.setState({
-      nations: { ...this.state.nations, [evilEmpire.id]: evilEmpire }
+    await this.setState({
+      nations: { ...this.state.nations, [evilEmpire.id]: evilEmpire },
+      activityConsequences: incidents
     });
   }
 

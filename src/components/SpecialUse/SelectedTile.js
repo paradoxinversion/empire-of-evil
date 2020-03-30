@@ -83,7 +83,9 @@ const SelectedTile = ({ gameManager, setModal }) => {
                   gameManager.state.selectedTile.tile
                 )
                 .map(squad => (
-                  <Collapsable title={squad.name}>
+                  <Collapsable
+                    key={`st-collapsable-squad-${squad.id}`}
+                    title={squad.name}>
                     <Squad squad={squad} gameManager={gameManager} />
                     <div id={`${squad.name}-actions`} className="px-1">
                       {!Object.keys(gameManager.getOccupiedSquads()).includes(

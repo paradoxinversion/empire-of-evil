@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Modal } from "../../GeneralUse/index";
 
-const TakeOverOperation = ({ gameManager, operationData, next }) => {
+const TakeOverOperation = ({ gameManager, currentGameEvent, next }) => {
   useEffect(() => {
-    const targetTile = gameManager.getTileById(operationData.targetTileId);
+    const targetTile = gameManager.getTileById(currentGameEvent.targetTileId);
     gameManager.changeTileOwner(targetTile, gameManager.getEvilEmpire().id);
   }, [gameManager]);
   return (

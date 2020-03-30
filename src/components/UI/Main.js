@@ -43,7 +43,7 @@ const Main = ({ gameManager }) => {
             <p>Current Operations</p>
             {gameManager.state.operations.map(operation => (
               <div>
-                <p>{operation.operationType.name}</p>
+                <p>{operation.gameEventData.name}</p>
               </div>
             ))}
           </div>
