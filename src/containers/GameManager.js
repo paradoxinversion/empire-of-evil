@@ -37,7 +37,47 @@ class GameManager extends Container {
     incidents: [],
     incidentShuffle: Shufflebag(incidentFrequency)
   };
+  getTileByCoordinates(x, y) {
+    return this.state.gameMap.flat().find(tile => tile.x === x && tile.y === y);
+  }
+  /**
+   * Convert a tile citizen to an agent of the nation controlling the tile
+   */
+  async convertTileCitizenToAgent(tile) {
+    const nonAgents = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role === 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+    const chosenCitizen =
+      nonAgents[getRandomIntInclusive(0, nonAgents.length - 1)];
+    chosenCitizen.role = 1;
+    await setState({
+      citizens: { ...this.state.citizens, [chosenCitizen.id]: chosenCitizen }
+    });
+  }
 
+  getRandomCitizensOnTile(tile, amount) {
+    const possibleCitizens = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role === 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+
+    const chosenCitizens = [];
+
+    for (let i = 0; i < amount; i++) {
+      const chosenCitizenIndex = getRandomIntInclusive(
+        0,
+        possibleCitizens.length - 1
+      );
+      chosenCitizens.push(possibleCitizens[chosenCitizenIndex]);
+      possibleCitizens.splice(chosenCitizenIndex, 1);
+    }
+    return chosenCitizens;
+  }
   // Date Functions
   getFormattedDate() {
     return this.state.gameDate.format("dddd, MMMM Do YYYY");
@@ -466,6 +506,13 @@ class GameManager extends Container {
     );
   }
 
+  getNationTiles(nationId) {
+    return this.state.gameMap.flat().filter(tile => tile.nationId === nationId);
+  }
+  getRandomNationTile(nationId) {
+    const nationTiles = this.getNationTiles(nationId);
+    return nationTiles[getRandomIntInclusive(0, nationTiles.length - 1)];
+  }
   /**
    * Set a tile as the one currently selected (or set it null)
    * @param {object} selectedTile - The tile to set, or null to unset
@@ -505,19 +552,22 @@ class GameManager extends Container {
   }
 
   generateIncidents() {
-    // const options = Object.keys(incidentTypes);
-    // const incident = options[getRandomIntInclusive(0, options.length - 1)];
-    // console.log(incidentTypes[incident]);
+    const options = Object.keys(incidentTypes);
+    const incident = options[getRandomIntInclusive(0, options.length - 1)];
+    console.log(incidentTypes[incident]);
   }
 
   async waitAndExecuteOperations() {
-    this.state.incidentShuffle.next();
+    const incidentRoll = this.state.incidentShuffle.next();
+    const incidents = this.state.incidents;
+    incidents.push(incidentTypes[incidentRoll]);
     // if (this.state.operations.le)
     this.executeActivities();
     await this.setState({
-      currentScreen: "turn-resolution"
+      currentScreen: "turn-resolution",
+      incidents: [...this.state.incidents]
     });
-    this.generateIncidents();
+    // this.generateIncidents();
     await this.advanceDay();
     if (this.state.gameDate.date() === 1) {
       // handle monthly expenses here
@@ -527,7 +577,8 @@ class GameManager extends Container {
 
   async executeActivities() {
     function getActivityReward(activityType, agent) {
-      const isConsequence = true;
+      //TODO: Change this to a shufflebag maybe
+      const isConsequence = getRandomIntInclusive(0, 10) > 8 ? true : false;
       let reward = 0;
       if (isConsequence) {
         const incidentData = incidentTypes[activityType.consequenceIncident];
@@ -585,6 +636,58 @@ class GameManager extends Container {
     if (enemies.length === 0) return false;
     return enemies[getRandomIntInclusive(0, enemies.length - 1)];
   }
+
+  getEnemyCombatantDomestic(combatantList, attackerRole) {
+    const enemies = combatantList.filter(agent =>
+      attackerRole === 0 ? agent.role > 0 : agent.role === 0 && agent.alive
+    );
+    if (enemies.length === 0) return false;
+    return enemies[getRandomIntInclusive(0, enemies.length - 1)];
+  }
+
+  async damageAgent(agentId, min, max) {
+    const agent = this.state.citizens[agentId];
+    agent.currentHealth -= getRandomIntInclusive(min, max);
+    await this.setState({
+      citizens: { ...this.state.citizens, [agentId]: agent }
+    });
+  }
+
+  /**
+   *
+   * @param {*} tile
+   * @param {Array} attackers
+   * @param {Array} defenders
+   */
+  doCombat(attackers, defenders, domestic = false) {
+    debugger;
+    const combatants = attackers.concat(defenders);
+    const citizens = Object.assign({}, this.state.citizens);
+    const combatLog = [];
+    combatants.forEach(combatant => {
+      if (combatant.alive) {
+        const target = domestic
+          ? this.getEnemyCombatantDomestic(combatants, combatant.role)
+          : this.getEnemyCombatant(combatants, combatant.nationId);
+        if (target) {
+          target.currentHealth -= combatant.strength;
+          if (target.currentHealth <= 0) {
+            target.alive = false;
+          }
+          const combatLogString = `${combatant.name} attacks ${target.name}`;
+          console.log(combatLog);
+
+          citizens[target.id] = target;
+          combatLog.push(combatLogString);
+        }
+      }
+    });
+    this.setState({
+      citizens
+    });
+    return combatLog;
+  }
+
   /**
    * Execute tile combat between the EoE and other nations
    * @param {*} tile
@@ -631,7 +734,15 @@ class GameManager extends Container {
   }
 
   clearOperations() {
-    this.state.operations = [];
+    this.setState({
+      operations: []
+    });
+  }
+
+  clearIncidents() {
+    this.setState({
+      incidents: []
+    });
   }
 
   changeTileOwner(tile, newOwnerId) {

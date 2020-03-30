@@ -14,21 +14,23 @@ const resolutionTypes = {
   move: MoveOperation,
   attack: AttackOperation,
   takeover: TakeOverOperation,
-  combat: Incident
+  combat: Incident,
+  damage: Incident,
+  "gain-agent": Incident,
+  "damage-agent": Incident
 };
 
 const TurnResolution = ({ gameManager }) => {
   const activityConsequences = gameManager.state.activityConsequences;
   const operations = gameManager.state.operations;
   const incidents = gameManager.state.incidents;
-  debugger;
   const gameEvents = [];
-
   activityConsequences.forEach(activityConsequence => {
     const gameEventData = {
       gameEventData: activityConsequence.gameEventData,
       targetTileId: activityConsequence.targetTileId,
-      squads: activityConsequence.squads
+      squads: activityConsequence.squads,
+      target: activityConsequence.agent
     };
     const newGameEvent = new gameEvent(gameEventData);
     gameEvents.push(newGameEvent);
@@ -43,6 +45,15 @@ const TurnResolution = ({ gameManager }) => {
     const newGameEvent = new gameEvent(gameEventData);
     gameEvents.push(newGameEvent);
   });
+
+  incidents.forEach(incident => {
+    const gameEventData = {
+      gameEventData: incident
+    };
+    const newGameEvent = new gameEvent(gameEventData);
+    gameEvents.push(newGameEvent);
+  });
+
   if (gameEvents.length > 0) {
     const [currentGameEventIndex, setCurrentGameEventIndex] = useState(0);
     const currentGameEvent = gameEvents[currentGameEventIndex];
@@ -56,6 +67,8 @@ const TurnResolution = ({ gameManager }) => {
         // if this is the last operation, go back to the main screen
         gameManager.setScreen("main");
         gameManager.clearOperations();
+        gameManager.clearIncidents();
+        // ! DO THIS NEXT
       }
     };
     return (

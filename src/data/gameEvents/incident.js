@@ -17,7 +17,7 @@ export const incidentTypes = {
       "An eager apprentice has arrived, prepared to learn your EVIL ways!",
     effect: 0,
     amount: 1,
-    eventType: "informational"
+    eventType: "gain-agent"
   },
   "change-of-heart": {
     name: "Change of Heart",
@@ -25,7 +25,7 @@ export const incidentTypes = {
       "An 'EVIL' Agent has decided they weren't as EVIL as we hoped. They've been terminated. As in killed.",
     effect: 1,
     amount: 1,
-    eventType: "information"
+    eventType: "kill-agent"
   },
   "nerd-revenge": {
     name: "Revenge of the Nerds",
@@ -38,18 +38,22 @@ export const incidentTypes = {
   },
   "the-ruler": {
     name: "Mess with the Nuns, get the ruler.",
-
-    description:
-      "Whether the Lord guided her hand or she honed the skill over decades, the fact remains: That really hurt.",
+    description: "Those sisters were having NUN of your agent's shenanigans.",
     effect: 4,
     amount: [3, 6],
     activityConsequence: true,
+    eventType: "damage-agent"
+  },
+  "area-revolt": {
+    name: "Uprising!",
+    description:
+      "The citizens of the area have grown tired of EVIL rule and staged an uprising! They're engaging our EVIL forces now!",
     eventType: "combat"
   }
 };
 
 export const incidentFrequency = {
   nothing: 1,
-  "evil-apprentice": 1,
+  "evil-apprentice": 100,
   "change-of-heart": 1
 };
