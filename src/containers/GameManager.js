@@ -83,7 +83,6 @@ class GameManager extends Container {
       }
     }
 
-    debugger;
     const operations = gameData.operations;
     const activities = gameData.activities;
     const squads = gameData.squads;
@@ -745,7 +744,6 @@ class GameManager extends Container {
    * @param {Array} defenders
    */
   doCombat(attackers, defenders, domestic = false) {
-    debugger;
     const combatants = attackers.concat(defenders);
     const citizens = Object.assign({}, this.state.citizens);
     const combatLog = [];

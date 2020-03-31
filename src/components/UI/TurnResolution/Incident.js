@@ -20,7 +20,6 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         );
         break;
       case "combat":
-        debugger;
         const attackers = gameManager.getRandomCitizensOnTile(
           gameManager.getTileByCoordinates(
             currentGameEvent.target.currentPosition.x,

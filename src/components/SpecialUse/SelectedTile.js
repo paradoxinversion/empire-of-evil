@@ -4,7 +4,6 @@ import { Squad, Agent } from "../Tiles/index";
 import PropTypes from "prop-types";
 const SelectedTile = ({ gameManager, setModal }) => {
   return (
-    // <Collapsable title="Selected Tile" width="1/4">
     <div className="flex flex-grow px-4">
       {gameManager.state.selectedTile ? (
         <React.Fragment>
@@ -156,7 +155,6 @@ const SelectedTile = ({ gameManager, setModal }) => {
         </div>
       )}
     </div>
-    // </Collapsable>
   );
 };
 
