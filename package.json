@@ -28,6 +28,7 @@
     "prop-types": "^15.7.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "store": "^2.0.12",
     "tailwindcss": "^1.2.0",
     "unstated": "^2.1.1",
     "unstated-connect": "^0.0.3"

@@ -16,6 +16,7 @@ import { incidentTypes, incidentFrequency } from "../data/gameEvents/incident";
 import { Shufflebag } from "../utilities";
 import faker from "faker";
 import moment from "moment";
+import store from "store";
 class GameManager extends Container {
   state = {
     gameDate: moment("2000-1-1"),
@@ -33,10 +34,48 @@ class GameManager extends Container {
     selectedAgent: null,
     selectedSquad: null,
     gameReady: false,
-    currentScreen: "main",
+    currentScreen: "title",
     incidents: [],
     incidentShuffle: Shufflebag(incidentFrequency)
   };
+
+  saveGame() {
+    const data = {
+      gameDate: this.state.gameDate.toDate(),
+      player: this.state.player,
+      nations: this.state.nations,
+      citizens: this.state.citizens,
+      gameMap: this.state.gameMap,
+      operations: this.state.operations,
+      activities: this.state.activities,
+      squads: this.state.squads
+    };
+    store.set("eoe-gamedata", data);
+  }
+
+  async loadGame() {
+    const gameData = store.get("eoe-gamedata");
+    debugger;
+    const gameDate = moment(gameData.gameDate);
+    const player = gameData.player;
+    const nations = gameData.nations;
+    const citizens = gameData.citizens;
+    const gameMap = gameData.gameMap;
+    const operations = gameData.operations;
+    const activities = gameData.activities;
+    const squads = gameData.squads;
+    await this.setState({
+      gameDate,
+      player,
+      nations,
+      citizens,
+      gameMap,
+      operations,
+      activities,
+      squads,
+      gameReady: true
+    });
+  }
   /*
     Tile Functions
   */
@@ -115,6 +154,21 @@ class GameManager extends Container {
   getAgents(nationId, role) {
     const allAgents = Object.values(this.state.citizens).filter(
       citizen => citizen.nationId === nationId && citizen.role > 0
+    );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
+  }
+
+  getAgentsOnTile(nationId, tile, role) {
+    const allAgents = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.nationId === nationId &&
+        citizen.role > 0 &&
+        citizen.currentPosition.x === tile.tile.x &&
+        citizen.currentPosition.y === tile.tile.y
     );
     if (!role) {
       return allAgents;

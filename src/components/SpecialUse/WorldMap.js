@@ -7,7 +7,6 @@ class WorldMap extends Component {
     tileSize: "32px",
     mapX: 10,
     mapY: 10,
-    gameMap: [],
     mapLoaded: false
   };
 

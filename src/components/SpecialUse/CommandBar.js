@@ -18,6 +18,7 @@ const CommandBar = ({ gameManager }) => {
         onClick={() => gameManager.setScreen("agents")}>
         Agents
       </button>
+      <button onClick={() => gameManager.saveGame()}>Save Game</button>
     </div>
   );
 };

@@ -11,8 +11,10 @@ import TurnResolution from "./components/UI/TurnResolution/TurnResolution";
 import { AgentProfile, SquadProfile } from "./components/Profile/index";
 import "./App.css";
 import "./output.css";
+import Title from "./components/UI/Title";
 
 const UIScreens = {
+  title: Title,
   main: Main,
   empire: Empire,
   agents: AgentsUI,
@@ -26,8 +28,8 @@ const UIScreens = {
 
 class App extends Component {
   componentDidMount() {
-    const [GameManager] = this.props.containers;
-    GameManager.setUpGame();
+    // const [GameManager] = this.props.containers;
+    // GameManager.setUpGame();
   }
   render() {
     const [GameManager] = this.props.containers;
