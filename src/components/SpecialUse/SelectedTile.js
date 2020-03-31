@@ -50,10 +50,14 @@ const SelectedTile = ({ gameManager, setModal }) => {
                 )}
 
               {Object.values(gameManager.state.selectedTile.adjacentSquads).map(
-                adjacentSquads => (
-                  <Collapsable title="Adjacent Squads">
+                (adjacentSquads, index) => (
+                  <Collapsable
+                    key={`adjacent-squads-${index}`}
+                    title="Adjacent Squads">
                     {adjacentSquads.map(squad => (
-                      <Collapsable title={squad.name}>
+                      <Collapsable
+                        key={`adjacent-squads-${index}-${squad.id}`}
+                        title={squad.name}>
                         <Squad squad={squad} gameManager={gameManager} />
                         <div id={`${squad.name}-actions`} className="px-1">
                           {Object.keys(
@@ -107,7 +111,11 @@ const SelectedTile = ({ gameManager, setModal }) => {
                   gameManager.getSelectedTile()
                 )
                 .map(agent => (
-                  <Agent agent={agent} gameManager={gameManager} />
+                  <Agent
+                    key={`evil-agents-tile-${agent.id}`}
+                    agent={agent}
+                    gameManager={gameManager}
+                  />
                 ))}
             </Collapsable>
             <Collapsable title="Tile Squads">

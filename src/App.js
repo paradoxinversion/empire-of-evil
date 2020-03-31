@@ -10,7 +10,7 @@ import EmpireResearchUI from "./components/UI/EmpireResearchUI";
 import TurnResolution from "./components/UI/TurnResolution/TurnResolution";
 import { AgentProfile, SquadProfile } from "./components/Profile/index";
 import "./App.css";
-import "./output.css";
+// import "./output.css";
 import Title from "./components/UI/Title";
 
 const UIScreens = {

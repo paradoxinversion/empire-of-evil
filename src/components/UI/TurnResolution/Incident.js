@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "../../GeneralUse/index";
-import { getRandomIntInclusive } from "../../../commonUtilities/commonUtilities";
+import PropTypes from "prop-types";
 const Incident = ({ gameManager, currentGameEvent, next }) => {
   const [log, setLog] = useState([]);
   useEffect(() => {
     // damage the participant
     switch (currentGameEvent.gameEventData.eventType) {
-      case "damage-agent":
+      case "damage-agent": {
         gameManager.damageAgent(
           currentGameEvent.target.id,
           currentGameEvent.gameEventData.amount[0],
@@ -14,12 +14,14 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         );
 
         break;
-      case "gain-agent":
+      }
+      case "gain-agent": {
         gameManager.convertTileCitizenToAgent(
           gameManager.getRandomNationTile(gameManager.getEvilEmpire().id)
         );
         break;
-      case "combat":
+      }
+      case "combat": {
         const attackers = gameManager.getRandomCitizensOnTile(
           gameManager.getTileByCoordinates(
             currentGameEvent.target.currentPosition.x,
@@ -31,8 +33,11 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         const combatLog = gameManager.doCombat(attackers, defenders, true);
         setLog(combatLog);
         break;
-      default:
+      }
+      default: {
+        console.log("unhandled event type");
         break;
+      }
     }
   }, [gameManager]);
   return (
@@ -42,12 +47,20 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         <p>{currentGameEvent.gameEventData.description}</p>
         <div className="p-2">
           {currentGameEvent.gameEventData.eventType === "combat" &&
-            log.map(logEntry => <p>{logEntry}</p>)}
+            log.map((logEntry, logEntryIndex) => (
+              <p key={`log-entry-${logEntryIndex}`}>{logEntry}</p>
+            ))}
         </div>
         <button onClick={() => next()}>Next</button>
       </div>
     </Modal>
   );
+};
+
+Incident.propTypes = {
+  gameManager: PropTypes.object.isRequired,
+  currentGameEvent: PropTypes.object.isRequired,
+  next: PropTypes.object.isRequired
 };
 
 export default Incident;

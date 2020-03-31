@@ -1,4 +1,4 @@
-const { getUID } = require("../../utilities");
+import { getUID } from "../../utilities";
 
 export class Nation {
   constructor({ name, isEvilEmpire = false, uid = null }) {

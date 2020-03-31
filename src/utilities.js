@@ -1,7 +1,7 @@
 /**
  * Creates a unique ID for an object
  */
-const getUID = () => {
+export const getUID = () => {
   const pre = Date.now();
   const letters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
@@ -17,10 +17,10 @@ const getUID = () => {
  *
  * @param {*} frequencyMap - a key/value map of options and their frequencies
  */
-const Shufflebag = frequencyMap => {
+export const Shufflebag = frequencyMap => {
   const getValueSet = frequencyMap => {
     let valueSet = [];
-    for (entry in frequencyMap) {
+    for (let entry in frequencyMap) {
       for (let y = 0; y < frequencyMap[entry]; y++) {
         valueSet.push(entry);
       }
@@ -44,9 +44,4 @@ const Shufflebag = frequencyMap => {
       return selection;
     }
   };
-};
-
-module.exports = {
-  getUID,
-  Shufflebag
 };

@@ -6,6 +6,7 @@ const Title = ({ gameManager }) => {
       <p>Empire of Evil</p>
       <p>A game of world domination</p>
       <button
+        className="btn"
         onClick={async () => {
           await gameManager.setUpGame();
           gameManager.setScreen("main");
