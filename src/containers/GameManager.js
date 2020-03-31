@@ -160,9 +160,17 @@ class GameManager extends Container {
 
   /**
    * Return agents that are busy because they are engaged in activities
+   * or in squads that are queued for an operation
+   * @returns An array containing the ids of all busy agents
    */
   getBusyAgents() {
     let busyAgents = [];
+    this.state.operations.forEach(operation => {
+      operation.squads.forEach(squad => {
+        busyAgents = busyAgents.concat(squad.members);
+      });
+    });
+
     for (let activity in this.state.activities) {
       busyAgents = busyAgents.concat(this.state.activities[activity]);
     }
@@ -424,6 +432,9 @@ class GameManager extends Container {
     return freeSquads;
   }
 
+  /**
+   * Return a list of squads that are on a mission or have members involved in activities
+   */
   getOccupiedSquads() {
     const squads = this.state.operations.reduce((accumulator, operation) => {
       operation.squads.forEach(squad => {

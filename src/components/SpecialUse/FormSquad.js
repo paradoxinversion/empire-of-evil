@@ -99,6 +99,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                 .filter(
                   agent =>
                     !selectedAgents.includes(agent.id) &&
+                    !gameManager.getBusyAgents().includes(agent.id) &&
                     agent.id !== squadLeader
                 )
                 .map(agent => (
