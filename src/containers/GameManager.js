@@ -1,7 +1,7 @@
 // TODO: move functions that create data/entities to those files & out of here
 
 import { Container } from "unstated";
-import { createNation } from "../data/entities/nation";
+import { createNation, createNations } from "../data/entities/nation";
 import {
   makeMap,
   getLandTiles,
@@ -9,6 +9,7 @@ import {
 } from "../commonUtilities/map/gameMap";
 import { Citizen } from "../data/entities/citizen";
 import { Squad } from "../data/entities/squads";
+import Tile from "../data/entities/tile";
 import { Operation } from "../data/gameEvents/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
 import { activityTypes } from "../data/gameEvents/activity";
@@ -55,12 +56,34 @@ class GameManager extends Container {
 
   async loadGame() {
     const gameData = store.get("eoe-gamedata");
-    debugger;
     const gameDate = moment(gameData.gameDate);
     const player = gameData.player;
-    const nations = gameData.nations;
-    const citizens = gameData.citizens;
-    const gameMap = gameData.gameMap;
+    const rawNations = gameData.nations;
+    const nations = {};
+    for (let nationId in rawNations) {
+      const nationObject = createNation("LOADED NATION", false);
+      const nation = Object.assign(nationObject, rawNations[nationId]);
+      nations[nationId] = nation;
+    }
+
+    const rawCitizens = gameData.citizens;
+    const citizens = {};
+    for (let citizenId in rawCitizens) {
+      const citizenObject = this.createCitizen(0, 0);
+      const citizen = Object.assign(citizenObject, rawCitizens[citizenId]);
+      citizens[citizenId] = citizen;
+    }
+    const rawGameMap = gameData.gameMap;
+    const gameMap = makeMap();
+    for (let y = 0; y < gameMap.length; y++) {
+      for (let x = 0; x < gameMap.length; x++) {
+        const tileObject = new Tile({ x: 0, y: 0 });
+        const tile = Object.assign(tileObject, rawGameMap[x][y]);
+        gameMap[x][y] = tile;
+      }
+    }
+
+    debugger;
     const operations = gameData.operations;
     const activities = gameData.activities;
     const squads = gameData.squads;
@@ -276,20 +299,6 @@ class GameManager extends Container {
     };
     const newCitizen = new Citizen(citizenAttributes);
     return newCitizen;
-  }
-
-  /**
-   * Creates the nations that will be used in the game
-   */
-  async createNations() {
-    const evilEmpire = createNation("EVIL Empire", true);
-
-    const cpuNation = createNation("CPU Nation", false);
-    const nations = {
-      [evilEmpire.id]: evilEmpire,
-      [cpuNation.id]: cpuNation
-    };
-    return { nations, cpuNation, evilEmpire };
   }
 
   /**
@@ -836,7 +845,7 @@ class GameManager extends Container {
     const gameMap = await makeMap();
 
     // Create nations to populate the map & set tile ownership
-    const { nations, cpuNation, evilEmpire } = await this.createNations();
+    const { nations, cpuNation, evilEmpire } = createNations();
     for (let y = 0; y < gameMap.length; y++) {
       for (let x = 0; x < gameMap[y].length; x++) {
         gameMap[y][x].setNationId(cpuNation.id);

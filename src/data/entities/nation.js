@@ -1,8 +1,8 @@
 const { getUID } = require("../../utilities");
 
-class Nation {
-  constructor({ name, isEvilEmpire = false }) {
-    this.id = getUID();
+export class Nation {
+  constructor({ name, isEvilEmpire = false, uid = null }) {
+    this.id = uid || getUID();
     this.name = name;
     this.isEvilEmpire = isEvilEmpire;
     this.cash = 10000;
@@ -10,7 +10,7 @@ class Nation {
   }
 }
 
-const createNation = (name, isEvilEmpire = false) => {
+export const createNation = (name, isEvilEmpire = false) => {
   const newNationOpts = {
     name,
     isEvilEmpire
@@ -19,7 +19,16 @@ const createNation = (name, isEvilEmpire = false) => {
   return newNation;
 };
 
-module.exports = {
-  Nation,
-  createNation
+/**
+ * Creates the nations that will be used in the game
+ */
+export const createNations = () => {
+  const evilEmpire = createNation("EVIL Empire", true);
+
+  const cpuNation = createNation("CPU Nation", false);
+  const nations = {
+    [evilEmpire.id]: evilEmpire,
+    [cpuNation.id]: cpuNation
+  };
+  return { nations, cpuNation, evilEmpire };
 };
