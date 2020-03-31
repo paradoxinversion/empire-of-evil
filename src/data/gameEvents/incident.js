@@ -53,7 +53,7 @@ export const incidentTypes = {
 };
 
 export const incidentFrequency = {
-  nothing: 1,
-  "evil-apprentice": 100,
-  "change-of-heart": 1
+  nothing: 100,
+  "evil-apprentice": 10,
+  "change-of-heart": 5
 };

@@ -37,24 +37,31 @@ class GameManager extends Container {
     incidents: [],
     incidentShuffle: Shufflebag(incidentFrequency)
   };
+  /*
+    Tile Functions
+  */
+
   getTileByCoordinates(x, y) {
     return this.state.gameMap.flat().find(tile => tile.x === x && tile.y === y);
   }
   /**
-   * Convert a tile citizen to an agent of the nation controlling the tile
+   * Retrieve a tile from the map by its ID
+   * @param {String} tileID - the string id of the tile to retrieve
    */
-  async convertTileCitizenToAgent(tile) {
-    const nonAgents = Object.values(this.state.citizens).filter(
-      citizen =>
-        citizen.role === 0 &&
-        citizen.currentPosition.x === tile.x &&
-        citizen.currentPosition.y === tile.y
-    );
-    const chosenCitizen =
-      nonAgents[getRandomIntInclusive(0, nonAgents.length - 1)];
-    chosenCitizen.role = 1;
-    await setState({
-      citizens: { ...this.state.citizens, [chosenCitizen.id]: chosenCitizen }
+  getTileById(tileID) {
+    return this.state.gameMap.flat().find(tile => tile.id === tileID);
+  }
+
+  getSelectedTile() {
+    return this.state.selectedTile;
+  }
+  /*
+    Citizen/Agent Functions
+  */
+
+  async selectAgent(agent) {
+    await this.setState({
+      selectedAgent: { agentData: agent }
     });
   }
 
@@ -78,27 +85,42 @@ class GameManager extends Container {
     }
     return chosenCitizens;
   }
-  // Date Functions
-  getFormattedDate() {
-    return this.state.gameDate.format("dddd, MMMM Do YYYY");
-  }
 
-  advanceDay() {
-    const gameDate = this.state.gameDate.add(1, "days");
-    this.setState({
-      gameDate
+  /**
+   * Convert a tile citizen to an agent of the nation controlling the tile
+   */
+  async convertTileCitizenToAgent(tile) {
+    const nonAgents = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role === 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+    const chosenCitizen =
+      nonAgents[getRandomIntInclusive(0, nonAgents.length - 1)];
+    chosenCitizen.role = 1;
+    await setState({
+      citizens: { ...this.state.citizens, [chosenCitizen.id]: chosenCitizen }
     });
   }
-  async selectAgent(agent) {
-    await this.setState({
-      selectedAgent: { agentData: agent }
-    });
-  }
-
-  selectSquad(squad) {
-    this.setState({
-      selectedSquad: { squadData: squad }
-    });
+  /**
+   * Returns all agents belonging to a supplied Nation (by ID).
+   *
+   * If a role is supplied, return agents that also match that role,
+   * otherwise, return all agents.
+   * @param {Object} citizensMap - a map of all citizens (!!! this should reference the state directly)
+   * @param {string} nationId - The id of the nation who's agents to retrieve
+   * @param {string} role - The role of the agents to retrive
+   */
+  getAgents(nationId, role) {
+    const allAgents = Object.values(this.state.citizens).filter(
+      citizen => citizen.nationId === nationId && citizen.role > 0
+    );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
   }
   async setAgentActivity(agentId, activity) {
     const activities = Object.assign({}, this.state.activities);
@@ -147,17 +169,26 @@ class GameManager extends Container {
     return busyAgents;
   }
 
-  /**
-   * Retrieve a tile from the map by its ID
-   * @param {String} tileID - the string id of the tile to retrieve
-   */
-  getTileById(tileID) {
-    return this.state.gameMap.flat().find(tile => tile.id === tileID);
+  /*
+    Date Functions
+  */
+  getFormattedDate() {
+    return this.state.gameDate.format("dddd, MMMM Do YYYY");
   }
 
-  getSelectedTile() {
-    return this.state.selectedTile;
+  advanceDay() {
+    const gameDate = this.state.gameDate.add(1, "days");
+    this.setState({
+      gameDate
+    });
   }
+
+  selectSquad(squad) {
+    this.setState({
+      selectedSquad: { squadData: squad }
+    });
+  }
+
   /**
    * Create a new citizen -- This does not set nation.
    * @param {number} x - position x at which to spawn the citizen
@@ -270,26 +301,6 @@ class GameManager extends Container {
     const allAgents = Object.values(this.state.citizens).filter(
       citizen =>
         citizen.nationId === this.getEvilEmpire().id && citizen.role > 0
-    );
-    if (!role) {
-      return allAgents;
-    } else {
-      return allAgents.filter(agent => agent.role === role);
-    }
-  }
-
-  /**
-   * Returns all agents belonging to a supplied Nation (by ID).
-   *
-   * If a role is supplied, return agents that also match that role,
-   * otherwise, return all agents.
-   * @param {Object} citizensMap - a map of all citizens (!!! this should reference the state directly)
-   * @param {string} nationId - The id of the nation who's agents to retrieve
-   * @param {string} role - The role of the agents to retrive
-   */
-  getAgents(nationId, role) {
-    const allAgents = Object.values(this.state.citizens).filter(
-      citizen => citizen.nationId === nationId && citizen.role > 0
     );
     if (!role) {
       return allAgents;

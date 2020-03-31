@@ -26,32 +26,38 @@ const TurnResolution = ({ gameManager }) => {
   const incidents = gameManager.state.incidents;
   const gameEvents = [];
   activityConsequences.forEach(activityConsequence => {
-    const gameEventData = {
-      gameEventData: activityConsequence.gameEventData,
-      targetTileId: activityConsequence.targetTileId,
-      squads: activityConsequence.squads,
-      target: activityConsequence.agent
-    };
-    const newGameEvent = new gameEvent(gameEventData);
-    gameEvents.push(newGameEvent);
+    if (activityConsequence.gameEventData.eventType !== "no-effect") {
+      const gameEventData = {
+        gameEventData: activityConsequence.gameEventData,
+        targetTileId: activityConsequence.targetTileId,
+        squads: activityConsequence.squads,
+        target: activityConsequence.agent
+      };
+      const newGameEvent = new gameEvent(gameEventData);
+      gameEvents.push(newGameEvent);
+    }
   });
 
   operations.forEach(operation => {
-    const gameEventData = {
-      gameEventData: operation.gameEventData,
-      targetTileId: operation.targetTileId,
-      squads: operation.squads
-    };
-    const newGameEvent = new gameEvent(gameEventData);
-    gameEvents.push(newGameEvent);
+    if (operation.gameEventData.eventType !== "no-effect") {
+      const gameEventData = {
+        gameEventData: operation.gameEventData,
+        targetTileId: operation.targetTileId,
+        squads: operation.squads
+      };
+      const newGameEvent = new gameEvent(gameEventData);
+      gameEvents.push(newGameEvent);
+    }
   });
 
   incidents.forEach(incident => {
-    const gameEventData = {
-      gameEventData: incident
-    };
-    const newGameEvent = new gameEvent(gameEventData);
-    gameEvents.push(newGameEvent);
+    if (incident.eventType !== "none") {
+      const gameEventData = {
+        gameEventData: incident
+      };
+      const newGameEvent = new gameEvent(gameEventData);
+      gameEvents.push(newGameEvent);
+    }
   });
 
   if (gameEvents.length > 0) {
