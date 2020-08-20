@@ -1,6 +1,6 @@
 import React, { Component, useContext } from "react";
-import Collapsable from "../Collapsable";
 import { GameDataContext } from "../../context/GameDataContext";
+import { Collapsable } from "../GeneralUse/index";
 
 const Empire = (props) => {
   const gameDataContext = useContext(GameDataContext);

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import Squad from "./Squad";
 import { GameDataContext } from "../context/GameDataContext";
+import { Squad } from "../Tiles/index";
 
 const SquadSelect = ({ selectedSquads, setSelectedSquads }) => {
   const gameDataContext = useContext(GameDataContext);
@@ -45,7 +46,6 @@ const SquadSelect = ({ selectedSquads, setSelectedSquads }) => {
               className="disabled:cursor-not-allowed border p-1 mx-2 mb-4"
               onClick={(e) => {
                 e.preventDefault();
-                console.log(!!!selectedSquad);
                 addSquad(selectedSquad);
               }}
               disabled={!!!selectedSquad}

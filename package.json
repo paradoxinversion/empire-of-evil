@@ -21,10 +21,17 @@
   },
   "dependencies": {
     "autoprefixer": "^9.7.4",
+    "chance": "^1.1.4",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-tailwind": "^0.2.0",
     "faker": "^4.1.0",
+    "moment": "^2.24.0",
     "postcss-nested": "^4.2.1",
+    "prop-types": "^15.7.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "store": "^2.0.12",
     "tailwindcss": "^1.2.0",
     "unstated": "^2.1.1",
     "unstated-connect": "^0.0.3"

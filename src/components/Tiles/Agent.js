@@ -4,7 +4,12 @@ import { GameDataContext } from "../context/GameDataContext";
 const Agent = ({ agent, border }) => {
   const gameDataContext = useContext(GameDataContext);
   return (
-    <div className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}>
+    <div
+      className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}
+      onClick={() => {
+        gameManager.selectAgent(agent);
+        gameManager.setScreen("profile-agent");
+      }}>
       <p className="mr-4">
         <strong>{agent.name}</strong>
       </p>{" "}

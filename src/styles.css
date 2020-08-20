@@ -1,5 +1,11 @@
+/* eslint-disable */
+
 @tailwind base;
 
 @tailwind components;
+
+.btn {
+  @apply border px-1;
+}
 
 @tailwind utilities;

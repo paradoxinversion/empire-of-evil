@@ -5,12 +5,16 @@ import AgentsUI from "./components/UI/AgentsUI";
 import EmpireOrganizationUI from "./components/UI/EmpireOrganizationUI";
 import EmpireOperationsUI from "./components/UI/EmpireOperationsUI";
 import EmpireResearchUI from "./components/UI/EmpireResearchUI";
-import OperationResolution from "./components/UI/OperationResolution";
+import TurnResolution from "./components/UI/TurnResolution/TurnResolution";
+import { AgentProfile, SquadProfile } from "./components/Profile/index";
 import "./App.css";
 import "./output.css";
 import { GameDataContext } from "./context/GameDataContext";
+// import "./output.css";
+import Title from "./components/UI/Title";
 
 const UIScreens = {
+  title: Title,
   main: Main,
   empire: Empire,
   agents: AgentsUI,
@@ -18,6 +22,9 @@ const UIScreens = {
   "empire-operations": EmpireOperationsUI,
   "empire-research": EmpireResearchUI,
   "operation-resolution": OperationResolution,
+  "turn-resolution": TurnResolution,
+  "profile-agent": AgentProfile,
+  "profile-squad": SquadProfile,
 };
 
 const App = () => {

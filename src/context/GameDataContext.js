@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 // import { Provider } from "unstated";
 // TODO: move functions that create data/entities to those files & out of here
-
-import { Container } from "unstated";
-import { createNation } from "../data/entities/nation";
+import { createNation, createNations } from "../data/entities/nation";
 import {
   makeMap,
   getLandTiles,
@@ -11,11 +9,19 @@ import {
 } from "../commonUtilities/map/gameMap";
 import { Citizen } from "../data/entities/citizen";
 import { Squad } from "../data/entities/squads";
-import { Operation } from "../data/operation";
+import Tile from "../data/entities/tile";
+import { Operation } from "../data/gameEvents/operation";
 import { getRandomIntInclusive } from "../commonUtilities/commonUtilities";
+import { activityTypes } from "../data/gameEvents/activity";
+import { incidentTypes, incidentFrequency } from "../data/gameEvents/incident";
+import { Shufflebag } from "../utilities";
 import faker from "faker";
+import moment from "moment";
+import store from "store";
+
 const GameDataContext = React.createContext();
 const { Provider } = GameDataContext;
+
 const GameDataProvider = ({ children, gameData }) => {
   const [gameState, setGameState] = useState({
     player: {
@@ -25,12 +31,85 @@ const GameDataProvider = ({ children, gameData }) => {
     citizens: {},
     gameMap: [],
     operations: [],
+    activities: {}, // a map with activity type keys and citizen id arrays
+    activityConsequences: [],
     squads: {},
     selectedTile: null,
+    selectedAgent: null,
+    selectedSquad: null,
     gameReady: false,
-    currentScreen: "main",
+    gameDate: moment("2000-1-1"),
+
+    currentScreen: "title",
+    incidents: [],
+    incidentShuffle: Shufflebag(incidentFrequency)
   });
 
+  const saveGame = () => {
+    const data = {
+      gameDate: this.state.gameDate.toDate(),
+      player: this.state.player,
+      nations: this.state.nations,
+      citizens: this.state.citizens,
+      gameMap: this.state.gameMap,
+      operations: this.state.operations,
+      activities: this.state.activities,
+      squads: this.state.squads
+    };
+    store.set("eoe-gamedata", data);
+  }
+
+  const loadGame =()=> {
+    const gameData = store.get("eoe-gamedata");
+    const gameDate = moment(gameData.gameDate);
+    const player = gameData.player;
+    const rawNations = gameData.nations;
+    const nations = {};
+    for (let nationId in rawNations) {
+      const nationObject = createNation("LOADED NATION", false);
+      const nation = Object.assign(nationObject, rawNations[nationId]);
+      nations[nationId] = nation;
+    }
+
+    const rawCitizens = gameData.citizens;
+    const citizens = {};
+    for (let citizenId in rawCitizens) {
+      const citizenObject = this.createCitizen(0, 0);
+      const citizen = Object.assign(citizenObject, rawCitizens[citizenId]);
+      citizens[citizenId] = citizen;
+    }
+    const rawGameMap = gameData.gameMap;
+    const gameMap = makeMap();
+    for (let y = 0; y < gameMap.length; y++) {
+      for (let x = 0; x < gameMap.length; x++) {
+        const tileObject = new Tile({ x: 0, y: 0 });
+        const tile = Object.assign(tileObject, rawGameMap[x][y]);
+        gameMap[x][y] = tile;
+      }
+    }
+
+    const operations = gameData.operations;
+    const activities = gameData.activities;
+    const squads = gameData.squads;
+    await this.setState({
+      gameDate,
+      player,
+      nations,
+      citizens,
+      gameMap,
+      operations,
+      activities,
+      squads,
+      gameReady: true
+    });
+  }
+  /*
+    Tile Functions
+  */
+
+  const getTileByCoordinates = (x, y) => {
+    return this.state.gameMap.flat().find(tile => tile.x === x && tile.y === y);
+  }
   /**
    * Retrieve a tile from the map by its ID
    * @param {String} tileID - the string id of the tile to retrieve
@@ -42,6 +121,165 @@ const GameDataProvider = ({ children, gameData }) => {
   const getSelectedTile = () => {
     return gameState.selectedTile;
   };
+
+  /*
+    Citizen/Agent Functions
+  */
+
+  const selectAgent=(agent) => {
+    await this.setState({
+      selectedAgent: { agentData: agent }
+    });
+  }
+
+  const getRandomCitizensOnTile = (tile, amount) => {
+    const possibleCitizens = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role === 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+
+    const chosenCitizens = [];
+
+    for (let i = 0; i < amount; i++) {
+      const chosenCitizenIndex = getRandomIntInclusive(
+        0,
+        possibleCitizens.length - 1
+      );
+      chosenCitizens.push(possibleCitizens[chosenCitizenIndex]);
+      possibleCitizens.splice(chosenCitizenIndex, 1);
+    }
+    return chosenCitizens;
+  }
+
+  /**
+   * Convert a tile citizen to an agent of the nation controlling the tile
+   */
+  const convertTileCitizenToAgent = async (tile) => {
+    const nonAgents = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.role === 0 &&
+        citizen.currentPosition.x === tile.x &&
+        citizen.currentPosition.y === tile.y
+    );
+    const chosenCitizen =
+      nonAgents[getRandomIntInclusive(0, nonAgents.length - 1)];
+    chosenCitizen.role = 1;
+    await setState({
+      citizens: { ...this.state.citizens, [chosenCitizen.id]: chosenCitizen }
+    });
+  }
+  /**
+   * Returns all agents belonging to a supplied Nation (by ID).
+   *
+   * If a role is supplied, return agents that also match that role,
+   * otherwise, return all agents.
+   * @param {Object} citizensMap - a map of all citizens (!!! this should reference the state directly)
+   * @param {string} nationId - The id of the nation who's agents to retrieve
+   * @param {string} role - The role of the agents to retrive
+   */
+  const getAgents = (nationId, role) => {
+    const allAgents = Object.values(this.state.citizens).filter(
+      citizen => citizen.nationId === nationId && citizen.role > 0
+    );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
+  }
+
+  const getAgentsOnTile =(nationId, tile, role) => {
+    const allAgents = Object.values(this.state.citizens).filter(
+      citizen =>
+        citizen.nationId === nationId &&
+        citizen.role > 0 &&
+        citizen.currentPosition.x === tile.tile.x &&
+        citizen.currentPosition.y === tile.tile.y
+    );
+    if (!role) {
+      return allAgents;
+    } else {
+      return allAgents.filter(agent => agent.role === role);
+    }
+  }
+
+  const setAgentActivity = (agentId, activity) => {
+    const activities = Object.assign({}, this.state.activities);
+    if (!activities[activity]) activities[activity] = [];
+    activities[activity].push(agentId);
+    return this.setState({ activities });
+  }
+
+  const clearAgentActivity = (agentId) => {
+    const activities = Object.assign({}, this.state.activities);
+
+    for (let activity in activities) {
+      const agentIndex = activities[activity].findIndex(
+        agent => (agent.id = agentId)
+      );
+      if (agentIndex) {
+        activities[activities].splice(agentIndex, 1);
+      }
+    }
+    this.setState({
+      activities
+    });
+  }
+
+  const getAgentActivity = (agentId) => {
+    const activities = Object.assign({}, this.state.activities);
+    let act = "";
+    for (let activity in activities) {
+      const agentIndex = activities[activity].findIndex(
+        agent => agent === agentId
+      );
+      if (agentIndex !== -1) act = activity;
+    }
+    if (act) return activityTypes[act].name;
+    return null;
+  }
+
+  /**
+   * Return agents that are busy because they are engaged in activities
+   * or in squads that are queued for an operation
+   * @returns An array containing the ids of all busy agents
+   */
+  const getBusyAgents = () => {
+    let busyAgents = [];
+    this.state.operations.forEach(operation => {
+      operation.squads.forEach(squad => {
+        busyAgents = busyAgents.concat(squad.members);
+      });
+    });
+
+    for (let activity in this.state.activities) {
+      busyAgents = busyAgents.concat(this.state.activities[activity]);
+    }
+    return busyAgents;
+  }
+
+  /*
+    Date Functions
+  */
+  const getFormattedDate=() => {
+    return this.state.gameDate.format("dddd, MMMM Do YYYY");
+  }
+
+  const advanceDay = () => {
+    const gameDate = this.state.gameDate.add(1, "days");
+    this.setState({
+      gameDate
+    });
+  }
+
+   const selectSquad = (squad) =>{
+    this.setState({
+      selectedSquad: { squadData: squad }
+    });
+  }
+
   /**
    * Create a new citizen -- This does not set nation.
    * @param {number} x - position x at which to spawn the citizen
@@ -135,8 +373,11 @@ const GameDataProvider = ({ children, gameData }) => {
     delete squads[squadId];
 
     setGameState({ ...gameState, citizens, squads });
-  };
 
+  }
+  const getCitizens = () => {
+    return this.state.citizens;
+  }
   /**
    * Returns the Player's empire.
    */
@@ -305,19 +546,18 @@ const GameDataProvider = ({ children, gameData }) => {
 
       return accumulator;
     }, {});
-    console.log(squads);
     return squads;
   };
 
   /**
    * Add a new operation to the execution list
-   * @param {*} operationType
+   * @param {*} gameEventData
    * @param {*} squads
    * @param {*} targetTile
    */
-  const addOperation = (operationType, squads, targetTile) => {
+  const addOperation = (gameEventData, squads, targetTile) => {
     let targetTileId = "";
-    switch (operationType.targetType) {
+    switch (gameEventData.targetType) {
       case "selected-tile":
         targetTileId = gameState.selectedTile.tile.id;
         break;
@@ -325,12 +565,13 @@ const GameDataProvider = ({ children, gameData }) => {
       default:
         targetTileId = targetTile.tile.id;
         break;
-    }
+     }
 
     const operation = {
       squads,
       operationType,
       targetTileId,
+      gameEventData,
     };
     const newOperation = new Operation(operation);
     const operations = gameState.operations.slice(0);
@@ -384,6 +625,13 @@ const GameDataProvider = ({ children, gameData }) => {
     );
   };
 
+  const getNationTiles = (nationId) => {
+    return this.state.gameMap.flat().filter(tile => tile.nationId === nationId);
+  }
+  const getRandomNationTile = (nationId) => {
+    const nationTiles = this.getNationTiles(nationId);
+    return nationTiles[getRandomIntInclusive(0, nationTiles.length - 1)];
+  }
   /**
    * Set a tile as the one currently selected (or set it null)
    * @param {object} selectedTile - The tile to set, or null to unset
@@ -422,10 +670,76 @@ const GameDataProvider = ({ children, gameData }) => {
     setGameState({ ...gameState, currentScreen });
   };
 
+  const generateIncidents = () => {
+    const options = Object.keys(incidentTypes);
+    const incident = options[getRandomIntInclusive(0, options.length - 1)];
+    console.log(incidentTypes[incident]);
+  }
+
   const waitAndExecuteOperations = async () => {
-    await setGameState({
-      ...gameState,
-      currentScreen: "operation-resolution",
+    const incidentRoll = this.state.incidentShuffle.next();
+    const incidents = this.state.incidents;
+    incidents.push(incidentTypes[incidentRoll]);
+    // if (this.state.operations.le)
+    this.executeActivities();
+    await this.setState({
+      currentScreen: "turn-resolution",
+      incidents: [...this.state.incidents]
+    });
+    // this.generateIncidents();
+    await this.advanceDay();
+    if (this.state.gameDate.date() === 1) {
+      // handle monthly expenses here
+      console.log("first of the month");
+    }
+  }
+
+  const executeActivities = async () => {
+    function getActivityReward(activityType, agent) {
+      //TODO: Change this to a shufflebag maybe
+      const isConsequence = getRandomIntInclusive(0, 10) > 8 ? true : false;
+      let reward = 0;
+      if (isConsequence) {
+        const incidentData = incidentTypes[activityType.consequenceIncident];
+        const incident = {
+          name: incidentData.name,
+          agent,
+          gameEventData: incidentData
+        };
+        return { reward, rewardType: activityType.effect, incident };
+      } else {
+        reward = getRandomIntInclusive(activityType.min, activityType.max);
+        return { reward, rewardType: activityType.effect, incident: null };
+      }
+    }
+    const rewards = {};
+    const incidents = [];
+    for (let activityType in this.state.activities) {
+      // For now, just get the rewards for each member
+      // ! In the future, there should be a 'fail' chance before reward (and possible none if failure occurs)
+      this.state.activities[activityType].forEach(citizenId => {
+        const agent = this.state.citizens[citizenId];
+        const { reward, rewardType, incident } = getActivityReward(
+          activityTypes[activityType],
+          agent
+        );
+        if (!incident) {
+          if (!rewards[rewardType]) {
+            rewards[rewardType] = reward;
+          } else {
+            rewards[rewardType] += reward;
+          }
+        } else {
+          incidents.push(incident);
+        }
+      });
+    }
+    const evilEmpire = this.getEvilEmpire();
+    if (rewards["0"]) evilEmpire.nationalControl += rewards[0];
+    if (rewards["1"]) evilEmpire.cash += rewards[1];
+    await this.setState({
+      nations: { ...this.state.nations, [evilEmpire.id]: evilEmpire },
+      activityConsequences: incidents
     });
   };
 
@@ -440,7 +754,58 @@ const GameDataProvider = ({ children, gameData }) => {
     );
     if (enemies.length === 0) return false;
     return enemies[getRandomIntInclusive(0, enemies.length - 1)];
-  };
+  }
+
+  const getEnemyCombatantDomestic = (combatantList, attackerRole) => {
+    const enemies = combatantList.filter(agent =>
+      attackerRole === 0 ? agent.role > 0 : agent.role === 0 && agent.alive
+    );
+    if (enemies.length === 0) return false;
+    return enemies[getRandomIntInclusive(0, enemies.length - 1)];
+  }
+
+  const  damageAgent = async (agentId, min, max) =>{
+    const agent = this.state.citizens[agentId];
+    agent.currentHealth -= getRandomIntInclusive(min, max);
+    await this.setState({
+      citizens: { ...this.state.citizens, [agentId]: agent }
+    });
+  }
+
+  /**
+   *
+   * @param {*} tile
+   * @param {Array} attackers
+   * @param {Array} defenders
+   */
+  const doCombat = (attackers, defenders, domestic = false) => {
+    const combatants = attackers.concat(defenders);
+    const citizens = Object.assign({}, this.state.citizens);
+    const combatLog = [];
+    combatants.forEach(combatant => {
+      if (combatant.alive) {
+        const target = domestic
+          ? this.getEnemyCombatantDomestic(combatants, combatant.role)
+          : this.getEnemyCombatant(combatants, combatant.nationId);
+        if (target) {
+          target.currentHealth -= combatant.strength;
+          if (target.currentHealth <= 0) {
+            target.alive = false;
+          }
+          const combatLogString = `${combatant.name} attacks ${target.name}`;
+          console.log(combatLog);
+
+          citizens[target.id] = target;
+          combatLog.push(combatLogString);
+        }
+      }
+    });
+    this.setState({
+      citizens
+    });
+    return combatLog;
+  }
+
   /**
    * Execute tile combat between the EoE and other nations
    * @param {*} tile
@@ -491,6 +856,12 @@ const GameDataProvider = ({ children, gameData }) => {
   const clearOperations = () => {
     gameState.operations = [];
   };
+
+  const clearIncidents = ()=> {
+    this.setState({
+      incidents: []
+    });
+  }
 
   const changeTileOwner = (tile, newOwnerId) => {
     tile.setNationId(newOwnerId);
@@ -600,6 +971,6 @@ const GameDataProvider = ({ children, gameData }) => {
       {children}
     </Provider>
   );
-};
+}
 
 export { GameDataContext, GameDataProvider };

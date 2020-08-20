@@ -1,14 +1,15 @@
 import React, { Component, useState, useCallback, useContext } from "react";
-import WorldMap from "../WorldMap";
-import CommandBar from "../CommandBar";
-import Agents from "../Agents";
-import Modal from "../Modal";
-import Operation from "../Operation";
-import { operationTypes } from "../../data/operation";
-import FormSquad from "../FormSquad";
-import SelectedTile from "../SelectedTile";
-import Squads from "../Squads";
 import { GameDataContext } from "../../context/GameDataContext";
+import {
+  WorldMap,
+  CommandBar,
+  FormSquad,
+  SelectedTile,
+  Operation,
+} from "../SpecialUse/index";
+import { Agents, Squads } from "../TileGroups/index";
+import { Modal } from "../GeneralUse";
+import { operationTypes } from "../../data/gameEvents/operation";
 
 /**
  * This is the primary screen component for EoE. It's used
@@ -42,7 +43,7 @@ const Main = () => {
             <p>Current Operations</p>
             {gameDataContext.gameState.operations.map((operation) => (
               <div>
-                <p>{operation.operationType.name}</p>
+                <p>{operation.gameEventData.name}</p>
               </div>
             ))}
           </div>

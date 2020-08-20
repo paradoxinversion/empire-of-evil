@@ -1,10 +1,10 @@
 //operation target types
 // selected-tile (target is the currently selected tile)
 
-const operationTypes = {
+export const operationTypes = {
   move: {
     name: "Move",
-    operationType: "move",
+    eventType: "move",
     description: "Move squads from the current tile to a new adjacent tile.",
     // no limits for squads/membership
     squadMemberLimit: null,
@@ -14,7 +14,7 @@ const operationTypes = {
   },
   scout: {
     name: "Scout",
-    operationType: "scout",
+    eventType: "scout",
     description:
       "Scout the area to get a more accurate count of defenses and possibilities.",
     squadMemberLimit: 4,
@@ -23,7 +23,7 @@ const operationTypes = {
   },
   attack: {
     name: "Attack",
-    operationType: "attack",
+    eventType: "attack",
     description: "Attack the current tile.",
     squadMemberLimit: null,
     maxSquads: null,
@@ -32,7 +32,7 @@ const operationTypes = {
   },
   takeover: {
     name: "Take Over",
-    operationType: "takeover",
+    eventType: "takeover",
     description: "Secure the current tile for the EVIL empire",
     squadMemberLimit: null,
     maxSquads: null,
@@ -41,18 +41,13 @@ const operationTypes = {
   }
 };
 
-const { getUID } = require("../utilities");
+const { getUID } = require("../../utilities");
 
-class Operation {
-  constructor({ squads, operationType, targetTileId }) {
+export class Operation {
+  constructor({ squads, gameEventData, targetTileId }) {
     this.id = getUID();
     this.squads = squads;
-    this.operationType = operationType;
+    this.gameEventData = gameEventData;
     this.targetTileId = targetTileId;
   }
 }
-
-module.exports = {
-  Operation,
-  operationTypes
-};

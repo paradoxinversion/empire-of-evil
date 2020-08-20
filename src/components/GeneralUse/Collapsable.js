@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 class Collapsable extends React.Component {
   state = {
@@ -14,14 +14,12 @@ class Collapsable extends React.Component {
       <div
         className={`collapsable flex flex-col${
           this.props.width ? ` w-${this.props.width}` : ""
-        }`}
-      >
+        }`}>
         <p
           className="bg-black text-white"
           onClick={() => {
             this.toggleCollapsedState();
-          }}
-        >
+          }}>
           {this.props.title}
         </p>
         {!this.state.collapsed && this.props.children}

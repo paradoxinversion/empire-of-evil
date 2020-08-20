@@ -5,7 +5,7 @@ const CommandBar = () => {
   const gameDataContext = useContext(GameDataContext);
   return (
     <div id="command-bar" className="mb-2">
-      <span className="mr-4">Wed, Nov 1, 2000</span>
+      <span className="mr-4">{gameManager.getFormattedDate()}</span>
       <button
         className="border px-1 mr-2 rounded"
         onClick={() => gameDataContext.waitAndExecuteOperations()}
@@ -24,6 +24,7 @@ const CommandBar = () => {
       >
         Agents
       </button>
+      <button onClick={() => gameManager.saveGame()}>Save Game</button>
     </div>
   );
 };

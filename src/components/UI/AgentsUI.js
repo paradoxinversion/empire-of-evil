@@ -1,5 +1,5 @@
 import React, { Component, useContext } from "react";
-import Agents from "../Agents";
+import { Agents } from "../TileGroups/index";
 import { GameDataContext } from "../../context/GameDataContext";
 
 const AgentsUI = (props) => {
@@ -8,9 +8,13 @@ const AgentsUI = (props) => {
     <React.Fragment>
       <button onClick={() => gameDataContext.setScreen("main")}>Back</button>
       <h1> AgentsUI </h1>
-      <Agents />
+      <Agents gameManager={gameManager} />
     </React.Fragment>
   );
+};
+
+AgentsUI.propTypes = {
+  gameManager: PropTypes.object,
 };
 
 export default AgentsUI;

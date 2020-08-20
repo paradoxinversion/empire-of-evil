@@ -1,7 +1,6 @@
 import React, { useEffect, useContext } from "react";
-import Modal from "../../Modal";
 import { GameDataContext } from "../../../context/GameDataContext";
-
+import { Modal } from "../../GeneralUse/index";
 const AttackOperation = ({ operationData, next }) => {
   const gameDataContext = useContext(GameDataContext);
   useEffect(() => {

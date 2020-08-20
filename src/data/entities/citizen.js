@@ -1,7 +1,7 @@
 const { getUID } = require("../../utilities");
 
 /**
- *
+ * Dead citizens (ie, alive = false) are considered to be 'in the morgue'.
  * @param {Object} param0 - Agent Parameters
  * @param {string} param0.name - Agent name
  * @param {number} param0.strength - Agent strength
@@ -37,6 +37,7 @@ class Citizen {
       y
     };
     this.experiencePoints = 0;
+    this.conviction = 0;
   }
 
   setNationId(id) {
