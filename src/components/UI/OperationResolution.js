@@ -6,7 +6,7 @@ import {
   MoveOperation,
   AttackOperation,
   TakeOverOperation,
-} from "./OperationResolution/index";
+} from "./TurnResolution/index";
 import { GameDataContext } from "../../context/GameDataContext";
 const resolutionTypes = {
   move: MoveOperation,

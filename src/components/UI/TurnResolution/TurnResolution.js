@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import {
   MoveOperation,
   AttackOperation,
   TakeOverOperation,
   NoOperations,
-  Incident
+  Incident,
 } from "./index";
 
 import gameEvent from "../../../data/gameEvents/gameEvent";
+import { GameDataContext } from "../../../context/GameDataContext";
 
 const resolutionTypes = {
   move: MoveOperation,
@@ -17,43 +18,44 @@ const resolutionTypes = {
   combat: Incident,
   damage: Incident,
   "gain-agent": Incident,
-  "damage-agent": Incident
+  "damage-agent": Incident,
 };
 
-const TurnResolution = ({ gameManager }) => {
-  const activityConsequences = gameManager.state.activityConsequences;
-  const operations = gameManager.state.operations;
-  const incidents = gameManager.state.incidents;
+const TurnResolution = () => {
+  const gameDataContext = useContext(GameDataContext);
+  const activityConsequences = gameDataContext.gameState.activityConsequences;
+  const operations = gameDataContext.gameState.operations;
+  const incidents = gameDataContext.gameState.incidents;
   const gameEvents = [];
-  activityConsequences.forEach(activityConsequence => {
+  activityConsequences.forEach((activityConsequence) => {
     if (activityConsequence.gameEventData.eventType !== "no-effect") {
       const gameEventData = {
         gameEventData: activityConsequence.gameEventData,
         targetTileId: activityConsequence.targetTileId,
         squads: activityConsequence.squads,
-        target: activityConsequence.agent
+        target: activityConsequence.agent,
       };
       const newGameEvent = new gameEvent(gameEventData);
       gameEvents.push(newGameEvent);
     }
   });
 
-  operations.forEach(operation => {
+  operations.forEach((operation) => {
     if (operation.gameEventData.eventType !== "no-effect") {
       const gameEventData = {
         gameEventData: operation.gameEventData,
         targetTileId: operation.targetTileId,
-        squads: operation.squads
+        squads: operation.squads,
       };
       const newGameEvent = new gameEvent(gameEventData);
       gameEvents.push(newGameEvent);
     }
   });
 
-  incidents.forEach(incident => {
+  incidents.forEach((incident) => {
     if (incident.eventType !== "none") {
       const gameEventData = {
-        gameEventData: incident
+        gameEventData: incident,
       };
       const newGameEvent = new gameEvent(gameEventData);
       gameEvents.push(newGameEvent);
@@ -71,15 +73,14 @@ const TurnResolution = ({ gameManager }) => {
         setCurrentGameEventIndex(currentGameEventIndex + 1);
       } else {
         // if this is the last operation, go back to the main screen
-        gameManager.setScreen("main");
-        gameManager.clearOperations();
-        gameManager.clearIncidents();
+        gameDataContext.setScreen("main");
+        gameDataContext.clearOperations();
+        gameDataContext.clearIncidents();
         // ! DO THIS NEXT
       }
     };
     return (
       <ResolutionComponent
-        gameManager={gameManager}
         operationData={currentGameEvent}
         currentGameEvent={currentGameEvent}
         next={next}
@@ -89,9 +90,8 @@ const TurnResolution = ({ gameManager }) => {
     //TODO: Return a resolution component that says you executed no missions
     return (
       <NoOperations
-        gameManager={gameManager}
         next={() => {
-          gameManager.setScreen("main");
+          gameDataContext.setScreen("main");
         }}
       />
     );

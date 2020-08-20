@@ -1,36 +1,36 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Collapsable } from "../GeneralUse/index";
 import { Squad } from "../Tiles/index";
 import PropTypes from "prop-types";
-const Squads = ({ gameManager, showDisband }) => {
+import { GameDataContext } from "../../context/GameDataContext";
+const Squads = ({ showDisband }) => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <Collapsable title="EVIL Squads and Teams">
       <Collapsable title="Squads">
-        {gameManager.getSquads(gameManager.getEvilEmpire().id, 0).map(squad => (
-          <Squad
-            key={`squads-${squad.id}`}
-            squad={squad}
-            showDisband={showDisband}
-            gameManager={gameManager}
-          />
-        ))}
+        {gameDataContext
+          .getSquads(gameDataContext.getEvilEmpire().id, 0)
+          .map((squad) => (
+            <Squad
+              key={`squads-${squad.id}`}
+              squad={squad}
+              showDisband={showDisband}
+            />
+          ))}
       </Collapsable>
       <Collapsable title="Research Teams">
-        {gameManager.getSquads(gameManager.getEvilEmpire().id, 1).map(squad => (
-          <Squad
-            squad={squad}
-            showDisband={showDisband}
-            gameManager={gameManager}
-          />
-        ))}
+        {gameDataContext
+          .getSquads(gameDataContext.getEvilEmpire().id, 1)
+          .map((squad) => (
+            <Squad squad={squad} showDisband={showDisband} />
+          ))}
       </Collapsable>
     </Collapsable>
   );
 };
 
 Squads.propTypes = {
-  gameManager: PropTypes.object.isRequired,
-  showDisband: PropTypes.bool
+  showDisband: PropTypes.bool,
 };
 
 export default Squads;

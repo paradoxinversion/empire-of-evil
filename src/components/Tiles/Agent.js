@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { GameDataContext } from "../context/GameDataContext";
+import { GameDataContext } from "../../context/GameDataContext";
 
 const Agent = ({ agent, border }) => {
   const gameDataContext = useContext(GameDataContext);
@@ -7,9 +7,10 @@ const Agent = ({ agent, border }) => {
     <div
       className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}
       onClick={() => {
-        gameManager.selectAgent(agent);
-        gameManager.setScreen("profile-agent");
-      }}>
+        gameDataContext.selectAgent(agent);
+        gameDataContext.setScreen("profile-agent");
+      }}
+    >
       <p className="mr-4">
         <strong>{agent.name}</strong>
       </p>{" "}

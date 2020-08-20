@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import store from "store";
-const Title = ({ gameManager }) => {
+import { GameDataContext } from "../../context/GameDataContext";
+const Title = () => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <div>
       <p>Empire of Evil</p>
@@ -8,17 +10,19 @@ const Title = ({ gameManager }) => {
       <button
         className="btn"
         onClick={async () => {
-          await gameManager.setUpGame();
-          gameManager.setScreen("main");
-        }}>
+          await gameDataContext.setUpGame();
+          gameDataContext.setScreen("main");
+        }}
+      >
         New Game
       </button>
       {store.get("eoe-gamedata") && (
         <button
           onClick={async () => {
-            await gameManager.loadGame();
-            gameManager.setScreen("main");
-          }}>
+            await gameDataContext.loadGame();
+            gameDataContext.setScreen("main");
+          }}
+        >
           Load Game
         </button>
       )}

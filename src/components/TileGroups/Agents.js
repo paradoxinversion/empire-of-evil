@@ -1,28 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Collapsable } from "../GeneralUse/index";
-import GameManager from "../../containers/GameManager";
 import connect from "unstated-connect";
 import { Agent } from "../Tiles";
 import PropTypes from "prop-types";
-const Agents = ({ gameManager }) => {
+import { GameDataContext } from "../../context/GameDataContext";
+const Agents = () => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <Collapsable title="EVIL Agents">
       <div className="h-64 overflow-y-scroll">
-        {gameManager.state.player.evilEmpire &&
-          gameManager
+        {gameDataContext.gameState.player.evilEmpire &&
+          gameDataContext
             .getEvilAgents(1)
-            .map(agent => (
-              <Agent
-                key={`agent-${agent.id}`}
-                agent={agent}
-                gameManager={gameManager}
-              />
-            ))}
+            .map((agent) => <Agent key={`agent-${agent.id}`} agent={agent} />)}
       </div>
     </Collapsable>
   );
 };
-Agents.propTypes = {
-  gameManager: PropTypes.object.isRequired
-};
-export default connect([GameManager])(Agents);
+Agents.propTypes = {};
+export default Agents;

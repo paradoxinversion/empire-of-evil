@@ -1,6 +1,6 @@
 import React, { Component, useContext, useState } from "react";
 import { Collapsable } from "../GeneralUse/index";
-import { GameDataContext } from "../context/GameDataContext";
+import { GameDataContext } from "../../context/GameDataContext";
 
 const tileSize = "32px";
 const WorldMap = () => {

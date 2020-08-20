@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import { operationTypes } from "../data/operation";
-import { GameDataContext } from "../context/GameDataContext";
+import { GameDataContext } from "../../context/GameDataContext";
 import { SquadSelect } from "../GeneralUse";
 
 const Operation = ({ operation, setModalOpen }) => {

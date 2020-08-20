@@ -1,21 +1,29 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Squad } from "../Tiles/index";
+import { GameDataContext } from "../../context/GameDataContext";
 
-const Agent = ({ gameManager }) => {
-  const agent = gameManager.state.selectedAgent.agentData;
+const Agent = () => {
+  const gameDataContext = useContext(GameDataContext);
+  const [agent, setAgent] = useState(
+    gameDataContext.gameState.selectedAgent
+      ? gameDataContext.gameState.selectedAgent.agentData
+      : null
+  );
   return (
     <React.Fragment>
       <div>
         <button
           onClick={() => {
-            gameManager.setScreen("main");
-          }}>
+            gameDataContext.setScreen("main");
+          }}
+        >
           to main
         </button>
         <button
           onClick={() => {
-            gameManager.setScreen("empire-organization");
-          }}>
+            gameDataContext.setScreen("empire-organization");
+          }}
+        >
           empire organization
         </button>
       </div>
@@ -33,16 +41,13 @@ const Agent = ({ gameManager }) => {
         </div>
         <div>
           <p>
-            {gameManager.getAgentActivity(agent.id)
-              ? gameManager.getAgentActivity(agent.id)
+            {gameDataContext.getAgentActivity(agent.id)
+              ? gameDataContext.getAgentActivity(agent.id)
               : "No Activity"}
           </p>
           <p>Squad</p>
           {agent.squadId !== -1 ? (
-            <Squad
-              squad={gameManager.state.squads[agent.squadId]}
-              gameManager={gameManager}
-            />
+            <Squad squad={gameDataContext.gameState.squads[agent.squadId]} />
           ) : (
             <p>Not in a squad</p>
           )}

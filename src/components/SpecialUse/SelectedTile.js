@@ -1,91 +1,100 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Collapsable } from "../GeneralUse/index";
 import { Squad, Agent } from "../Tiles/index";
 import PropTypes from "prop-types";
-const SelectedTile = ({ gameManager, setModal }) => {
+import { GameDataContext } from "../../context/GameDataContext";
+const SelectedTile = ({ setModal }) => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <div className="flex flex-grow px-4">
-      {gameManager.state.selectedTile ? (
+      {gameDataContext.gameState.selectedTile ? (
         <React.Fragment>
           <div className="w-2/5">
             <h2>
               <strong>Selected Tile</strong>
             </h2>
             <p>
-              Coordinates: {gameManager.state.selectedTile.tile.x},
-              {gameManager.state.selectedTile.tile.y}
+              Coordinates: {gameDataContext.gameState.selectedTile.tile.x},
+              {gameDataContext.gameState.selectedTile.tile.y}
             </p>
             <p>
               Nation:{" "}
               {
-                gameManager.state.nations[
-                  gameManager.state.selectedTile.tile.nationId
+                gameDataContext.gameState.nations[
+                  gameDataContext.gameState.selectedTile.tile.nationId
                 ].name
               }{" "}
             </p>
             <div id="tile-recon">
               <strong>Reconnaissance</strong>
-              <p>Citizens: {gameManager.state.selectedTile.citizens.length}</p>
+              <p>
+                Citizens:{" "}
+                {gameDataContext.gameState.selectedTile.citizens.length}
+              </p>
             </div>
             <div id="tile-actions">
               <p>
                 <strong>Actions</strong>
               </p>
-              {gameManager.state.selectedTile.tile.nationId ===
-                gameManager.getEvilEmpire().id &&
-                gameManager.getSquadlessAgentsOnTile(
-                  gameManager.getEvilEmpire().id,
+              {gameDataContext.gameState.selectedTile.tile.nationId ===
+                gameDataContext.getEvilEmpire().id &&
+                gameDataContext.getSquadlessAgentsOnTile(
+                  gameDataContext.getEvilEmpire().id,
 
-                  gameManager.state.selectedTile
+                  gameDataContext.gameState.selectedTile
                 ) && (
                   <button
                     className="border rounded"
                     onClick={() => {
                       setModal({
-                        modalType: "form-squad"
+                        modalType: "form-squad",
                       });
-                    }}>
+                    }}
+                  >
                     Form Squad/Team Here
                   </button>
                 )}
 
-              {Object.values(gameManager.state.selectedTile.adjacentSquads).map(
-                (adjacentSquads, index) => (
-                  <Collapsable
-                    key={`adjacent-squads-${index}`}
-                    title="Adjacent Squads">
-                    {adjacentSquads.map(squad => (
-                      <Collapsable
-                        key={`adjacent-squads-${index}-${squad.id}`}
-                        title={squad.name}>
-                        <Squad squad={squad} gameManager={gameManager} />
-                        <div id={`${squad.name}-actions`} className="px-1">
-                          {Object.keys(
-                            gameManager.getOccupiedSquads()
-                          ).includes(squad.id) === false && (
-                            <button
-                              onClick={() => {
-                                setModal({
-                                  modalType: "operation",
-                                  operationType: "move"
-                                });
-                              }}>
-                              Move Squad
-                            </button>
-                          )}
-                        </div>
-                      </Collapsable>
-                    ))}
-                  </Collapsable>
-                )
-              )}
+              {Object.values(
+                gameDataContext.gameState.selectedTile.adjacentSquads
+              ).map((adjacentSquads, index) => (
+                <Collapsable
+                  key={`adjacent-squads-${index}`}
+                  title="Adjacent Squads"
+                >
+                  {adjacentSquads.map((squad) => (
+                    <Collapsable
+                      key={`adjacent-squads-${index}-${squad.id}`}
+                      title={squad.name}
+                    >
+                      <Squad squad={squad} gameDataContext={gameDataContext} />
+                      <div id={`${squad.name}-actions`} className="px-1">
+                        {Object.keys(
+                          gameDataContext.getOccupiedSquads()
+                        ).includes(squad.id) === false && (
+                          <button
+                            onClick={() => {
+                              setModal({
+                                modalType: "operation",
+                                operationType: "move",
+                              });
+                            }}
+                          >
+                            Move Squad
+                          </button>
+                        )}
+                      </div>
+                    </Collapsable>
+                  ))}
+                </Collapsable>
+              ))}
 
-              {gameManager.getCPUAgentsOnTile(
-                gameManager.state.selectedTile.tile
+              {gameDataContext.getCPUAgentsOnTile(
+                gameDataContext.gameState.selectedTile.tile
               ).length > 0 &&
-                gameManager.getSquadsOnTile(
-                  gameManager.getEvilEmpire().id,
-                  gameManager.state.selectedTile.tile
+                gameDataContext.getSquadsOnTile(
+                  gameDataContext.getEvilEmpire().id,
+                  gameDataContext.gameState.selectedTile.tile
                 ).length > 0 && (
                   <div>
                     <button
@@ -93,9 +102,10 @@ const SelectedTile = ({ gameManager, setModal }) => {
                       onClick={() => {
                         setModal({
                           modalType: "operation",
-                          operationType: "takeover"
+                          operationType: "takeover",
                         });
-                      }}>
+                      }}
+                    >
                       take over
                     </button>
                   </div>
@@ -105,45 +115,47 @@ const SelectedTile = ({ gameManager, setModal }) => {
 
           <div id="tile-agents-squads" className="w-3/5">
             <Collapsable title="EVIL Agents Here">
-              {gameManager
+              {gameDataContext
                 .getAgentsOnTile(
-                  gameManager.getEvilEmpire().id,
-                  gameManager.getSelectedTile()
+                  gameDataContext.getEvilEmpire().id,
+                  gameDataContext.getSelectedTile()
                 )
-                .map(agent => (
+                .map((agent) => (
                   <Agent
                     key={`evil-agents-tile-${agent.id}`}
                     agent={agent}
-                    gameManager={gameManager}
+                    gameDataContext={gameDataContext}
                   />
                 ))}
             </Collapsable>
             <Collapsable title="Tile Squads">
-              {gameManager
+              {gameDataContext
                 .getSquadsOnTile(
-                  gameManager.getEvilEmpire().id,
-                  gameManager.state.selectedTile.tile
+                  gameDataContext.getEvilEmpire().id,
+                  gameDataContext.gameState.selectedTile.tile
                 )
-                .map(squad => (
+                .map((squad) => (
                   <Collapsable
                     key={`st-collapsable-squad-${squad.id}`}
-                    title={squad.name}>
-                    <Squad squad={squad} gameManager={gameManager} />
+                    title={squad.name}
+                  >
+                    <Squad squad={squad} gameDataContext={gameDataContext} />
                     <div id={`${squad.name}-actions`} className="px-1">
-                      {!Object.keys(gameManager.getOccupiedSquads()).includes(
-                        squad.id
-                      ) && (
+                      {!Object.keys(
+                        gameDataContext.getOccupiedSquads()
+                      ).includes(squad.id) && (
                         <div>
-                          {gameManager.getSelectedTile().tile.nationId !==
-                            gameManager.getEvilEmpire().id && (
+                          {gameDataContext.getSelectedTile().tile.nationId !==
+                            gameDataContext.getEvilEmpire().id && (
                             <div>
                               <button
                                 onClick={() => {
                                   setModal({
                                     modalType: "operation",
-                                    operationType: "attack"
+                                    operationType: "attack",
                                   });
-                                }}>
+                                }}
+                              >
                                 Attack
                               </button>
                             </div>
@@ -167,8 +179,7 @@ const SelectedTile = ({ gameManager, setModal }) => {
 };
 
 SelectedTile.propTypes = {
-  gameManager: PropTypes.object.isRequired,
-  setModal: PropTypes.func
+  setModal: PropTypes.func,
 };
 
 export default SelectedTile;

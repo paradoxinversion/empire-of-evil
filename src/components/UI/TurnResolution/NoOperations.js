@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "../../GeneralUse/index";
 
-const NoOperations = ({ gameManager, next }) => {
+const NoOperations = ({ next }) => {
   return (
     <Modal>
       <div className="bg-white w-1/4 p-4">

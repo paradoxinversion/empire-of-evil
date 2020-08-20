@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 
-import FormSquad from "../FormSquad";
 import { GameDataContext } from "../../context/GameDataContext";
 import { Agents, Squads } from "../TileGroups/index";
 
@@ -62,16 +61,12 @@ const EmpireOrganizationUI = () => {
         {organizationContext === "agents" && (
           <div>
             <button>Transfer to Squad?</button>
-            <Agents gameManager={gameManager} />
+            <Agents />
           </div>
         )}
         {organizationContext === "squads" && (
           <div>
-            <Squads
-              showSquadOptions={true}
-              gameManager={gameManager}
-              showDisband={true}
-            />
+            <Squads showSquadOptions={true} showDisband={true} />
           </div>
         )}
       </div>

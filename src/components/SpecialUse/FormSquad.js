@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Agent } from "../Tiles/index";
 import Faker from "faker";
-import { GameDataContext } from "../context/GameDataContext";
+import { GameDataContext } from "../../context/GameDataContext";
 
 const FormSquad = ({ setModalOpen }) => {
   const gameDataContext = useContext(GameDataContext);
@@ -107,7 +107,7 @@ const FormSquad = ({ setModalOpen }) => {
                 .filter(
                   (agent) =>
                     !selectedAgents.includes(agent.id) &&
-                    !gameManager.getBusyAgents().includes(agent.id) &&
+                    !gameDataContext.getBusyAgents().includes(agent.id) &&
                     agent.id !== squadLeader
                 )
                 .map((agent) => (

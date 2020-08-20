@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import Squad from "./Squad";
-import { GameDataContext } from "../context/GameDataContext";
+import { GameDataContext } from "../../context/GameDataContext";
 import { Squad } from "../Tiles/index";
 
 const SquadSelect = ({ selectedSquads, setSelectedSquads }) => {

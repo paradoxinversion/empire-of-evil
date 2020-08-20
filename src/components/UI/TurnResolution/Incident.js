@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "../../GeneralUse/index";
 import PropTypes from "prop-types";
-const Incident = ({ gameManager, currentGameEvent, next }) => {
+import { GameDataContext } from "../../../context/GameDataContext";
+const Incident = ({ currentGameEvent, next }) => {
+  const gameDataContext = useContext(GameDataContext);
   const [log, setLog] = useState([]);
   useEffect(() => {
     // damage the participant
     switch (currentGameEvent.gameEventData.eventType) {
       case "damage-agent": {
-        gameManager.damageAgent(
+        gameDataContext.damageAgent(
           currentGameEvent.target.id,
           currentGameEvent.gameEventData.amount[0],
           currentGameEvent.gameEventData.amount[1]
@@ -16,21 +18,23 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         break;
       }
       case "gain-agent": {
-        gameManager.convertTileCitizenToAgent(
-          gameManager.getRandomNationTile(gameManager.getEvilEmpire().id)
+        gameDataContext.convertTileCitizenToAgent(
+          gameDataContext.getRandomNationTile(
+            gameDataContext.getEvilEmpire().id
+          )
         );
         break;
       }
       case "combat": {
-        const attackers = gameManager.getRandomCitizensOnTile(
-          gameManager.getTileByCoordinates(
+        const attackers = gameDataContext.getRandomCitizensOnTile(
+          gameDataContext.getTileByCoordinates(
             currentGameEvent.target.currentPosition.x,
             currentGameEvent.target.currentPosition.y
           ),
           3
         );
         const defenders = [currentGameEvent.target];
-        const combatLog = gameManager.doCombat(attackers, defenders, true);
+        const combatLog = gameDataContext.doCombat(attackers, defenders, true);
         setLog(combatLog);
         break;
       }
@@ -39,7 +43,7 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
         break;
       }
     }
-  }, [gameManager]);
+  }, [gameDataContext]);
   return (
     <Modal>
       <div className="bg-white w-1/4 p-4">
@@ -58,9 +62,8 @@ const Incident = ({ gameManager, currentGameEvent, next }) => {
 };
 
 Incident.propTypes = {
-  gameManager: PropTypes.object.isRequired,
   currentGameEvent: PropTypes.object.isRequired,
-  next: PropTypes.object.isRequired
+  next: PropTypes.object.isRequired,
 };
 
 export default Incident;

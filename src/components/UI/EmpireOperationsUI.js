@@ -1,14 +1,11 @@
-import React, { useContext } from "react";
-import Operation from "../Operation";
-import { operationTypes } from "../../data/operation";
+import React, { useContext, useState } from "react";
 import { GameDataContext } from "../../context/GameDataContext";
-import React, { useState } from "react";
 import { activityTypes } from "../../data/gameEvents/activity";
 import { Collapsable, Modal } from "../GeneralUse";
 import { Agent, Squad } from "../Tiles/index";
 import { SelectAgents } from "../GeneralUse/index";
 
-const EmpireOperationsUI = ({ gameDataContext }) => {
+const EmpireOperationsUI = () => {
   const gameDataContext = useContext(GameDataContext);
   const [modal, setModal] = useState(null);
   return (

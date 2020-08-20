@@ -10,6 +10,7 @@ import { AgentProfile, SquadProfile } from "./components/Profile/index";
 import "./App.css";
 import "./output.css";
 import { GameDataContext } from "./context/GameDataContext";
+import OperationResolution from "./components/UI/OperationResolution";
 // import "./output.css";
 import Title from "./components/UI/Title";
 
