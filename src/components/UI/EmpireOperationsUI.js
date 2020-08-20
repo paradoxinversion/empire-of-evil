@@ -19,7 +19,7 @@ const EmpireOperationsUI = () => {
                 setModalOpen={setModal}
                 callback={async (list) => {
                   for (let x = 0; x < list.length; x++) {
-                    await gameDataContext.setAgentActivity(
+                    gameDataContext.setAgentActivity(
                       list[x],
                       modal.activityType
                     );

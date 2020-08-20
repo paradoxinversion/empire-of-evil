@@ -7,8 +7,7 @@ const Agent = ({ agent, border }) => {
     <div
       className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}
       onClick={() => {
-        gameDataContext.selectAgent(agent);
-        gameDataContext.setScreen("profile-agent");
+        gameDataContext.selectAgent(agent, true);
       }}
     >
       <p className="mr-4">

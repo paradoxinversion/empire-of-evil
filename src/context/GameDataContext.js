@@ -128,9 +128,12 @@ const GameDataProvider = ({ children, gameData }) => {
     Citizen/Agent Functions
   */
 
-  const selectAgent = async (agent) => {
+  const selectAgent = async (agent, openAgentProfile) => {
     setGameState({
       ...gameState,
+      currentScreen: openAgentProfile
+        ? "profile-agent"
+        : gameState.currentScreen,
       selectedAgent: { agentData: agent },
     });
   };
@@ -194,7 +197,7 @@ const GameDataProvider = ({ children, gameData }) => {
     const activities = Object.assign({}, gameState.activities);
     if (!activities[activity]) activities[activity] = [];
     activities[activity].push(agentId);
-    setGameState(...gameState, { activities });
+    setGameState({ ...gameState, activities });
     return activities;
   };
 
@@ -672,6 +675,7 @@ const GameDataProvider = ({ children, gameData }) => {
   };
 
   const waitAndExecuteOperations = async () => {
+    debugger;
     const incidentRoll = gameState.incidentShuffle.next();
     const incidents = gameState.incidents;
     incidents.push(incidentTypes[incidentRoll]);
@@ -972,6 +976,9 @@ const GameDataProvider = ({ children, gameData }) => {
         getAgentsOnTile,
         getBusyAgents,
         selectAgent,
+        getAgentActivity,
+        setAgentActivity,
+        waitAndExecuteOperations,
       }}
     >
       {children}
