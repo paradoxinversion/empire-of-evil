@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Agent from "./Agent";
 import Faker from "faker";
+import { GameDataContext } from "../context/GameDataContext";
 
-const FormSquad = ({ gameManager, setModalOpen }) => {
+const FormSquad = ({ setModalOpen }) => {
+  const gameDataContext = useContext(GameDataContext);
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [squadLeader, setSquadLeader] = useState(null);
   const color = Faker.commerce.color();
   const word = Faker.random.word();
   const [squadName, setSquadName] = useState(
-    `${color[0].toUpperCase() + color.slice(1)} ${word[0].toUpperCase() +
-      word.slice(1)}`
+    `${color[0].toUpperCase() + color.slice(1)} ${
+      word[0].toUpperCase() + word.slice(1)
+    }`
   );
   const [squadtype, setSquadType] = useState("");
   return (
@@ -27,7 +30,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             className="border border-grey-400"
             type="text"
             value={squadName}
-            onChange={e => setSquadName(e.target.value)}
+            onChange={(e) => setSquadName(e.target.value)}
             required
           />
         </div>
@@ -39,7 +42,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             id="form-squad-type"
             className="border border-gray-400"
             value={squadtype}
-            onChange={e => setSquadType(e.target.value)}
+            onChange={(e) => setSquadType(e.target.value)}
           >
             <option value="">Select Type</option>
             <option value={0}>Soldier Squad</option>
@@ -56,20 +59,20 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
               <select
                 id="form-squad-leader"
                 className="border border-gray-400"
-                onChange={e => {
+                onChange={(e) => {
                   setSquadLeader(e.target.value);
                   setSelectedAgent(null);
                 }}
               >
                 <option value="">Select a Leader</option>
-                {gameManager
-                  .getSquadlessAgents(gameManager.getEvilEmpire().id)
+                {gameDataContext
+                  .getSquadlessAgents(gameDataContext.getEvilEmpire().id)
                   .filter(
-                    agent =>
+                    (agent) =>
                       !selectedAgents.includes(agent.id) &&
                       agent.id !== squadLeader
                   )
-                  .map(agent => (
+                  .map((agent) => (
                     <option key={`leader-select-${agent.id}`} value={agent.id}>
                       {agent.name}
                     </option>
@@ -79,7 +82,9 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
           ) : (
             <p>
               Squad Leader is{" "}
-              <strong>{gameManager.state.citizens[squadLeader].name}</strong>
+              <strong>
+                {gameDataContext.gameState.citizens[squadLeader].name}
+              </strong>
               <button
                 className="ml-4 border px-2"
                 onClick={() => setSquadLeader(null)}
@@ -93,18 +98,18 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
         <div id="form-squad-members">
           <div className="flex">
             <div className="border w-1/2 p-2">
-              {gameManager
+              {gameDataContext
                 .getSquadlessAgentsOnTile(
-                  gameManager.getEvilEmpire().id,
+                  gameDataContext.getEvilEmpire().id,
 
-                  gameManager.state.selectedTile
+                  gameDataContext.gameState.selectedTile
                 )
                 .filter(
-                  agent =>
+                  (agent) =>
                     !selectedAgents.includes(agent.id) &&
                     agent.id !== squadLeader
                 )
-                .map(agent => (
+                .map((agent) => (
                   <div
                     key={`agent-select-add-${agent.id}`}
                     className="hover:bg-gray-300"
@@ -119,7 +124,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             <div className="flex flex-col justify-center">
               <button
                 className="border p-1 mx-2 mb-4"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   const selectedMembers = selectedAgents.slice(0);
                   selectedMembers.push(selectedAgent.id);
@@ -131,7 +136,7 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
               </button>
               <button
                 className="border p-1 mx-2"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   const selectedMembers = selectedAgents.slice(0);
                   // get the member index
@@ -145,15 +150,17 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
               </button>
             </div>
             <div className="border w-1/2 p-2">
-              {selectedAgents.map(agentId => (
+              {selectedAgents.map((agentId) => (
                 <div
                   key={`agent-select-remove-${agentId}`}
                   className="hover:bg-gray-300"
                   onClick={() => {
-                    setSelectedAgent(gameManager.state.citizens[agentId]);
+                    setSelectedAgent(
+                      gameDataContext.gameState.citizens[agentId]
+                    );
                   }}
                 >
-                  {gameManager.state.citizens[agentId].name}
+                  {gameDataContext.gameState.citizens[agentId].name}
                 </div>
               ))}
             </div>
@@ -165,11 +172,12 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
               {selectedAgents.length > 0 || squadLeader
                 ? selectedAgents.reduce((accumulator, agentId) => {
                     return (
-                      accumulator + gameManager.state.citizens[agentId].strength
+                      accumulator +
+                      gameDataContext.gameState.citizens[agentId].strength
                     );
                   }, 0) +
                   (squadLeader
-                    ? gameManager.state.citizens[squadLeader].strength
+                    ? gameDataContext.gameState.citizens[squadLeader].strength
                     : 0)
                 : 0}
             </span>
@@ -179,11 +187,12 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
                 ? selectedAgents.reduce((accumulator, agentId) => {
                     return (
                       accumulator +
-                      gameManager.state.citizens[agentId].intelligence
+                      gameDataContext.gameState.citizens[agentId].intelligence
                     );
                   }, 0) +
                   (squadLeader
-                    ? gameManager.state.citizens[squadLeader].intelligence
+                    ? gameDataContext.gameState.citizens[squadLeader]
+                        .intelligence
                     : 0)
                 : 0}{" "}
             </span>
@@ -199,15 +208,15 @@ const FormSquad = ({ gameManager, setModalOpen }) => {
             <React.Fragment>
               <button
                 className="border px-1"
-                onClick={async e => {
+                onClick={async (e) => {
                   e.preventDefault();
-                  await gameManager.createSquad(
-                    gameManager.getEvilEmpire().id,
+                  await gameDataContext.createSquad(
+                    gameDataContext.getEvilEmpire().id,
                     squadName,
                     selectedAgents.concat(squadLeader),
                     squadLeader,
                     0,
-                    gameManager.state.selectedTile.tile
+                    gameDataContext.gameState.selectedTile.tile
                   );
                   setModalOpen(false);
                 }}

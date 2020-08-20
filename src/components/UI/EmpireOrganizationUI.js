@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Agents from "../Agents";
 import Squads from "../Squads";
 import FormSquad from "../FormSquad";
+import { GameDataContext } from "../../context/GameDataContext";
 
-const EmpireOrganizationUI = ({ gameManager }) => {
+const EmpireOrganizationUI = () => {
+  const gameDataContext = useContext(GameDataContext);
   const [organizationContext, setOrganizationContext] = useState("agents");
 
-  const handleChange = function(event) {
+  const handleChange = function (event) {
     setOrganizationContext(event.target.value);
   };
   return (
@@ -15,19 +17,19 @@ const EmpireOrganizationUI = ({ gameManager }) => {
       <div>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("empire-research")}
+          onClick={() => gameDataContext.setScreen("empire-research")}
         >
           Research
         </button>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("empire-operations")}
+          onClick={() => gameDataContext.setScreen("empire-operations")}
         >
           Operations
         </button>
         <button
           className="border mr-1"
-          onClick={() => gameManager.setScreen("main")}
+          onClick={() => gameDataContext.setScreen("main")}
         >
           Back
         </button>
@@ -38,7 +40,7 @@ const EmpireOrganizationUI = ({ gameManager }) => {
               id="personnel-type-agents"
               name="personnel-type"
               value="agents"
-              onChange={e => {
+              onChange={(e) => {
                 handleChange(e);
               }}
             />
@@ -50,7 +52,7 @@ const EmpireOrganizationUI = ({ gameManager }) => {
               id="personnel-type-squads"
               name="personnel-type"
               value="squads"
-              onChange={e => {
+              onChange={(e) => {
                 handleChange(e);
               }}
             />

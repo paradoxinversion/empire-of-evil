@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import Modal from "../../Modal";
+import { GameDataContext } from "../../../context/GameDataContext";
 
-const MoveOperation = ({ gameManager, operationData, next }) => {
+const MoveOperation = ({ operationData, next }) => {
+  const gameDataContext = useContext(GameDataContext);
   useEffect(() => {
-    const targetTile = gameManager.getTileById(operationData.targetTileId);
-    operationData.squads.forEach(squad => {
-      gameManager.setSquadLocation(targetTile.x, targetTile.y, squad.id);
+    const targetTile = gameDataContext.getTileById(operationData.targetTileId);
+    operationData.squads.forEach((squad) => {
+      gameDataContext.setSquadLocation(targetTile.x, targetTile.y, squad.id);
     });
-  }, [gameManager]);
+  }, [gameDataContext]);
   return (
     <Modal>
       <div className="bg-white w-1/4 p-4">

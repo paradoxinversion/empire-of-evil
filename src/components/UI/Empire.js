@@ -1,47 +1,46 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import Collapsable from "../Collapsable";
+import { GameDataContext } from "../../context/GameDataContext";
 
-const Empire = props => {
+const Empire = (props) => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <React.Fragment>
       <div>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-organization")}
+          onClick={() => gameDataContext.setScreen("empire-organization")}
         >
           Organization
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-research")}
+          onClick={() => gameDataContext.setScreen("empire-research")}
         >
           Research
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("empire-operations")}
+          onClick={() => gameDataContext.setScreen("empire-operations")}
         >
           Operations
         </button>
         <button
           className="border mr-1 px-1"
-          onClick={() => props.gameManager.setScreen("main")}
+          onClick={() => gameDataContext.setScreen("main")}
         >
           Back
         </button>
       </div>
       <h1> Empire </h1>
       <Collapsable title="Vital">
-        <p>EVIL: {props.gameManager.getEvilEmpire().nationalControl}</p>
-        <p>Cash: {props.gameManager.getEvilEmpire().cash}</p>
+        <p>EVIL: {gameDataContext.getEvilEmpire().nationalControl}</p>
+        <p>Cash: {gameDataContext.getEvilEmpire().cash}</p>
       </Collapsable>
       <Collapsable title="Personnel">
         <p>
           Total Agents:{" "}
-          {
-            props.gameManager.getAgents(props.gameManager.getEvilEmpire().id)
-              .length
-          }
+          {gameDataContext.getAgents(gameDataContext.getEvilEmpire().id).length}
         </p>
       </Collapsable>
       <Collapsable title="Financials">

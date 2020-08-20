@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Squad from "./Squad";
+import { GameDataContext } from "../context/GameDataContext";
 
-const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
+const SquadSelect = ({ selectedSquads, setSelectedSquads }) => {
+  const gameDataContext = useContext(GameDataContext);
   // const [selectedSquads, setSelectedSquads] = useState([]);
   const [selectedSquad, setSelectedSquad] = useState(null);
-  const addSquad = squad => {
+  const addSquad = (squad) => {
     const squads = selectedSquads.slice(0);
     squads.push(squad);
     setSelectedSquads(squads);
   };
-  const removeSquad = squadToRemove => {
+  const removeSquad = (squadToRemove) => {
     const squads = selectedSquads.slice(0);
     const squadIndex = selectedSquads.findIndex(
-      squad => (squad.id = squadToRemove.id)
+      (squad) => (squad.id = squadToRemove.id)
     );
     squads.splice(squadIndex, 1);
     setSelectedSquads(squads);
@@ -25,10 +27,10 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
       <form>
         <div id="operation-squad-select" className="flex mb-2">
           <div id="operation-free-squads" className="border w-1/2 p-2">
-            {gameManager
-              .getFreeSquads(gameManager.getEvilEmpire().id)
-              .filter(squad => !selectedSquads.includes(squad))
-              .map(squad => (
+            {gameDataContext
+              .getFreeSquads(gameDataContext.getEvilEmpire().id)
+              .filter((squad) => !selectedSquads.includes(squad))
+              .map((squad) => (
                 <div
                   onClick={() => {
                     setSelectedSquad(squad);
@@ -41,7 +43,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
           <div className="flex flex-col justify-center">
             <button
               className="disabled:cursor-not-allowed border p-1 mx-2 mb-4"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 console.log(!!!selectedSquad);
                 addSquad(selectedSquad);
@@ -52,7 +54,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
             </button>
             <button
               className="disabled:cursor-not-allowed border p-1 mx-2"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 removeSquad(selectedSquad);
               }}
@@ -62,7 +64,7 @@ const SquadSelect = ({ gameManager, selectedSquads, setSelectedSquads }) => {
             </button>
           </div>
           <div id="operation-free-squads" className="border w-1/2 p-2">
-            {selectedSquads.map(squad => (
+            {selectedSquads.map((squad) => (
               <div
                 onClick={() => {
                   setSelectedSquad(squad);

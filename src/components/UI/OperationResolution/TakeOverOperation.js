@@ -1,11 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import Modal from "../../Modal";
+import { GameDataContext } from "../../../context/GameDataContext";
 
-const TakeOverOperation = ({ gameManager, operationData, next }) => {
+const TakeOverOperation = ({ operationData, next }) => {
+  const gameDataContext = useContext(GameDataContext);
   useEffect(() => {
-    const targetTile = gameManager.getTileById(operationData.targetTileId);
-    gameManager.changeTileOwner(targetTile, gameManager.getEvilEmpire().id);
-  }, [gameManager]);
+    const targetTile = gameDataContext.getTileById(operationData.targetTileId);
+    gameDataContext.changeTileOwner(
+      targetTile,
+      gameDataContext.getEvilEmpire().id
+    );
+  }, [gameDataContext]);
   return (
     <Modal>
       <div className="bg-white w-1/4 p-4">

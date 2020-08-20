@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
+import { GameDataContext } from "../context/GameDataContext";
 
-const Agent = ({ agent, gameManager, border }) => {
+const Agent = ({ agent, border }) => {
+  const gameDataContext = useContext(GameDataContext);
   return (
     <div className={`mb-2 hover:bg-gray-300 ${border ? "border" : ""}`}>
       <p className="mr-4">
@@ -8,7 +10,7 @@ const Agent = ({ agent, gameManager, border }) => {
       </p>{" "}
       <p className="mr-4">
         {agent.squadId !== -1
-          ? gameManager.state.squads[agent.squadId].name
+          ? gameDataContext.gameState.squads[agent.squadId].name
           : "No Squad"}
       </p>
       <span className="mr-4">

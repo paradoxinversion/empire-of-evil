@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App.js";
-import { Provider } from "unstated";
+import { GameDataProvider } from "./context/GameDataContext.js";
 ReactDOM.render(
-  <Provider>
+  <GameDataProvider>
     <App />
-  </Provider>,
+  </GameDataProvider>,
   document.getElementById("root")
 );

@@ -1,6 +1,4 @@
-import React, { Component } from "react";
-import connect from "unstated-connect";
-import GameManager from "./containers/GameManager";
+import React, { Component, useContext, useEffect, useState } from "react";
 import Main from "./components/UI/Main";
 import Empire from "./components/UI/Empire";
 import AgentsUI from "./components/UI/AgentsUI";
@@ -10,6 +8,7 @@ import EmpireResearchUI from "./components/UI/EmpireResearchUI";
 import OperationResolution from "./components/UI/OperationResolution";
 import "./App.css";
 import "./output.css";
+import { GameDataContext } from "./context/GameDataContext";
 
 const UIScreens = {
   main: Main,
@@ -18,23 +17,27 @@ const UIScreens = {
   "empire-organization": EmpireOrganizationUI,
   "empire-operations": EmpireOperationsUI,
   "empire-research": EmpireResearchUI,
-  "operation-resolution": OperationResolution
+  "operation-resolution": OperationResolution,
 };
 
-class App extends Component {
-  componentDidMount() {
-    const [GameManager] = this.props.containers;
-    GameManager.setUpGame();
-  }
-  render() {
-    const [GameManager] = this.props.containers;
-    const CurrentScreen = UIScreens[GameManager.state.currentScreen];
-    return (
-      <main className="App">
-        <CurrentScreen gameManager={GameManager} />
-      </main>
-    );
-  }
-}
+const App = () => {
+  const gameDataContext = useContext(GameDataContext);
+  const [gamePrepared, setGamePrepared] = useState(false);
+  useEffect(() => {
+    gameDataContext.setUpGame().then(() => setGamePrepared(true));
+  }, []);
 
-export default connect([GameManager])(App);
+  const CurrentScreen = UIScreens[gameDataContext.gameState.currentScreen];
+  return (
+    <React.Fragment>
+      {gamePrepared ? (
+        <main className="App">
+          <CurrentScreen />
+        </main>
+      ) : (
+        <p>loading</p>
+      )}
+    </React.Fragment>
+  );
+};
+export default App;

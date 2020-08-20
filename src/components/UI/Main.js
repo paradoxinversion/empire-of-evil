@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useCallback, useContext } from "react";
 import WorldMap from "../WorldMap";
 import CommandBar from "../CommandBar";
 import Agents from "../Agents";
@@ -8,15 +8,16 @@ import { operationTypes } from "../../data/operation";
 import FormSquad from "../FormSquad";
 import SelectedTile from "../SelectedTile";
 import Squads from "../Squads";
+import { GameDataContext } from "../../context/GameDataContext";
 
 /**
  * This is the primary screen component for EoE. It's used
  * for the main interface, as well as encounters, menus, etc.
  * @param {} props
  */
-const Main = ({ gameManager }) => {
+const Main = () => {
   const [modal, setModal] = useState(null);
-
+  const gameDataContext = useContext(GameDataContext);
   return (
     <React.Fragment>
       {modal && (
@@ -26,21 +27,20 @@ const Main = ({ gameManager }) => {
             <Operation
               operation={operationTypes[modal.operationType]}
               setModalOpen={setModal}
-              gameManager={gameManager}
             />
           ) : (
-            <FormSquad gameManager={gameManager} setModalOpen={setModal} />
+            <FormSquad setModalOpen={setModal} />
           )}
         </Modal>
       )}
 
       <header id="main-header">
         <span> Empire Of EVIL </span>
-        <CommandBar gameManager={gameManager} />
-        {gameManager.state.operations.length > 0 && (
+        <CommandBar />
+        {gameDataContext.gameState.operations.length > 0 && (
           <div className="border">
             <p>Current Operations</p>
-            {gameManager.state.operations.map(operation => (
+            {gameDataContext.gameState.operations.map((operation) => (
               <div>
                 <p>{operation.operationType.name}</p>
               </div>
@@ -51,11 +51,11 @@ const Main = ({ gameManager }) => {
 
       <div id="game-area" className="flex flex-wrap">
         <WorldMap />
-        {gameManager.state.gameReady && (
+        {gameDataContext.gameState.gameReady && (
           <React.Fragment>
-            <SelectedTile gameManager={gameManager} setModal={setModal} />
+            <SelectedTile setModal={setModal} />
             <Agents />
-            <Squads gameManager={gameManager} />
+            <Squads />
           </React.Fragment>
         )}
       </div>

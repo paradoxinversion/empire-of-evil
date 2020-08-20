@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import SquadSelect from "./SquadSelect";
+import { operationTypes } from "../data/operation";
+import { GameDataContext } from "../context/GameDataContext";
 
-const Operation = ({ operation, setModalOpen, gameManager }) => {
+const Operation = ({ operation, setModalOpen }) => {
+  const gameDataContext = useContext(GameDataContext);
   const [selectedSquads, setSelectedSquads] = useState([]);
   return (
     <div className="fixed top-0 left-0 bg-gray-600 h-screen w-screen flex justify-center items-center">
@@ -11,7 +14,6 @@ const Operation = ({ operation, setModalOpen, gameManager }) => {
         <p>Max Squads: {operation.maxSquads || "Unlimited"}</p>
         <p>Squad Member Limit: {operation.squadMemberLimit || "Unlimited"}</p>
         <SquadSelect
-          gameManager={gameManager}
           selectedSquads={selectedSquads}
           setSelectedSquads={setSelectedSquads}
         />
@@ -20,7 +22,7 @@ const Operation = ({ operation, setModalOpen, gameManager }) => {
             className="border rounded p-1"
             onClick={() => {
               // ! Defaulting targetid
-              gameManager.addOperation(operation, selectedSquads);
+              gameDataContext.addOperation(operation, selectedSquads);
               setModalOpen(false);
             }}
           >
