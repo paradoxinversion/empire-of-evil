@@ -1,5 +1,18 @@
 # Implementation Notes
 
+## Architecture Decision Records
+
+Full architecture decisions are documented in numbered files in this directory:
+
+- [01 — Monorepo & Package Structure](./01-monorepo-and-package-structure.md)
+- [02 — Game State Model](./02-game-state-model.md)
+- [03 — Simulation Engine](./03-simulation-engine.md)
+- [04 — Data-Driven Design & Config Patterns](./04-data-driven-design.md)
+- [05 — Event System](./05-event-system.md)
+- [06 — React Integration & State Management](./06-react-integration.md)
+
+---
+
 ## Simulation
 
 The game features heavy simulation.
