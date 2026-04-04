@@ -4,7 +4,27 @@ import { z } from 'zod';
 // Most are stubs (passthrough) until their config files are finalized.
 
 export const ActivitiesSchema = z.array(z.object({}).passthrough());
-export const BuildingsSchema = z.array(z.object({}).passthrough());
+const ResourceAmountSchema = z.object({
+    money: z.number().optional(),
+    science: z.number().optional(),
+    infrastructure: z.number().optional(),
+});
+
+export const BuildingsSchema = z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    baseCost: ResourceAmountSchema,
+    capacity: z.number().int().optional(),
+    resourceOutput: ResourceAmountSchema.optional(),
+    upkeepPerDay: z.number().optional(),
+    infrastructureLoad: z.number(),
+    preferredSkills: z.array(z.string()),
+    wealthRequirement: z.number().optional(),
+    wealthWeight: z.number().optional(),
+    buildableOnTileTypes: z.array(z.string()).optional(),
+    effects: z.array(z.string()).optional(),
+}));
 export const CitizenActionsSchema = z.array(z.object({}).passthrough());
 export const CpuBehaviorsSchema = z.array(z.object({}).passthrough());
 export const EffectsSchema = z.array(z.object({}).passthrough());
