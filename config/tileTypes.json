@@ -1,26 +1,153 @@
 {
-    "city": {
-        "name": "City",
-        "description": "A bustling urban area with many resources and opportunities.",
-        "buildingRestrictions": [],
-        "effects": ["combat-cover"]
+    "ocean": {
+        "name": "Ocean",
+        "description": "A vast body of water. Impassable without naval capability; acts as a natural barrier between nations.",
+        "buildingRestrictions": ["all"],
+        "effects": [],
+        "terrainConditions": {
+            "elevationMin": 0.0,
+            "elevationMax": 0.38,
+            "moistureMin": 0.0,
+            "moistureMax": 1.0,
+            "priority": 100
+        },
+        "canBeInhabited": false,
+        "isOcean": true,
+        "wealthContribution": 0
     },
     "mountain": {
         "name": "Mountain",
         "description": "A towering natural formation, often rich in minerals and resources.",
         "buildingRestrictions": ["bank"],
-        "effects": ["heavily-slowed-movement", "defender-advantage"]
+        "effects": ["heavily-slowed-movement", "defender-advantage"],
+        "terrainConditions": {
+            "elevationMin": 0.70,
+            "elevationMax": 1.0,
+            "moistureMin": 0.0,
+            "moistureMax": 1.0,
+            "priority": 90
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 15
     },
-    "ocean": {
-        "name": "Ocean",
-        "description": "A vast body of water, home to diverse marine life and resources.",
-        "buildingRestrictions": ["all"],
-        "effects": []
+    "coastal": {
+        "name": "Coastal",
+        "description": "Low-lying land along the water's edge. Supports fishing and trade but is vulnerable to flooding.",
+        "buildingRestrictions": ["bank"],
+        "effects": [],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.46,
+            "moistureMin": 0.0,
+            "moistureMax": 1.0,
+            "priority": 50
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 35
+    },
+    "swamp": {
+        "name": "Swamp",
+        "description": "Waterlogged lowland thick with vegetation. Difficult to traverse and build on.",
+        "buildingRestrictions": ["bank", "military-base"],
+        "effects": ["slowed-movement", "reduced-visibility"],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.50,
+            "moistureMin": 0.78,
+            "moistureMax": 1.0,
+            "priority": 60
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 20
+    },
+    "tundra": {
+        "name": "Tundra",
+        "description": "Cold, high-altitude terrain with sparse vegetation. Harsh conditions limit settlement.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["slowed-movement"],
+        "terrainConditions": {
+            "elevationMin": 0.62,
+            "elevationMax": 0.72,
+            "moistureMin": 0.0,
+            "moistureMax": 0.45,
+            "priority": 45
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 12
+    },
+    "city": {
+        "name": "City",
+        "description": "A bustling urban area with many resources and opportunities.",
+        "buildingRestrictions": [],
+        "effects": ["combat-cover"],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.70,
+            "moistureMin": 0.45,
+            "moistureMax": 1.0,
+            "priority": 40
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 80
+    },
+    "forest": {
+        "name": "Forest",
+        "description": "Dense woodland. Rich in natural resources but slows movement and limits visibility.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["slowed-movement", "reduced-visibility"],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.70,
+            "moistureMin": 0.55,
+            "moistureMax": 0.78,
+            "priority": 30
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 30
+    },
+    "plains": {
+        "name": "Plains",
+        "description": "Flat, open grassland. Easy to traverse and well-suited for agriculture and basic industry.",
+        "buildingRestrictions": [],
+        "effects": [],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.70,
+            "moistureMin": 0.25,
+            "moistureMax": 0.55,
+            "priority": 30
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 45
+    },
+    "desert": {
+        "name": "Desert",
+        "description": "Arid, sun-scorched terrain. Sparse population and scarce resources, but passable.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["slowed-movement"],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.70,
+            "moistureMin": 0.0,
+            "moistureMax": 0.25,
+            "priority": 30
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 10
     },
     "wilderness": {
         "name": "Wilderness",
         "description": "Untamed natural areas, often difficult to traverse but rich in resources.",
         "buildingRestrictions": ["bank"],
-        "effects": ["slowed-movement", "reduced-visibility"]
+        "effects": ["slowed-movement", "reduced-visibility"],
+        "terrainConditions": {
+            "elevationMin": 0.0,
+            "elevationMax": 1.0,
+            "moistureMin": 0.0,
+            "moistureMax": 1.0,
+            "priority": 1
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 20
     }
 }
