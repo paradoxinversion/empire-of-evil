@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Stub schemas — will be replaced with strict Zod schemas per config file.
 // One schema per JSON config file in config/.
+// Most are stubs (passthrough) until their config files are finalized.
 
 export const ActivitiesSchema = z.array(z.object({}).passthrough());
 export const BuildingsSchema = z.array(z.object({}).passthrough());
@@ -14,4 +14,21 @@ export const PetsSchema = z.array(z.object({}).passthrough());
 export const PlotsSchema = z.array(z.object({}).passthrough());
 export const ResearchProjectsSchema = z.array(z.object({}).passthrough());
 export const SkillsSchema = z.array(z.object({}).passthrough());
-export const TileTypesSchema = z.array(z.object({}).passthrough());
+const TileTypeDefinitionSchema = z.object({
+    name: z.string(),
+    description: z.string(),
+    buildingRestrictions: z.array(z.string()),
+    effects: z.array(z.string()),
+    terrainConditions: z.object({
+        elevationMin: z.number().min(0).max(1),
+        elevationMax: z.number().min(0).max(1),
+        moistureMin: z.number().min(0).max(1),
+        moistureMax: z.number().min(0).max(1),
+        priority: z.number().int(),
+    }),
+    canBeInhabited: z.boolean(),
+    wealthContribution: z.number().min(0).max(100),
+    isOcean: z.boolean().optional(),
+});
+
+export const TileTypesSchema = z.record(z.string(), TileTypeDefinitionSchema);
