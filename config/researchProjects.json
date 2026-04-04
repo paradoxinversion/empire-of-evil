@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Operational Transparency Initiative",
+        "description": "Deploy basic internal communications infrastructure across empire zones.",
+        "cost": 10,
+        "scienceRequired": 10,
+        "completionDays": 10,
+        "prerequisites": [],
+        "skillDrivers": ["computing"],
+        "unlocks": {
+            "effects": ["centralized-telecom"]
+        }
+    }
+]

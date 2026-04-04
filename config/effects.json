@@ -1,0 +1,128 @@
+[
+    {
+        "id": "no-prisoners",
+        "name": "No Prisoners",
+        "category": "organization",
+        "description": "Your organization has a strict policy of not taking prisoners. Any enemy combatants captured during missions are executed on the spot. This policy instills fear in your enemies and deters them from engaging with your forces."
+    },
+    {
+        "id": "encryption-protocols",
+        "name": "Encryption Protocols",
+        "category": "organization",
+        "description": "Your organization has implemented advanced encryption protocols to secure all communications and data. This makes it extremely difficult for adversaries to intercept or decipher your messages, providing a significant advantage in intelligence gathering and operational security."
+    },
+    {
+        "id": "centralized-telecom",
+        "name": "Centralized Telecommunications",
+        "category": "organization",
+        "description": "Your organization has established a centralized telecommunications network that allows for seamless communication and coordination among all members. This network is highly secure and resistant to interference, ensuring that your forces can communicate effectively even in the most challenging environments."
+    },
+    {
+        "id": "missile-pigeons",
+        "name": "Missile Pigeons",
+        "category": "organization",
+        "description": "Your organization has trained a fleet of highly intelligent pigeons to deliver messages and small packages. These pigeons are equipped with GPS trackers and can navigate through complex environments, making them an invaluable asset for covert operations and communication in areas with limited technology."
+    },
+    {
+        "id": "pigeon-missiles",
+        "name": "Pigeon Missiles",
+        "category": "organization",
+        "description": "Your organization has developed a unique weapon system that utilizes trained pigeons to deliver small explosive devices. These 'pigeon missiles' can be deployed to target specific locations or individuals, providing a stealthy and unexpected method of attack."
+    },
+    {
+        "id": "hyperrefractive-materials",
+        "name": "Hyperrefractive Materials",
+        "category": "organization",
+        "description": "Your organization has access to cutting-edge hyperrefractive materials that can bend light around objects, rendering them invisible to the naked eye. This technology allows your forces to conduct covert operations and evade detection by enemies, giving you a significant tactical advantage."
+    },
+    {
+        "id": "counterfeiter",
+        "name": "Counterfeiter",
+        "category": "organization",
+        "description": "Your organization has a skilled counterfeiter who can produce high-quality fake documents, currency, and identification. This allows you to infiltrate enemy organizations, conduct covert operations, and finance your activities without relying on traditional methods."
+    },
+    {
+        "id": "conspiracy-theories",
+        "name": "Conspiracy Theories",
+        "category": "person",
+        "description": "The person is prone to believing in and spreading conspiracy theories. This can lead to a skewed perception of reality and may cause them to make decisions based on misinformation."
+    },
+    {
+        "id": "sick",
+        "name": "Sick",
+        "category": "person",
+        "description": "The person is currently experiencing illness, which may affect their ability to perform tasks and interact with others effectively."
+    },
+    {
+        "id": "injured",
+        "name": "Injured",
+        "category": "person",
+        "description": "The person has sustained injuries that may limit their physical capabilities and require medical attention."
+    },
+    {
+        "id": "inspired",
+        "name": "Inspired",
+        "category": "person",
+        "description": "The person is currently feeling inspired, which may enhance their creativity and motivation to achieve their goals."
+    },
+    {
+        "id": "radicalized",
+        "name": "Radicalized",
+        "category": "person",
+        "description": "The person has undergone a process of radicalization, leading to extreme beliefs and behaviors that may be harmful to themselves or others."
+    },
+    {
+        "id": "party-animal",
+        "name": "Party Animal",
+        "category": "person",
+        "description": "The person is known for their love of partying and socializing, often prioritizing fun and entertainment over responsibilities."
+    },
+    {
+        "id": "outbreak",
+        "name": "Outbreak",
+        "category": "zone",
+        "description": "The zone is currently experiencing an outbreak of a contagious disease, which poses a significant health risk to anyone entering the area. The outbreak has led to increased security measures and restrictions on movement within the zone."
+    },
+    {
+        "id": "zombie-plague",
+        "name": "Zombie Plague",
+        "category": "zone",
+        "description": "The zone is overrun by a zombie plague, with infected individuals roaming the streets and posing a constant threat to anyone who enters. The plague has caused widespread panic and chaos, making it difficult to maintain order and safety within the zone."
+    },
+    {
+        "id": "combat-cover",
+        "name": "Combat Cover",
+        "category": "tile",
+        "description": "The tile provides excellent cover for combat, allowing units to take reduced damage from enemy attacks. This makes it an ideal location for defensive positions and ambushes."
+    },
+    {
+        "id": "slowed-movement",
+        "name": "Slowed Movement",
+        "category": "tile",
+        "description": "The tile slows down movement, making it more difficult for units to traverse. This can be used strategically to hinder enemy advances or protect key areas."
+    },
+    {
+        "id": "heavily-slowed-movement",
+        "name": "Heavily Slowed Movement",
+        "category": "tile",
+        "description": "The tile significantly slows down movement, making it very difficult for units to traverse. This can be used strategically to hinder enemy advances or protect key areas."
+    },
+    {
+        "id": "combat-cover",
+        "name": "Combat Cover",
+        "category": "tile",
+        "description": "The tile provides excellent cover for combat, allowing units to take reduced damage from enemy attacks. This makes it an ideal location for defensive positions and ambushes."
+    },
+    {
+        "id": "reduced-visibility",
+        "name": "Reduced Visibility",
+        "category": "tile",
+        "description": "The tile has reduced visibility, making it harder for units to see and target enemies. This can be used strategically to hide units or create ambush opportunities."
+    },
+    {
+        "id": "defender-advantage",
+        "name": "Defender Advantage",
+        "category": "tile",
+        "description": "The tile provides a significant advantage to defenders, allowing them to take reduced damage and increase their chances of successfully defending against enemy attacks."
+    }
+]

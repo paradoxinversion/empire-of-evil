@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Strength"
+    },
+    {
+        "name": "Intelligence"
+    },
+    {
+        "name": "Constitution"
+    },
+    {
+        "name": "Agility"
+    },
+    {
+        "name": "Leadership"
+    },
+    {
+        "name": "Administration"
+    },
+    {
+        "name": "Combat"
+    },
+    {
+        "name": "Empathy"
+    },
+    {
+        "name": "Motivation"
+    }
+]

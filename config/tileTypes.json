@@ -1,0 +1,26 @@
+{
+    "city": {
+        "name": "City",
+        "description": "A bustling urban area with many resources and opportunities.",
+        "buildingRestrictions": [],
+        "effects": ["combat-cover"]
+    },
+    "mountain": {
+        "name": "Mountain",
+        "description": "A towering natural formation, often rich in minerals and resources.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["heavily-slowed-movement", "defender-advantage"]
+    },
+    "ocean": {
+        "name": "Ocean",
+        "description": "A vast body of water, home to diverse marine life and resources.",
+        "buildingRestrictions": ["all"],
+        "effects": []
+    },
+    "wilderness": {
+        "name": "Wilderness",
+        "description": "Untamed natural areas, often difficult to traverse but rich in resources.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["slowed-movement", "reduced-visibility"]
+    }
+}

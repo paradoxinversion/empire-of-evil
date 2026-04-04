@@ -1,0 +1,102 @@
+[
+    {
+        "id": "firearms",
+        "attributeCap": "combat"
+    },
+    {
+        "id": "melee",
+        "attributeCap": "combat"
+    },
+    {
+        "id": "tactics",
+        "attributeCap": "leadership"
+    },
+    {
+        "id": "evasion",
+        "attributeCap": "agility"
+    },
+    {
+        "id": "field-medicine",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "biology",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "engineering",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "computing",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "logistics",
+        "attributeCap": "administration"
+    },
+    {
+        "id": "finance",
+        "attributeCap": "administration"
+    },
+    {
+        "id": "medicine",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "first-aid",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "surveillance",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "infiltration",
+        "attributeCap": "agility"
+    },
+    {
+        "id": "counter-intelligence",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "forgery",
+        "attributeCap": "intelligence"
+    },
+    {
+        "id": "persuasion",
+        "attributeCap": "empathy"
+    },
+    {
+        "id": "intimidation",
+        "attributeCap": "combat"
+    },
+    {
+        "id": "oratory",
+        "attributeCap": "empathy"
+    },
+    {
+        "id": "deception",
+        "attributeCap": "intelligece"
+    },
+    {
+        "id": "delegation",
+        "attributeCap": "leadership"
+    },
+    {
+        "id": "training",
+        "attributeCap": "leadership"
+    },
+    {
+        "id": "smuggling",
+        "attributeCap": "agility"
+    },
+    {
+        "id": "larceny",
+        "attributeCap": "agility"
+    },
+    {
+        "id": "streetwise",
+        "attributeCap": "intelligence"
+    }
+]
