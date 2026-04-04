@@ -5,7 +5,7 @@
         "effects": [
             {
                 "chance": 0.5,
-                "effect": "skill_increase",
+                "type": "skill_increase",
                 "cost": 1,
                 "parameters": {
                     "minIncrease": 0.01,
@@ -16,12 +16,12 @@
         ]
     },
     {
-        "name": "Survey Citizens ",
+        "name": "Survey Citizens",
         "description": "Survey citizens to gather intelligence and improve your knowledge.",
         "effects": [
             {
                 "chance": 1,
-                "effect": "increase_intelligence",
+                "type": "increase_intel",
                 "cost": 1,
                 "parameters": {
                     "target": "random_citizen",
@@ -38,7 +38,7 @@
         "effects": [
             {
                 "chance": 1,
-                "effect": "increase_loyalty",
+                "type": "increase_loyalty",
                 "cost": 1,
                 "parameters": {
                     "target": "participant",
@@ -54,7 +54,7 @@
         "effects": [
             {
                 "chance": 0.6,
-                "effect": "civilian_combat_encounter",
+                "type": "civilian_combat_encounter",
                 "cost": 0,
                 "parameters": {
                     "baseEnemyCount": 1

@@ -1,0 +1,13 @@
+{
+  "name": "empire-of-evil",
+  "private": true,
+  "engines": { "node": ">=22.16.0", "pnpm": ">=9" },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @empire-of-evil/web dev",
+    "test": "pnpm --filter @empire-of-evil/engine test"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

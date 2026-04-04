@@ -1,0 +1,5 @@
+node_modules
+dist
+# TypeScript incremental buildinfo
+*.tsbuildinfo
+tsconfig.tsbuildinfo
