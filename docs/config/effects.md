@@ -1,4 +1,4 @@
-# `config/effects.json`
+# `effects.json`
 
 Defines effect types — what a named effect **is** (its category, display name, and description). This file does not define behavior; behavior is handled by `effectResolvers` in the engine. Active instances of effects on entities are `EffectInstance` objects stored in `state.effectInstances`.
 
@@ -12,12 +12,12 @@ An array of effect definition objects.
 
 ### Effect object
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `id` | `string` | Yes | Unique identifier. Referenced by `EffectInstance.effectId`, tile type `effects` arrays, and any config that applies this effect. Must be unique across all entries. Use kebab-case. |
-| `name` | `string` | Yes | Display name shown in the UI. |
-| `category` | `"person"` \| `"zone"` \| `"tile"` \| `"organization"` | Yes | Which entity type this effect can be applied to. Used for validation and UI grouping. |
-| `description` | `string` | Yes | Player-facing explanation of what the effect means. |
+| Field         | Type                                                   | Required | Description                                                                                                                                                                         |
+| ------------- | ------------------------------------------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                               | Yes      | Unique identifier. Referenced by `EffectInstance.effectId`, tile type `effects` arrays, and any config that applies this effect. Must be unique across all entries. Use kebab-case. |
+| `name`        | `string`                                               | Yes      | Display name shown in the UI.                                                                                                                                                       |
+| `category`    | `"person"` \| `"zone"` \| `"tile"` \| `"organization"` | Yes      | Which entity type this effect can be applied to. Used for validation and UI grouping.                                                                                               |
+| `description` | `string`                                               | Yes      | Player-facing explanation of what the effect means.                                                                                                                                 |
 
 ---
 
@@ -32,17 +32,17 @@ An array of effect definition objects.
 
 ```json
 [
-  {
-    "id": "example-effect",
-    "name": "Example Effect",
-    "category": "person",
-    "description": "A description of what this condition means for the affected entity."
-  },
-  {
-    "id": "example-zone-effect",
-    "name": "Example Zone Effect",
-    "category": "zone",
-    "description": "A description of what this condition means for the affected zone."
-  }
+    {
+        "id": "example-effect",
+        "name": "Example Effect",
+        "category": "person",
+        "description": "A description of what this condition means for the affected entity."
+    },
+    {
+        "id": "example-zone-effect",
+        "name": "Example Zone Effect",
+        "category": "zone",
+        "description": "A description of what this condition means for the affected zone."
+    }
 ]
 ```

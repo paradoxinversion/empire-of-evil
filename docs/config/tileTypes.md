@@ -1,4 +1,4 @@
-# `config/tileTypes.json`
+# `tileTypes.json`
 
 Defines tile type templates used during world generation. Each zone is made up of tiles; tiles determine what buildings can be placed on them and grant passive effects to units and operations in that zone.
 
@@ -19,35 +19,35 @@ An **object** (not an array) where each key is the tile type's ID and the value 
 
 ### Tile type definition object
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | `string` | Yes | Display name shown in the UI. |
-| `description` | `string` | Yes | Flavor text describing the terrain. |
-| `buildingRestrictions` | `string[]` | Yes | Building type IDs that **cannot** be built on this tile. Use `["all"]` to prevent all building placement. Use `[]` to allow all. |
-| `effects` | `string[]` | Yes | Effect IDs (from `effects.json`) that are permanently active on this tile type. Applied to all entities operating on tiles of this type. |
-| `terrainConditions` | `object` | Yes | Controls where on the noise map this tile type appears during world generation. See below. |
-| `canBeInhabited` | `boolean` | Yes | Whether zones whose plurality tile type is this can be inhabited. Set to `false` for ocean and other impassable terrain. |
-| `wealthContribution` | `number` | Yes | How much each tile of this type contributes to its zone's `generationWealth` (0–100). City tiles are high; desert and ocean tiles are low. |
-| `isOcean` | `boolean` | No | Marks this tile type as ocean for the border flood-fill contiguity pass. Omit or set `false` for all non-ocean types. |
+| Field                  | Type       | Required | Description                                                                                                                                |
+| ---------------------- | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                 | `string`   | Yes      | Display name shown in the UI.                                                                                                              |
+| `description`          | `string`   | Yes      | Flavor text describing the terrain.                                                                                                        |
+| `buildingRestrictions` | `string[]` | Yes      | Building type IDs that **cannot** be built on this tile. Use `["all"]` to prevent all building placement. Use `[]` to allow all.           |
+| `effects`              | `string[]` | Yes      | Effect IDs (from `effects.json`) that are permanently active on this tile type. Applied to all entities operating on tiles of this type.   |
+| `terrainConditions`    | `object`   | Yes      | Controls where on the noise map this tile type appears during world generation. See below.                                                 |
+| `canBeInhabited`       | `boolean`  | Yes      | Whether zones whose plurality tile type is this can be inhabited. Set to `false` for ocean and other impassable terrain.                   |
+| `wealthContribution`   | `number`   | Yes      | How much each tile of this type contributes to its zone's `generationWealth` (0–100). City tiles are high; desert and ocean tiles are low. |
+| `isOcean`              | `boolean`  | No       | Marks this tile type as ocean for the border flood-fill contiguity pass. Omit or set `false` for all non-ocean types.                      |
 
 ### `terrainConditions` object
 
-| Field | Type | Description |
-|---|---|---|
-| `elevationMin` | `number` (0.0–1.0) | Minimum elevation noise value (inclusive) for this tile type to appear. |
-| `elevationMax` | `number` (0.0–1.0) | Maximum elevation noise value (inclusive). |
-| `moistureMin` | `number` (0.0–1.0) | Minimum moisture noise value (inclusive). |
-| `moistureMax` | `number` (0.0–1.0) | Maximum moisture noise value (inclusive). |
-| `priority` | `integer` | Tiebreaker when multiple tile types match the same noise values. Higher priority wins. |
+| Field          | Type               | Description                                                                            |
+| -------------- | ------------------ | -------------------------------------------------------------------------------------- |
+| `elevationMin` | `number` (0.0–1.0) | Minimum elevation noise value (inclusive) for this tile type to appear.                |
+| `elevationMax` | `number` (0.0–1.0) | Maximum elevation noise value (inclusive).                                             |
+| `moistureMin`  | `number` (0.0–1.0) | Minimum moisture noise value (inclusive).                                              |
+| `moistureMax`  | `number` (0.0–1.0) | Maximum moisture noise value (inclusive).                                              |
+| `priority`     | `integer`          | Tiebreaker when multiple tile types match the same noise values. Higher priority wins. |
 
 **Priority guidance:** Multiple tile types may have overlapping ranges — this is intentional. Use priority to control which type wins. Recommended conventions:
 
-| Priority range | Role |
-|---|---|
-| 90–100 | Dominant terrain (ocean, mountain) — override everything |
-| 50–89 | Specific overrides within a band (coastal, swamp, tundra) |
-| 20–49 | Normal terrain types (city, forest, plains, desert) |
-| 1–19 | Fallback / catch-all (wilderness) |
+| Priority range | Role                                                      |
+| -------------- | --------------------------------------------------------- |
+| 90–100         | Dominant terrain (ocean, mountain) — override everything  |
+| 50–89          | Specific overrides within a band (coastal, swamp, tundra) |
+| 20–49          | Normal terrain types (city, forest, plains, desert)       |
+| 1–19           | Fallback / catch-all (wilderness)                         |
 
 **Catch-all:** At least one tile type should cover the full 0.0–1.0 range for both elevation and moisture at low priority so that every noise value maps to something. `wilderness` serves this role by default.
 
@@ -67,35 +67,35 @@ An **object** (not an array) where each key is the tile type's ID and the value 
 
 ```json
 {
-  "city": {
-    "name": "City",
-    "description": "A dense urban environment with many people and resources.",
-    "buildingRestrictions": [],
-    "effects": ["combat-cover"],
-    "terrainConditions": {
-      "elevationMin": 0.38,
-      "elevationMax": 0.70,
-      "moistureMin": 0.45,
-      "moistureMax": 1.0,
-      "priority": 40
+    "city": {
+        "name": "City",
+        "description": "A dense urban environment with many people and resources.",
+        "buildingRestrictions": [],
+        "effects": ["combat-cover"],
+        "terrainConditions": {
+            "elevationMin": 0.38,
+            "elevationMax": 0.7,
+            "moistureMin": 0.45,
+            "moistureMax": 1.0,
+            "priority": 40
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 80
     },
-    "canBeInhabited": true,
-    "wealthContribution": 80
-  },
-  "wilderness": {
-    "name": "Wilderness",
-    "description": "Untamed natural areas.",
-    "buildingRestrictions": ["bank"],
-    "effects": ["slowed-movement", "reduced-visibility"],
-    "terrainConditions": {
-      "elevationMin": 0.0,
-      "elevationMax": 1.0,
-      "moistureMin": 0.0,
-      "moistureMax": 1.0,
-      "priority": 1
-    },
-    "canBeInhabited": true,
-    "wealthContribution": 20
-  }
+    "wilderness": {
+        "name": "Wilderness",
+        "description": "Untamed natural areas.",
+        "buildingRestrictions": ["bank"],
+        "effects": ["slowed-movement", "reduced-visibility"],
+        "terrainConditions": {
+            "elevationMin": 0.0,
+            "elevationMax": 1.0,
+            "moistureMin": 0.0,
+            "moistureMax": 1.0,
+            "priority": 1
+        },
+        "canBeInhabited": true,
+        "wealthContribution": 20
+    }
 }
 ```

@@ -1,4 +1,4 @@
-# `config/skills.json`
+# `skills.json`
 
 Defines the skills that persons can develop. Skills represent trained abilities, scored 0–100, and are soft-capped by their governing attribute — a skill's effective maximum is the value of its `attributeCap` attribute on that person.
 
@@ -12,10 +12,10 @@ An array of skill definition objects.
 
 ### Skill object
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `id` | `string` | Yes | Unique identifier. Referenced by `skillDrivers` arrays in plots, activities, research, and citizen action configs. Use kebab-case. |
-| `attributeCap` | `string` | Yes | The attribute whose value caps this skill. Must match the lowercased `name` of an entry in `personAttributes.json` (e.g., `"intelligence"`, `"combat"`). |
+| Field          | Type     | Required | Description                                                                                                                                              |
+| -------------- | -------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | `string` | Yes      | Unique identifier. Referenced by `skillDrivers` arrays in plots, activities, research, and citizen action configs. Use kebab-case.                       |
+| `attributeCap` | `string` | Yes      | The attribute whose value caps this skill. Must match the lowercased `name` of an entry in `personAttributes.json` (e.g., `"intelligence"`, `"combat"`). |
 
 ---
 
@@ -30,8 +30,8 @@ An array of skill definition objects.
 
 ```json
 [
-  { "id": "firearms",     "attributeCap": "combat" },
-  { "id": "infiltration", "attributeCap": "agility" },
-  { "id": "computing",    "attributeCap": "intelligence" }
+    { "id": "firearms", "attributeCap": "combat" },
+    { "id": "infiltration", "attributeCap": "agility" },
+    { "id": "computing", "attributeCap": "intelligence" }
 ]
 ```

@@ -1,4 +1,4 @@
-# `config/personAttributes.json`
+# `personAttributes.json`
 
 Defines the attributes that every `Person` has. Attributes represent innate physical and mental capabilities, scored 0–100. They act as caps on related skills — a skill cannot exceed the value of its governing attribute.
 
@@ -12,9 +12,9 @@ An array of attribute definition objects.
 
 ### Attribute object
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | `string` | Yes | Display name and the source of the attribute's ID. The ID used in `skills.json`'s `attributeCap` field is the lowercase version of this name (e.g., `"Combat"` → `"combat"`). Must be unique. |
+| Field  | Type     | Required | Description                                                                                                                                                                                   |
+| ------ | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name` | `string` | Yes      | Display name and the source of the attribute's ID. The ID used in `skills.json`'s `attributeCap` field is the lowercase version of this name (e.g., `"Combat"` → `"combat"`). Must be unique. |
 
 ---
 
@@ -29,9 +29,5 @@ An array of attribute definition objects.
 ## Example template
 
 ```json
-[
-  { "name": "Strength" },
-  { "name": "Intelligence" },
-  { "name": "Agility" }
-]
+[{ "name": "Strength" }, { "name": "Intelligence" }, { "name": "Agility" }]
 ```

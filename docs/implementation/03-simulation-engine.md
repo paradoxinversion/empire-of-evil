@@ -10,24 +10,24 @@ The simulation uses a **generator-based daily tick** that mutates `GameState` in
 // packages/engine/src/simulation/advance.ts
 
 export type AdvanceResult =
-  | { type: 'day_complete'; date: number }
-  | { type: 'interrupted'; events: InterruptEvent[] };
+    | { type: "day_complete"; date: number }
+    | { type: "interrupted"; events: InterruptEvent[] };
 
 export function* advanceTime(
-  state: GameState,
-  targetDate: number
+    state: GameState,
+    targetDate: number,
 ): Generator<AdvanceResult> {
-  while (state.date < targetDate) {
-    runDay(state);
-    const interrupts = collectInterrupts(state);
-    if (interrupts.length > 0) {
-      // Move interrupt events to pending queue; caller is responsible for resolving them
-      state.pendingEvents.push(...interrupts);
-      yield { type: 'interrupted', events: interrupts };
-      return; // caller must resume the generator after resolving events
+    while (state.date < targetDate) {
+        runDay(state);
+        const interrupts = collectInterrupts(state);
+        if (interrupts.length > 0) {
+            // Move interrupt events to pending queue; caller is responsible for resolving them
+            state.pendingEvents.push(...interrupts);
+            yield { type: "interrupted", events: interrupts };
+            return; // caller must resume the generator after resolving events
+        }
+        yield { type: "day_complete", date: state.date };
     }
-    yield { type: 'day_complete', date: state.date };
-  }
 }
 ```
 
@@ -41,34 +41,34 @@ Each day runs phases in a fixed sequence. Phase order matters because outputs of
 // packages/engine/src/simulation/day.ts
 
 export const runDay = (state: GameState): void => {
-  state.date += 1;
+    state.date += 1;
 
-  // 1. Tick effect durations — decrement countdown, remove expired instances
-  tickEffects(state);
+    // 1. Tick effect durations — decrement countdown, remove expired instances
+    tickEffects(state);
 
-  // 2. Citizen simulation — every living, non-incapacitated person takes their daily actions
-  simulateCitizens(state);
+    // 2. Citizen simulation — every living, non-incapacitated person takes their daily actions
+    simulateCitizens(state);
 
-  // 3. Building output — staffed buildings generate resources
-  processBuildingOutput(state);
+    // 3. Building output — staffed buildings generate resources
+    processBuildingOutput(state);
 
-  // 4. Plot advancement — move plots forward by one day; resolve completed/failed plots
-  advancePlots(state);
+    // 4. Plot advancement — move plots forward by one day; resolve completed/failed plots
+    advancePlots(state);
 
-  // 5. Activity execution — execute one day of each active activity
-  executeActivities(state);
+    // 5. Activity execution — execute one day of each active activity
+    executeActivities(state);
 
-  // 6. Research advancement — progress active research projects
-  advanceResearch(state);
+    // 6. Research advancement — progress active research projects
+    advanceResearch(state);
 
-  // 7. Resource settlement — tally income, deduct expenses, handle shortfalls
-  settleResources(state);
+    // 7. Resource settlement — tally income, deduct expenses, handle shortfalls
+    settleResources(state);
 
-  // 8. CPU org actions — each non-empire GO takes its daily action
-  processCpuOrgs(state);
+    // 8. CPU org actions — each non-empire GO takes its daily action
+    processCpuOrgs(state);
 
-  // 9. Event generation — evaluate triggers, create new events
-  generateEvents(state);
+    // 9. Event generation — evaluate triggers, create new events
+    generateEvents(state);
 };
 ```
 
@@ -80,25 +80,26 @@ Citizens are processed one by one. This is the most computationally expensive ph
 // packages/engine/src/simulation/citizens.ts
 
 const simulateCitizens = (state: GameState): void => {
-  for (const person of Object.values(state.persons)) {
-    if (person.dead) continue;
-    if (isIncapacitated(person, state)) continue;
-    simulatePersonDay(person, state);
-  }
+    for (const person of Object.values(state.persons)) {
+        if (person.dead) continue;
+        if (isIncapacitated(person, state)) continue;
+        simulatePersonDay(person, state);
+    }
 };
 
 const simulatePersonDay = (person: Person, state: GameState): void => {
-  const zone = state.zones[person.zoneId];
-  const eligibleActions = getEligibleActions(person, zone, state);
-  if (eligibleActions.length === 0) return;
-  
-  // Most citizens take one action; some may take two
-  const action = weightedRandom(eligibleActions);
-  executeCitizenAction(action, person, state);
+    const zone = state.zones[person.zoneId];
+    const eligibleActions = getEligibleActions(person, zone, state);
+    if (eligibleActions.length === 0) return;
+
+    // Most citizens take one action; some may take two
+    const action = weightedRandom(eligibleActions);
+    executeCitizenAction(action, person, state);
 };
 ```
 
-Citizen action definitions come from `config/citizenActions.json`. Each action definition has:
+Citizen action definitions come from `config/<config-set>/citizenActions.json`. Each action definition has:
+
 - Eligibility conditions (attribute thresholds, zone conditions, loyalty ranges, required effects)
 - Weight modifiers (how personality traits affect likelihood)
 - Effects (what the action does to the person, the zone, or other persons)
@@ -107,21 +108,23 @@ Citizen action definitions come from `config/citizenActions.json`. Each action d
 
 Not all events interrupt time. The GDD specifies that **only certain categories** pause advancement:
 
-| Category | Example | Interrupts? |
-|---|---|---|
-| Combat encounter | Citizen attacks agent | Yes |
-| Named character death or injury | Agent killed in plot | Yes |
-| Mandatory player choice | Branching plot resolution | Yes |
-| EVIL tier threshold crossed | Entering "Menace" tier | Yes |
-| Informational | Resource milestone reached | No (logged only) |
+| Category                        | Example                    | Interrupts?      |
+| ------------------------------- | -------------------------- | ---------------- |
+| Combat encounter                | Citizen attacks agent      | Yes              |
+| Named character death or injury | Agent killed in plot       | Yes              |
+| Mandatory player choice         | Branching plot resolution  | Yes              |
+| EVIL tier threshold crossed     | Entering "Menace" tier     | Yes              |
+| Informational                   | Resource milestone reached | No (logged only) |
 
 ```typescript
 type InterruptEvent = GameEvent & { requiresResolution: true };
 
 const collectInterrupts = (state: GameState): InterruptEvent[] => {
-  // Events are added to state.pendingEvents during generateEvents()
-  // This function filters for those requiring player resolution
-  return state.pendingEvents.filter(e => e.requiresResolution) as InterruptEvent[];
+    // Events are added to state.pendingEvents during generateEvents()
+    // This function filters for those requiring player resolution
+    return state.pendingEvents.filter(
+        (e) => e.requiresResolution,
+    ) as InterruptEvent[];
 };
 ```
 
@@ -139,19 +142,25 @@ Plots have multi-stage lifecycles. An `ActivePlot` in state tracks current stage
 
 ```typescript
 interface ActivePlot {
-  id: string;
-  plotDefinitionId: string;             // references config/plots.json
-  currentStageIndex: number;
-  assignedAgentIds: string[];
-  targetZoneId?: string;
-  targetPersonId?: string;
-  daysRemaining: number;                // for current stage
-  accumulatedSuccessScore: number;      // skill rolls accumulated so far
-  status: 'traveling' | 'active' | 'awaiting_resolution' | 'complete' | 'failed';
+    id: string;
+    plotDefinitionId: string; // references config/<config-set>/plots.json
+    currentStageIndex: number;
+    assignedAgentIds: string[];
+    targetZoneId?: string;
+    targetPersonId?: string;
+    daysRemaining: number; // for current stage
+    accumulatedSuccessScore: number; // skill rolls accumulated so far
+    status:
+        | "traveling"
+        | "active"
+        | "awaiting_resolution"
+        | "complete"
+        | "failed";
 }
 ```
 
 Each day, `advancePlots` decrements `daysRemaining`. When it hits zero:
+
 1. Resolve the current stage using accumulated skill scores vs. the plot definition's success thresholds.
 2. If the plot has more stages: transition to the next stage and create a branching `InterruptEvent` if required.
 3. If the plot is single-stage or on its final stage: generate outcome effects and mark complete or failed.
@@ -174,16 +183,17 @@ After buildings generate and activities fire, `settleResources` computes the dai
 
 ```typescript
 const settleResources = (state: GameState): void => {
-  const income = computeDailyIncome(state);      // building output + citizen taxes
-  const expenses = computeDailyExpenses(state);  // salaries + upkeep + plot costs
-  
-  state.empire.resources.money += income.money - expenses.money;
-  state.empire.resources.science += income.science - expenses.science;
-  state.empire.resources.infrastructure += income.infrastructure - expenses.infrastructure;
-  
-  if (state.empire.resources.money < 0) {
-    handleMoneyShortfall(state);                 // loyalty decay, agent defection risk
-  }
+    const income = computeDailyIncome(state); // building output + citizen taxes
+    const expenses = computeDailyExpenses(state); // salaries + upkeep + plot costs
+
+    state.empire.resources.money += income.money - expenses.money;
+    state.empire.resources.science += income.science - expenses.science;
+    state.empire.resources.infrastructure +=
+        income.infrastructure - expenses.infrastructure;
+
+    if (state.empire.resources.money < 0) {
+        handleMoneyShortfall(state); // loyalty decay, agent defection risk
+    }
 };
 ```
 
