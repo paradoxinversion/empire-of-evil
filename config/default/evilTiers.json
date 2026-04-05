@@ -1,8 +1,44 @@
 [
-  { "minPerceived": 0,  "maxPerceived": 19,  "name": "Nuisance",     "worldResponseProfile": "none" },
-  { "minPerceived": 20, "maxPerceived": 39,  "name": "Irritant",     "worldResponseProfile": "low" },
-  { "minPerceived": 40, "maxPerceived": 59,  "name": "Threat",       "worldResponseProfile": "moderate" },
-  { "minPerceived": 60, "maxPerceived": 79,  "name": "Menace",       "worldResponseProfile": "high" },
-  { "minPerceived": 80, "maxPerceived": 94,  "name": "Supervillain", "worldResponseProfile": "critical" },
-  { "minPerceived": 95, "maxPerceived": 100, "name": "Apocalyptic",  "worldResponseProfile": "maximum" }
+  {
+    "minPerceived": 0,
+    "maxPerceived": 19,
+    "name": "Nuisance",
+    "worldResponseProfile": "none",
+    "playerFacingDescription": "No formal response. Minor diplomatic side-eye."
+  },
+  {
+    "minPerceived": 20,
+    "maxPerceived": 39,
+    "name": "Irritant",
+    "worldResponseProfile": "low",
+    "playerFacingDescription": "Foreign orgs begin increasing border security. Espionage attempts increase."
+  },
+  {
+    "minPerceived": 40,
+    "maxPerceived": 59,
+    "name": "Threat",
+    "worldResponseProfile": "moderate",
+    "playerFacingDescription": "Resistance movements emerge. CPU aggression toward your empire increases."
+  },
+  {
+    "minPerceived": 60,
+    "maxPerceived": 79,
+    "name": "Menace",
+    "worldResponseProfile": "high",
+    "playerFacingDescription": "Hero organizations begin to form. International coalitions discuss 'the problem.'"
+  },
+  {
+    "minPerceived": 80,
+    "maxPerceived": 94,
+    "name": "Supervillain",
+    "worldResponseProfile": "critical",
+    "playerFacingDescription": "Active hero teams deploy. The World Police mobilizes."
+  },
+  {
+    "minPerceived": 95,
+    "maxPerceived": 100,
+    "name": "Apocalyptic",
+    "worldResponseProfile": "maximum",
+    "playerFacingDescription": "All non-empire orgs treat your empire as their primary threat. Maximum response."
+  }
 ]

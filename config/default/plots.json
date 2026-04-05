@@ -1,1 +1,1968 @@
-[]
+[
+  {
+    "id": "biggest-tax-oldest-profession",
+    "name": "The Biggest Tax for the Oldest Profession",
+    "description": "Enforce exploitative taxes on adult services workers in target zones.",
+    "tier": 1,
+    "evilCategory": "cartoonish",
+    "category": "economic-disruption",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 1 },
+      "skillRequirements": [],
+      "researchIds": []
+    },
+    "durationDays": 5,
+    "stages": [
+      {
+        "name": "Enforce the Tax",
+        "durationDays": 5,
+        "successThreshold": 40,
+        "skillDrivers": ["intimidation", "finance"],
+        "outcomes": {
+          "success": { "narrative": "Your agents enforce the new tax regime. The zone's wealth flows upward — toward your coffers." },
+          "failure": { "narrative": "The operation is reported to foreign authorities. Your agent's cover is blown." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 10 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 2 } }
+          ],
+          "failure": [
+            { "type": "lose_loyalty_zone", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "funny-money-printing-press",
+    "name": "Funny Money Printing Press",
+    "description": "Flood a target zone's economy with counterfeit currency.",
+    "tier": 1,
+    "evilCategory": "cartoonish",
+    "category": "economic-disruption",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [],
+      "researchIds": ["counterfeiter"]
+    },
+    "durationDays": 7,
+    "stages": [
+      {
+        "name": "Flood the Market",
+        "durationDays": 7,
+        "successThreshold": 45,
+        "skillDrivers": ["forgery", "finance"],
+        "outcomes": {
+          "success": { "narrative": "Counterfeit bills flood the zone. Economic output craters while your vaults swell." },
+          "failure": { "narrative": "The forgery is detected. Your agents are captured and the foreign org is alerted." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 30 } },
+            { "type": "reduce_zone_economic_output", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "failure": [
+            { "type": "capture_agents", "chance": 0.7, "parameters": {} },
+            { "type": "alert_foreign_org", "chance": 1.0, "parameters": {} }
+          ],
+          "always": [
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 3 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "siphon-zone-accounts",
+    "name": "Siphon Zone Accounts",
+    "description": "Systematically drain financial accounts in a target zone.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "economic-disruption",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "computing", "minimumValue": 20 }],
+      "researchIds": []
+    },
+    "durationDays": 6,
+    "stages": [
+      {
+        "name": "Drain the Accounts",
+        "durationDays": 6,
+        "successThreshold": 40,
+        "skillDrivers": ["computing", "finance"],
+        "outcomes": {
+          "success": { "narrative": "Funds transfer silently. Zone residents wake to lighter wallets and no obvious culprit." },
+          "failure": { "narrative": "The breach is detected. Your agent is captured or expelled and the foreign org is alerted." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_resource_scaled_to_zone_output", "chance": 1.0, "parameters": { "resource": "money" } },
+            { "type": "lose_loyalty_zone", "chance": 1.0, "parameters": { "amount": 8 } }
+          ],
+          "failure": [
+            { "type": "capture_or_expel_agent", "chance": 1.0, "parameters": {} },
+            { "type": "alert_foreign_org", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "forge-trade-documents",
+    "name": "Forge Trade Documents",
+    "description": "Fabricate trade agreements or tariff documents to manipulate a zone's economy.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "economic-disruption",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "forgery", "minimumValue": 25 }],
+      "researchIds": ["advanced-forgeries"]
+    },
+    "durationDays": 8,
+    "stages": [
+      {
+        "name": "Forge and File",
+        "durationDays": 8,
+        "successThreshold": 50,
+        "skillDrivers": ["forgery", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The documents are accepted. Smuggling routes in the zone open up and economic output quietly diminishes." },
+          "failure": { "narrative": "The forgery is detected. Your agent is expelled and the plot is on cooldown in this zone." }
+        },
+        "effects": {
+          "success": [
+            { "type": "unlock_smuggling_routes_in_zone", "chance": 1.0, "parameters": {} },
+            { "type": "reduce_zone_economic_output", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "failure": [
+            { "type": "expel_or_capture_agent", "chance": 1.0, "parameters": {} },
+            { "type": "apply_plot_cooldown_to_zone", "chance": 1.0, "parameters": { "plotId": "forge-trade-documents", "days": 30 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "inspiring-speech",
+    "name": "Inspiring Speech",
+    "description": "The Overlord or a high-Oratory agent delivers a rousing address to empire citizens.",
+    "tier": 1,
+    "evilCategory": "cartoonish",
+    "category": "political-manipulation",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 0,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "oratory", "minimumValue": 30 }],
+      "researchIds": ["communications-strategy-framework"]
+    },
+    "durationDays": 3,
+    "stages": [
+      {
+        "name": "Deliver the Address",
+        "durationDays": 3,
+        "successThreshold": 30,
+        "skillDrivers": ["oratory"],
+        "outcomes": {
+          "success": { "narrative": "The speech lands. Empire citizens are inspired, loyal, and briefly convinced this is the good life." },
+          "failure": { "narrative": "The address falls flat. Apparently the speechwriter had an off day." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_loyalty_empire_wide", "chance": 1.0, "parameters": { "amount": 5 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 2 } }
+          ],
+          "failure": [],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "reconnaissance",
+    "name": "Reconnaissance",
+    "description": "Gather intelligence on a foreign zone.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [],
+      "researchIds": []
+    },
+    "durationDays": 5,
+    "stages": [
+      {
+        "name": "Gather Intel",
+        "durationDays": 5,
+        "successThreshold": 35,
+        "skillDrivers": ["surveillance", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "Your agent returns with detailed intelligence. Zone reports are now more accurate." },
+          "failure": { "narrative": "Your agent is captured, expelled, or forced to flee under fire." }
+        },
+        "effects": {
+          "success": [
+            { "type": "raise_zone_intel", "chance": 1.0, "parameters": { "amount": 15 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 1 } }
+          ],
+          "failure": [
+            { "type": "capture_expel_or_combat_agent", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "sabotage",
+    "name": "Sabotage",
+    "description": "Damage or destroy a specific building in a foreign zone without attempting to take the zone.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [],
+      "researchIds": []
+    },
+    "durationDays": 6,
+    "stages": [
+      {
+        "name": "Execute Sabotage",
+        "durationDays": 6,
+        "successThreshold": 40,
+        "skillDrivers": ["engineering", "larceny"],
+        "outcomes": {
+          "success": { "narrative": "The target building is damaged. Zone output falls and the foreign org scrambles to respond." },
+          "failure": { "narrative": "Your agents are captured or killed. The foreign org is alerted and increases security." }
+        },
+        "effects": {
+          "success": [
+            { "type": "damage_target_building", "chance": 1.0, "parameters": {} },
+            { "type": "reduce_zone_economic_output", "chance": 1.0, "parameters": { "amount": 8 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 2 } }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "alert_foreign_org", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 3 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "plant-disinformation",
+    "name": "Plant Disinformation",
+    "description": "Corrupt the intel available to a foreign org about an empire zone.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "deception", "minimumValue": 20 }],
+      "researchIds": []
+    },
+    "durationDays": 7,
+    "stages": [
+      {
+        "name": "Plant the False Data",
+        "durationDays": 7,
+        "successThreshold": 45,
+        "skillDrivers": ["deception", "forgery"],
+        "outcomes": {
+          "success": { "narrative": "The enemy's intelligence on the zone is now thoroughly corrupted. Their recon will return noise for weeks." },
+          "failure": { "narrative": "The deception is discovered. The enemy becomes more careful — and your zone intel suffers for it." }
+        },
+        "effects": {
+          "success": [
+            { "type": "corrupt_enemy_intel_on_zone", "chance": 1.0, "parameters": { "durationDays": 20 } }
+          ],
+          "failure": [
+            { "type": "reduce_empire_intel_on_zone", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "spread-conspiracy-theories",
+    "name": "Spread Conspiracy Theories",
+    "description": "Seed conspiracy theories among citizens in a target zone.",
+    "tier": 1,
+    "evilCategory": "cartoonish",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "deception", "minimumValue": 15 }],
+      "researchIds": []
+    },
+    "durationDays": 6,
+    "stages": [
+      {
+        "name": "Seed the Theories",
+        "durationDays": 6,
+        "successThreshold": 35,
+        "skillDrivers": ["deception", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "Citizens in the zone have become convinced that the moon is a government project. Their intelligence drops. Their loyalty shifts." },
+          "failure": { "narrative": "The campaign fizzles. Nobody took the bait." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_effect_to_zone_citizens", "chance": 0.4, "parameters": { "effectId": "conspiracy-theories" } }
+          ],
+          "failure": [],
+          "always": [
+            { "type": "spread_effect_citizen_to_citizen", "chance": 1.0, "parameters": { "effectId": "conspiracy-theories", "dailySpreadChance": 0.1 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "organize-antiwork-unions",
+    "name": "Organize Antiwork Unions",
+    "description": "Plant agents in a foreign zone to convince citizens that work is bad, actually.",
+    "tier": 1,
+    "evilCategory": "cartoonish",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "persuasion", "minimumValue": 20 }],
+      "researchIds": []
+    },
+    "durationDays": 8,
+    "stages": [
+      {
+        "name": "Radicalize the Workforce",
+        "durationDays": 8,
+        "successThreshold": 45,
+        "skillDrivers": ["persuasion", "oratory"],
+        "outcomes": {
+          "success": { "narrative": "A significant portion of the zone's workforce has quit. Economic output drops as workers pursue their passion projects." },
+          "failure": { "narrative": "The workers remain unconvinced. Personnel loyalty to their GO increases and your agents are expelled." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_zone_employment", "chance": 1.0, "parameters": { "fraction": 0.2 } },
+            { "type": "reduce_zone_economic_output", "chance": 1.0, "parameters": { "amount": 12 } }
+          ],
+          "failure": [
+            { "type": "increase_zone_loyalty_to_foreign_org", "chance": 1.0, "parameters": { "amount": 5 } },
+            { "type": "expel_agents", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "false-flag-operation",
+    "name": "False Flag Operation",
+    "description": "Attribute an empire action or a fabricated incident to another org.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 0,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "forgery", "minimumValue": 30 },
+        { "skillId": "deception", "minimumValue": 30 }
+      ],
+      "researchIds": ["narrative-control-systems"]
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Frame the Target",
+        "durationDays": 10,
+        "successThreshold": 55,
+        "skillDrivers": ["forgery", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The false flag lands. Perceived EVIL drops as another org takes the blame. Their reputation suffers accordingly." },
+          "failure": { "narrative": "The false flag is exposed. Perceived EVIL rises sharply and the empire's credibility takes a hit." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_perceived_evil", "chance": 1.0, "parameters": { "amount": 8 } },
+            { "type": "damage_foreign_org_reputation", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 10 } },
+            { "type": "apply_plot_debuff", "chance": 1.0, "parameters": { "skillId": "deception", "durationDays": 20 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "rob-a-bank",
+    "name": "Rob a Bank",
+    "description": "Hit a bank in a target zone for direct money gain.",
+    "tier": 2,
+    "evilCategory": "cartoonish",
+    "category": "criminal",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "larceny", "minimumValue": 30 },
+        { "skillId": "firearms", "minimumValue": 20 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 5,
+    "stages": [
+      {
+        "name": "The Heist",
+        "durationDays": 5,
+        "successThreshold": 50,
+        "skillDrivers": ["larceny", "tactics"],
+        "outcomes": {
+          "success": { "narrative": "The vault is emptied. The local news will be talking about this for weeks. You launder or pocket the proceeds." },
+          "failure": { "narrative": "Something went wrong. Agents captured or killed. The EVIL is hard to shake regardless." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_resource_scaled_to_bank_size", "chance": 1.0, "parameters": { "resource": "money" } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "always": []
+        },
+        "branchingChoice": {
+          "trigger": "success",
+          "prompt": "How do you handle the proceeds?",
+          "options": [
+            {
+              "id": "launder",
+              "label": "Launder through a front company",
+              "effects": [
+                { "type": "gain_resource", "chance": 1.0, "parameters": { "resource": "money", "multiplier": 0.7 } }
+              ],
+              "evilDelta": -2
+            },
+            {
+              "id": "pocket",
+              "label": "Take it directly",
+              "effects": [
+                { "type": "gain_resource", "chance": 1.0, "parameters": { "resource": "money", "multiplier": 1.0 } }
+              ],
+              "evilDelta": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "forge-identity-documents",
+    "name": "Forge Identity Documents",
+    "description": "Create false identities for empire agents operating in foreign zones.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "criminal",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 0,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "forgery", "minimumValue": 30 }],
+      "researchIds": ["advanced-forgeries"]
+    },
+    "durationDays": 5,
+    "stages": [
+      {
+        "name": "Prepare the Documents",
+        "durationDays": 5,
+        "successThreshold": 45,
+        "skillDrivers": ["forgery"],
+        "outcomes": {
+          "success": { "narrative": "Flawless documents. Your agents can now operate in foreign zones with significantly reduced detection risk." },
+          "failure": { "narrative": "The forgery is detected. Your agents are flagged and face increased scrutiny for the foreseeable future." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_cover_identity_to_agents", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "flag_agents_in_foreign_org", "chance": 1.0, "parameters": { "durationDays": 20 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "encryption-protocols-plot",
+    "name": "Encryption Protocols",
+    "description": "Deploy advanced encryption across empire communications.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 0,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "computing", "minimumValue": 30 }],
+      "researchIds": ["encryption-protocols"]
+    },
+    "durationDays": 7,
+    "stages": [
+      {
+        "name": "Deploy Encryption",
+        "durationDays": 7,
+        "successThreshold": 40,
+        "skillDrivers": ["computing", "counter-intelligence"],
+        "outcomes": {
+          "success": { "narrative": "The encryption is live. Enemy surveillance operations will find only noise." },
+          "failure": { "narrative": "Deployment fails. Communications remain exposed." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_effect_to_empire", "chance": 1.0, "parameters": { "effectId": "encryption-protocols" } }
+          ],
+          "failure": [],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "counterintelligence-sweep",
+    "name": "Counterintelligence Sweep",
+    "description": "Assign agents to monitor and intercept foreign espionage operations empire-wide.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "defensive",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 0,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "counter-intelligence", "minimumValue": 25 }],
+      "researchIds": []
+    },
+    "durationDays": -1,
+    "ongoing": true,
+    "stages": [
+      {
+        "name": "Run the Sweep",
+        "durationDays": -1,
+        "successThreshold": 0,
+        "skillDrivers": ["counter-intelligence", "computing"],
+        "outcomes": {
+          "success": { "narrative": "Foreign espionage operations continue to stumble over your defenses. An agent has been identified." },
+          "failure": { "narrative": "The sweep runs but catches nothing this cycle." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_foreign_espionage_success", "chance": 1.0, "parameters": { "amount": 0.2 } },
+            { "type": "identify_foreign_agent", "chance": 0.15, "parameters": {} }
+          ],
+          "failure": [],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "establish-front-company",
+    "name": "Establish a Front Company",
+    "description": "Plant a legitimate-seeming business in a target zone as a persistent imperial asset.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "economic-disruption",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 50 },
+      "skillRequirements": [
+        { "skillId": "finance", "minimumValue": 30 },
+        { "skillId": "forgery", "minimumValue": 25 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 14,
+    "stages": [
+      {
+        "name": "Establish the Business",
+        "durationDays": 14,
+        "successThreshold": 55,
+        "skillDrivers": ["finance", "forgery", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The front company opens its doors. A legitimate-looking asset now provides cover and passive income." },
+          "failure": { "narrative": "The company is exposed. Agents are seized along with the assets." }
+        },
+        "effects": {
+          "success": [
+            { "type": "create_front_company_in_zone", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "expose_and_capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "send-ade",
+    "name": "Send Ade",
+    "description": "Infiltrate a target zone with cult-like loyalty manipulation. Send them some ade. Cool-ade. Tons and tons of Cool-ade.",
+    "tier": 2,
+    "evilCategory": "cartoonish",
+    "category": "political-manipulation",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 30 },
+      "skillRequirements": [
+        { "skillId": "persuasion", "minimumValue": 30 },
+        { "skillId": "oratory", "minimumValue": 25 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Distribute the Ade",
+        "durationDays": 10,
+        "successThreshold": 50,
+        "skillDrivers": ["persuasion", "oratory"],
+        "outcomes": {
+          "success": { "narrative": "The ade flows freely. A portion of the zone's citizens now feel an inexplicable warmth toward your empire." },
+          "failure": { "narrative": "Your agents are expelled. Loyalty toward the empire in the zone drops." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_loyalty_zone_citizens", "chance": 1.0, "parameters": { "fraction": 0.3, "amount": 10 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 3 } }
+          ],
+          "failure": [
+            { "type": "expel_agents", "chance": 1.0, "parameters": {} },
+            { "type": "lose_loyalty_zone", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "always": []
+        },
+        "branchingChoice": {
+          "trigger": "success_threshold_exceeded",
+          "threshold": 75,
+          "prompt": "The operation has exceeded expectations. Do you push further?",
+          "options": [
+            {
+              "id": "push",
+              "label": "Push further",
+              "effects": [
+                { "type": "gain_loyalty_zone_citizens", "chance": 1.0, "parameters": { "fraction": 0.2, "amount": 10 } },
+                { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 5 } }
+              ]
+            },
+            {
+              "id": "consolidate",
+              "label": "Consolidate gains",
+              "effects": []
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "assassination",
+    "name": "Assassination",
+    "description": "Kill a specific named target in a foreign zone.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "firearms", "minimumValue": 40 }],
+      "researchIds": [],
+      "minZoneIntel": 40
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Execute the Hit",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["firearms", "infiltration", "evasion"],
+        "outcomes": {
+          "success": { "narrative": "The target is eliminated. The foreign org enters a succession crisis." },
+          "failure": { "narrative": "The attempt fails. Agents are captured or killed, the target goes into hiding, and intel on them resets to zero." }
+        },
+        "effects": {
+          "success": [
+            { "type": "kill_target", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 10 } },
+            { "type": "trigger_succession_if_leader", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "reset_target_intel", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 8 } }
+          ],
+          "always": []
+        },
+        "branchingChoice": {
+          "trigger": "success",
+          "requiresTargetIsLeader": true,
+          "prompt": "The target was a GO leader. Do you publicize the assassination?",
+          "options": [
+            {
+              "id": "publicize",
+              "label": "Publicize",
+              "effects": [
+                { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 8 } },
+                { "type": "apply_fear_to_foreign_orgs", "chance": 1.0, "parameters": {} }
+              ]
+            },
+            {
+              "id": "keep-quiet",
+              "label": "Keep it quiet",
+              "effects": [
+                { "type": "delay_succession_disruption", "chance": 1.0, "parameters": {} }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "destabilize-zone",
+    "name": "Destabilize Zone",
+    "description": "Weaken a zone's defenses and loyalty ahead of a planned Takeover.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "infiltration", "minimumValue": 25 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 12,
+    "stages": [
+      {
+        "name": "Undermine the Zone",
+        "durationDays": 12,
+        "successThreshold": 50,
+        "skillDrivers": ["infiltration", "intimidation", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "Zone defenses are compromised. Loyalty is fractured. A Takeover Zone plot here will find much easier going." },
+          "failure": { "narrative": "Your agents are expelled. The zone is now on high alert." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_zone_combat_defense", "chance": 1.0, "parameters": { "amount": 20 } },
+            { "type": "lose_loyalty_zone", "chance": 1.0, "parameters": { "amount": 10 } },
+            { "type": "improve_takeover_odds_for_zone", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "expel_agents", "chance": 1.0, "parameters": {} },
+            { "type": "increase_zone_alert", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 3 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "abduction",
+    "name": "Abduction",
+    "description": "Capture a specific person from a foreign zone and bring them to empire territory.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [],
+      "researchIds": [],
+      "minZoneIntel": 30
+    },
+    "durationDays": 8,
+    "stages": [
+      {
+        "name": "Extract the Target",
+        "durationDays": 8,
+        "successThreshold": 50,
+        "skillDrivers": ["infiltration", "evasion", "firearms"],
+        "outcomes": {
+          "success": { "narrative": "The target is extracted and added to your captives list." },
+          "failure": { "narrative": "Extraction fails. Agents are captured or killed and the foreign org is alerted." }
+        },
+        "effects": {
+          "success": [
+            { "type": "add_to_captives", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "alert_foreign_org", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 5 } }
+          ],
+          "always": []
+        },
+        "branchingChoice": {
+          "trigger": "success",
+          "prompt": "The captive is in your hands. What do you do with them?",
+          "options": [
+            { "id": "hold", "label": "Hold them", "effects": [] },
+            {
+              "id": "interrogate",
+              "label": "Interrogate",
+              "effects": [{ "type": "interrogate_captive", "chance": 1.0, "parameters": {} }]
+            },
+            {
+              "id": "ransom",
+              "label": "Ransom",
+              "effects": [{ "type": "ransom_captive", "chance": 1.0, "parameters": {} }]
+            },
+            {
+              "id": "release",
+              "label": "Release",
+              "effects": [{ "type": "release_captive", "chance": 1.0, "parameters": {} }]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "surveillance-tap",
+    "name": "Surveillance Tap",
+    "description": "Plant listening devices in a target zone's key locations.",
+    "tier": 1,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "surveillance", "minimumValue": 25 }],
+      "researchIds": ["centralized-telecommunications"]
+    },
+    "durationDays": 8,
+    "stages": [
+      {
+        "name": "Plant the Devices",
+        "durationDays": 8,
+        "successThreshold": 45,
+        "skillDrivers": ["surveillance", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "The tap is live. Intercepted communications from this zone will begin appearing in your intelligence reports." },
+          "failure": { "narrative": "The devices are discovered. Your agent is captured and the tap is gone." }
+        },
+        "effects": {
+          "success": [
+            { "type": "activate_intel_feed_for_zone", "chance": 1.0, "parameters": {} },
+            { "type": "passive_zone_intel_increase", "chance": 1.0, "parameters": { "perDayAmount": 1 } }
+          ],
+          "failure": [
+            { "type": "capture_agent", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "purge-foreign-agents",
+    "name": "Purge Foreign Agents",
+    "description": "Sweep an empire zone for foreign operatives.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "counter-intelligence", "minimumValue": 30 },
+        { "skillId": "surveillance", "minimumValue": 20 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Execute the Sweep",
+        "durationDays": 10,
+        "successThreshold": 50,
+        "skillDrivers": ["counter-intelligence", "surveillance"],
+        "outcomes": {
+          "success": { "narrative": "Foreign agents identified and captured or expelled. The zone is clean — for now." },
+          "failure": { "narrative": "Foreign agents go to ground. The sweep catches no one and citizens resent the disruption." }
+        },
+        "effects": {
+          "success": [
+            { "type": "identify_and_capture_foreign_agents", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "hide_foreign_agents", "chance": 1.0, "parameters": { "durationDays": 15 } },
+            { "type": "lose_loyalty_zone", "chance": 1.0, "parameters": { "amount": 3 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "establish-smuggling-route",
+    "name": "Establish a Smuggling Route",
+    "description": "Set up a persistent underground supply line between two zones.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "criminal",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 2,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "smuggling", "minimumValue": 30 },
+        { "skillId": "streetwise", "minimumValue": 20 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 12,
+    "stages": [
+      {
+        "name": "Establish the Route",
+        "durationDays": 12,
+        "successThreshold": 55,
+        "skillDrivers": ["smuggling", "streetwise", "larceny"],
+        "outcomes": {
+          "success": { "narrative": "The route is open. Goods and agents move between zones with reduced risk and cost." },
+          "failure": { "narrative": "The route is exposed. Agents are captured and both zones become more alert." }
+        },
+        "effects": {
+          "success": [
+            { "type": "create_smuggling_route", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "increase_zone_alert", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 4 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "recruit-criminal-network",
+    "name": "Recruit Criminal Network",
+    "description": "Absorb an existing criminal network in a target zone into the empire's operations.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "criminal",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 40 },
+      "skillRequirements": [
+        { "skillId": "streetwise", "minimumValue": 30 }
+      ],
+      "researchIds": []
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Make the Offer",
+        "durationDays": 10,
+        "successThreshold": 55,
+        "skillDrivers": ["streetwise", "intimidation", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "The network falls in line. Black market access improves and intel flows in on zone citizens." },
+          "failure": { "narrative": "The network turns hostile. Your agents are at risk and the zone's orgs are alerted." }
+        },
+        "effects": {
+          "success": [
+            { "type": "absorb_criminal_network", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "hostile_criminal_network", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 4 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "fortify-zone",
+    "name": "Fortify Zone",
+    "description": "Establish and maintain ongoing defensive infrastructure in an empire zone.",
+    "tier": 2,
+    "evilCategory": "grounded",
+    "category": "defensive",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 20 },
+      "skillRequirements": [
+        { "skillId": "engineering", "minimumValue": 30 },
+        { "skillId": "logistics", "minimumValue": 20 }
+      ],
+      "researchIds": ["fortification-engineering"]
+    },
+    "durationDays": -1,
+    "ongoing": true,
+    "stages": [
+      {
+        "name": "Maintain the Fortifications",
+        "durationDays": -1,
+        "successThreshold": 0,
+        "skillDrivers": ["engineering", "logistics"],
+        "outcomes": {
+          "success": { "narrative": "Fortifications hold. Incoming Takeover attempts will find stiff resistance." },
+          "failure": { "narrative": "Fortification effort flags this cycle. Defenses are slightly below optimum." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_combat_defense_bonus_to_zone", "chance": 1.0, "parameters": { "amount": 25 } }
+          ],
+          "failure": [],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "free-internet",
+    "name": "Free Internet",
+    "description": "Provide free internet access to citizens in a target zone as a loyalty-building measure.",
+    "tier": 2,
+    "evilCategory": "cartoonish",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": { "science": 10 },
+      "skillRequirements": [{ "skillId": "computing", "minimumValue": 30 }],
+      "researchIds": ["empire-intranet"],
+      "minPerceivedEvil": 25
+    },
+    "durationDays": 10,
+    "stages": [
+      {
+        "name": "Deploy the Network",
+        "durationDays": 10,
+        "successThreshold": 45,
+        "skillDrivers": ["computing", "engineering"],
+        "outcomes": {
+          "success": { "narrative": "Free internet arrives. Loyalty climbs. Citizens post enthusiastic content about their benevolent providers." },
+          "failure": { "narrative": "Deployment fails. Nothing to show for the effort." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_loyalty_zone_citizens", "chance": 1.0, "parameters": { "amount": 8 } },
+            { "type": "passive_zone_intel_increase", "chance": 1.0, "parameters": { "perDayAmount": 1 } }
+          ],
+          "failure": [],
+          "always": []
+        },
+        "branchingChoice": {
+          "trigger": "success",
+          "prompt": "Do you include a surveillance backdoor?",
+          "options": [
+            {
+              "id": "include-backdoor",
+              "label": "Include backdoor",
+              "effects": [
+                { "type": "passive_zone_intel_increase", "chance": 1.0, "parameters": { "perDayAmount": 2 } },
+                { "type": "trigger_loyalty_collapse_on_discovery", "chance": 1.0, "parameters": {} }
+              ]
+            },
+            {
+              "id": "no-backdoor",
+              "label": "No backdoor",
+              "effects": []
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "back-puppet-candidate",
+    "name": "Back a Puppet Candidate",
+    "description": "Engineer the political rise of an empire-aligned figure in a foreign zone.",
+    "tier": 3,
+    "evilCategory": "grounded",
+    "category": "political-manipulation",
+    "requirements": {
+      "agentCount": 3,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 150 },
+      "skillRequirements": [
+        { "skillId": "persuasion", "minimumValue": 40 },
+        { "skillId": "surveillance", "minimumValue": 35 },
+        { "skillId": "deception", "minimumValue": 35 }
+      ],
+      "researchIds": [],
+      "minZoneIntel": 50
+    },
+    "durationDays": 40,
+    "stages": [
+      {
+        "name": "Identify Candidate",
+        "durationDays": 10,
+        "successThreshold": 50,
+        "skillDrivers": ["surveillance", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "A suitable candidate has been identified and approached. They are... receptive." },
+          "failure": { "narrative": "No viable candidate found. The plot chain fails at the first step." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [],
+          "always": []
+        }
+      },
+      {
+        "name": "Fund Campaign",
+        "durationDays": 15,
+        "successThreshold": 55,
+        "skillDrivers": ["finance", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The candidate's campaign is gaining traction, funded discreetly through empire channels." },
+          "failure": { "narrative": "Funding is traced back to the empire. Agents captured or expelled. EVIL spikes." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "capture_or_expel_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 15 } },
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Suppress Opposition",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["deception", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "Rival candidates are discredited, distracted, or dissuaded. The path is clear." },
+          "failure": { "narrative": "The suppression is exposed. Significant blowback." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 12 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Install",
+        "durationDays": 5,
+        "successThreshold": 65,
+        "skillDrivers": ["persuasion", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The candidate wins. Zone control transfers to the empire." },
+          "failure": { "narrative": "The installation collapses. Agents are captured and EVIL surges." }
+        },
+        "effects": {
+          "success": [
+            { "type": "transfer_zone_control", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 20 } },
+            { "type": "reduce_foreign_org_opinion", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "engineer-a-coup",
+    "name": "Engineer a Coup",
+    "description": "Destabilize a foreign org's leadership and install a new leader directly loyal to the empire.",
+    "tier": 3,
+    "evilCategory": "grounded",
+    "category": "political-manipulation",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "money": 200, "science": 30 },
+      "skillRequirements": [
+        { "skillId": "infiltration", "minimumValue": 50 },
+        { "skillId": "deception", "minimumValue": 45 }
+      ],
+      "researchIds": [],
+      "minTargetLeaderIntel": 60
+    },
+    "durationDays": 35,
+    "stages": [
+      {
+        "name": "Surveil Leadership",
+        "durationDays": 12,
+        "successThreshold": 55,
+        "skillDrivers": ["surveillance", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "Leadership patterns mapped. Vulnerabilities identified." },
+          "failure": { "narrative": "Surveillance detected. The plot chain ends here." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "capture_agents", "chance": 0.5, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 8 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Turn Key Personnel",
+        "durationDays": 15,
+        "successThreshold": 65,
+        "skillDrivers": ["persuasion", "deception", "intimidation"],
+        "outcomes": {
+          "success": { "narrative": "Key personnel are now loyal to the empire. The coup has its conspirators." },
+          "failure": { "narrative": "The turncoats fail to hold. Coup collapses." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 15 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Execute Coup",
+        "durationDays": 8,
+        "successThreshold": 70,
+        "skillDrivers": ["tactics", "infiltration", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The coup succeeds. A new, empire-loyal leader is installed." },
+          "failure": { "narrative": "The coup collapses catastrophically. Empire reputation suffers across all orgs." }
+        },
+        "effects": {
+          "success": [
+            { "type": "install_loyal_leader", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 25 } },
+            { "type": "increase_all_org_hostility", "chance": 1.0, "parameters": { "durationDays": 30 } }
+          ],
+          "always": [
+            { "type": "chance_of_exposure_and_perceived_evil_spike", "chance": 0.4, "parameters": {} }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "global-propaganda-campaign",
+    "name": "Global Propaganda Campaign",
+    "description": "A sustained, coordinated multi-zone propaganda effort targeting world opinion of the empire.",
+    "tier": 3,
+    "evilCategory": "cartoonish",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 3,
+      "resourceCosts": { "money": 120 },
+      "skillRequirements": [
+        { "skillId": "oratory", "minimumValue": 45 },
+        { "skillId": "deception", "minimumValue": 40 }
+      ],
+      "researchIds": ["propaganda-department"]
+    },
+    "durationDays": 40,
+    "stages": [
+      {
+        "name": "Develop Messaging",
+        "durationDays": 12,
+        "successThreshold": 50,
+        "skillDrivers": ["oratory", "deception"],
+        "outcomes": {
+          "success": { "narrative": "The messaging is sharp, targeted, and implausibly reasonable." },
+          "failure": { "narrative": "The messaging is exposed as empire output. Campaign fails here." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 12 } },
+            { "type": "lose_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 60 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Place Agents",
+        "durationDays": 18,
+        "successThreshold": 55,
+        "skillDrivers": ["deception", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "Agents are in place across all target zones. The broadcast begins." },
+          "failure": { "narrative": "An agent is compromised. The campaign collapses mid-execution." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 15 } },
+            { "type": "lose_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 80 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Sustain Broadcast",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["oratory", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "The campaign lands. Perceived EVIL drops. Target zone citizens are warming to the empire." },
+          "failure": { "narrative": "The campaign is exposed as fabrication. Massive perceived EVIL spike." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_perceived_evil", "chance": 1.0, "parameters": { "amount": 15 } },
+            { "type": "gain_loyalty_zone_citizens_multi", "chance": 1.0, "parameters": { "amount": 5 } },
+            { "type": "improve_empire_opinion_with_target_orgs", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "takeover-zone",
+    "name": "Takeover Zone",
+    "description": "Attempt to seize control of a foreign zone. Core military victory mechanic.",
+    "tier": 3,
+    "evilCategory": "grounded",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [{ "skillId": "tactics", "minimumValue": 30 }],
+      "researchIds": []
+    },
+    "durationDays": 15,
+    "stages": [
+      {
+        "name": "Travel to Zone",
+        "durationDays": 3,
+        "successThreshold": 0,
+        "skillDrivers": ["logistics"],
+        "outcomes": {
+          "success": { "narrative": "Your forces arrive at the zone perimeter." },
+          "failure": { "narrative": "Travel disrupted by foreign patrol." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "trigger_combat_event", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Engage Defenses",
+        "durationDays": 5,
+        "successThreshold": 50,
+        "skillDrivers": ["tactics", "firearms", "melee"],
+        "outcomes": {
+          "success": { "narrative": "Defenses are overcome. The zone is vulnerable." },
+          "failure": { "narrative": "Defenses hold. Agents are killed in combat." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "kill_participating_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Combat Encounter",
+        "durationDays": 7,
+        "successThreshold": 55,
+        "skillDrivers": ["tactics", "firearms", "melee"],
+        "outcomes": {
+          "success": { "narrative": "The zone falls. Its buildings and citizens are now under empire control." },
+          "failure": { "narrative": "The assault fails. Agents are killed in combat and the empire is repelled." }
+        },
+        "effects": {
+          "success": [
+            { "type": "transfer_zone_to_empire", "chance": 1.0, "parameters": {} },
+            { "type": "set_zone_intel_maximum", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 12 } }
+          ],
+          "failure": [
+            { "type": "kill_participating_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "disinformation-network",
+    "name": "Disinformation Network",
+    "description": "Build a sustained, multi-zone false intelligence infrastructure that corrupts enemy recon across the empire.",
+    "tier": 3,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 3,
+      "zoneCount": 3,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "deception", "minimumValue": 45 },
+        { "skillId": "forgery", "minimumValue": 40 },
+        { "skillId": "computing", "minimumValue": 35 }
+      ],
+      "researchIds": ["propaganda-department", "predictive-behavioral-modeling"]
+    },
+    "durationDays": 35,
+    "stages": [
+      {
+        "name": "Establish False Data Sources",
+        "durationDays": 12,
+        "successThreshold": 55,
+        "skillDrivers": ["forgery", "deception"],
+        "outcomes": {
+          "success": { "narrative": "False data sources planted across the empire. Enemy analysts will find their readings... misleading." },
+          "failure": { "narrative": "The false sources are exposed. Enemy intel on empire zones improves." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "improve_enemy_intel_on_empire_zones", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Place Disinformation Agents",
+        "durationDays": 13,
+        "successThreshold": 60,
+        "skillDrivers": ["deception", "infiltration"],
+        "outcomes": {
+          "success": { "narrative": "Agents are embedded. The network is live." },
+          "failure": { "narrative": "An agent is compromised. Network collapses." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "improve_enemy_intel_on_empire_zones", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Maintain Network",
+        "durationDays": 10,
+        "successThreshold": 55,
+        "skillDrivers": ["computing", "deception"],
+        "outcomes": {
+          "success": { "narrative": "All enemy recon operations targeting empire zones now return corrupted data." },
+          "failure": { "narrative": "The network is dismantled. Enemy intelligence surges." }
+        },
+        "effects": {
+          "success": [
+            { "type": "corrupt_all_enemy_recon_on_empire", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_agents", "chance": 1.0, "parameters": {} },
+            { "type": "improve_enemy_intel_on_empire_zones", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "operation-clean-hands",
+    "name": "Operation Clean Hands",
+    "description": "Make the world believe the Adjudicators are corrupt. Requires perceived EVIL below 60.",
+    "tier": 3,
+    "evilCategory": "grounded",
+    "category": "espionage-intelligence",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 2,
+      "resourceCosts": {},
+      "skillRequirements": [
+        { "skillId": "forgery", "minimumValue": 50 },
+        { "skillId": "deception", "minimumValue": 50 }
+      ],
+      "researchIds": ["advanced-forgeries", "propaganda-department"],
+      "maxPerceivedEvil": 59
+    },
+    "durationDays": 30,
+    "stages": [
+      {
+        "name": "Plant the Seeds",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["forgery", "deception"],
+        "outcomes": {
+          "success": { "narrative": "Fabricated Adjudicator misconduct evidence is in circulation. Three orgs have received the documents. Suspicion begins." },
+          "failure": { "narrative": "The forgery is detected. Adjudicators are alerted. The plot chain fails and perceived EVIL increases." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "alert_adjudicators", "chance": 1.0, "parameters": {} },
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Cultivate the Narrative",
+        "durationDays": 15,
+        "successThreshold": 65,
+        "skillDrivers": ["oratory", "persuasion"],
+        "outcomes": {
+          "success": { "narrative": "Two or more orgs formally question Adjudicator legitimacy. Adjudicator capability is temporarily reduced." },
+          "failure": { "narrative": "The narrative collapses. Empire identified as source. Adjudicators rally and gain capability." }
+        },
+        "effects": {
+          "success": [
+            { "type": "reduce_adjudicator_capability", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "gain_perceived_evil", "chance": 1.0, "parameters": { "amount": 20 } },
+            { "type": "boost_adjudicator_capability", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "The Revelation",
+        "durationDays": 5,
+        "successThreshold": 70,
+        "skillDrivers": ["deception", "computing", "forgery"],
+        "outcomes": {
+          "success": { "narrative": "The world turns on the Adjudicators. Their mandate is revoked. The org enters collapse." },
+          "failure": { "narrative": "Catastrophic failure. Empire identified as orchestrator. All orgs increase hostility. Adjudicators gain maximum capability from worldwide sympathy." }
+        },
+        "effects": {
+          "success": [
+            { "type": "collapse_adjudicators", "chance": 1.0, "parameters": {} },
+            { "type": "reduce_perceived_evil", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "failure": [
+            { "type": "increase_all_org_hostility_maximum", "chance": 1.0, "parameters": {} },
+            { "type": "boost_adjudicator_capability_maximum", "chance": 1.0, "parameters": {} }
+          ],
+          "always": [
+            { "type": "reduce_perceived_evil_partial", "chance": 1.0, "parameters": { "onPartialSuccess": true, "amount": 10 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "hypno-disco-ball",
+    "name": "The Hypno Disco Ball",
+    "description": "Deploy a hyper-refractive light installation capable of broadcasting hypnotic frequencies across an entire zone.",
+    "tier": 4,
+    "evilCategory": "cartoonish",
+    "category": "social-engineering-propaganda",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 1,
+      "resourceCosts": { "science": 80 },
+      "skillRequirements": [
+        { "skillId": "engineering", "minimumValue": 55 }
+      ],
+      "researchIds": ["hyperrefractive-materials", "behavioral-influence-research"]
+    },
+    "durationDays": 25,
+    "stages": [
+      {
+        "name": "Deploy and Activate",
+        "durationDays": 25,
+        "successThreshold": 65,
+        "skillDrivers": ["engineering", "computing"],
+        "outcomes": {
+          "success": { "narrative": "The Disco Ball hums to life. Citizens in the zone undergo mass loyalty conversion. They are also having an extremely good time." },
+          "failure": { "narrative": "The device malfunctions. Agents are injured and the foreign org now knows you have optical research capabilities." }
+        },
+        "effects": {
+          "success": [
+            { "type": "gain_loyalty_zone_citizens", "chance": 1.0, "parameters": { "fraction": 1.0, "amount": 25 } },
+            { "type": "apply_effect_to_zone_citizens", "chance": 1.0, "parameters": { "effectId": "party-animal" } },
+            { "type": "reduce_zone_citizen_intelligence", "chance": 1.0, "parameters": { "amount": 10 } }
+          ],
+          "failure": [
+            { "type": "injure_agents", "chance": 0.5, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 15 } },
+            { "type": "reveal_research_to_foreign_org", "chance": 1.0, "parameters": { "researchId": "hyperrefractive-materials" } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "blot-out-the-sun",
+    "name": "Blot Out the Sun",
+    "description": "Launch a stratospheric particulate dispersal system that reduces global solar energy output — then sell the solution back to a dependent world.",
+    "tier": 4,
+    "evilCategory": "grounded",
+    "category": "world-altering",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 0,
+      "resourceCosts": { "money": 500, "science": 200 },
+      "skillRequirements": [
+        { "skillId": "engineering", "minimumValue": 65 }
+      ],
+      "researchIds": ["stratospheric-dispersal-systems"]
+    },
+    "durationDays": 60,
+    "stages": [
+      {
+        "name": "Develop Dispersal System",
+        "durationDays": 20,
+        "successThreshold": 65,
+        "skillDrivers": ["engineering", "computing"],
+        "outcomes": {
+          "success": { "narrative": "The dispersal system is complete. Global sunlight reduction is now technically feasible." },
+          "failure": { "narrative": "Development fails. Massive investment lost." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "lose_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 200 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Deploy Globally",
+        "durationDays": 20,
+        "successThreshold": 70,
+        "skillDrivers": ["engineering", "logistics"],
+        "outcomes": {
+          "success": { "narrative": "Deployment successful. The sky darkens slightly over populated zones. The world has not yet made the connection." },
+          "failure": { "narrative": "Deployment fails. The world traces the attempt to the empire." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 30 } },
+            { "type": "increase_all_org_hostility", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Establish Power Infrastructure",
+        "durationDays": 10,
+        "successThreshold": 55,
+        "skillDrivers": ["engineering", "logistics"],
+        "outcomes": {
+          "success": { "narrative": "Infrastructure online. The empire holds the world's sunlight hostage." },
+          "failure": { "narrative": "Infrastructure fails. The plot cannot proceed to extortion." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [],
+          "always": []
+        }
+      },
+      {
+        "name": "Begin Extortion",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["oratory", "intimidation"],
+        "outcomes": {
+          "success": { "narrative": "All non-empire orgs must now pay ongoing tribute or face mounting penalties. The world complies — for now. Maximum aggression from all orgs begins immediately." },
+          "failure": { "narrative": "The extortion apparatus collapses. The sun returns. The investment is lost." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_global_tribute_mechanic", "chance": 1.0, "parameters": {} },
+            { "type": "escalate_all_org_hostility_maximum", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 25 } },
+            { "type": "increase_all_org_hostility", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "control-worlds-water-supply",
+    "name": "Control the World's Water Supply",
+    "description": "Seize control of global freshwater infrastructure through physical infiltration and technological override.",
+    "tier": 4,
+    "evilCategory": "grounded",
+    "category": "world-altering",
+    "requirements": {
+      "agentCount": 4,
+      "zoneCount": 4,
+      "resourceCosts": { "money": 600, "science": 250 },
+      "skillRequirements": [
+        { "skillId": "engineering", "minimumValue": 65 },
+        { "skillId": "surveillance", "minimumValue": 50 }
+      ],
+      "researchIds": ["water-infrastructure-infiltration"]
+    },
+    "durationDays": 70,
+    "stages": [
+      {
+        "name": "Map Global Water Infrastructure",
+        "durationDays": 20,
+        "successThreshold": 55,
+        "skillDrivers": ["surveillance", "computing"],
+        "outcomes": {
+          "success": { "narrative": "Global freshwater distribution fully mapped. Key nodes identified." },
+          "failure": { "narrative": "Mapping operation discovered. Security on water infrastructure increases." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "increase_water_infra_security", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Infiltrate Key Nodes",
+        "durationDays": 25,
+        "successThreshold": 65,
+        "skillDrivers": ["infiltration", "engineering"],
+        "outcomes": {
+          "success": { "narrative": "Control devices are in place at key distribution nodes." },
+          "failure": { "narrative": "Infiltration detected. Agents killed or captured. Mass hostility increase." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 1.0, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 30 } }
+          ],
+          "always": []
+        }
+      },
+      {
+        "name": "Deploy Control Systems",
+        "durationDays": 15,
+        "successThreshold": 70,
+        "skillDrivers": ["computing", "engineering"],
+        "outcomes": {
+          "success": { "narrative": "Control systems online. Freshwater distribution can now be modulated remotely." },
+          "failure": { "narrative": "Systems fail. The plot cannot proceed." }
+        },
+        "effects": {
+          "success": [],
+          "failure": [],
+          "always": []
+        }
+      },
+      {
+        "name": "Activate Leverage",
+        "durationDays": 10,
+        "successThreshold": 60,
+        "skillDrivers": ["oratory", "intimidation"],
+        "outcomes": {
+          "success": { "narrative": "Water leverage activated. Non-empire orgs pay tribute or face Sick status spreading among their citizens." },
+          "failure": { "narrative": "Leverage fails to hold. The infrastructure seizure collapses." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_water_tribute_mechanic", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "capture_or_kill_agents", "chance": 0.5, "parameters": {} },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 35 } },
+            { "type": "increase_all_org_hostility", "chance": 1.0, "parameters": {} }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "supersoldier-program",
+    "name": "The Supersoldier Program",
+    "description": "Develop and deploy genetically or chemically enhanced soldiers. Results may vary.",
+    "tier": 4,
+    "evilCategory": "grounded",
+    "category": "world-altering",
+    "requirements": {
+      "agentCount": 2,
+      "zoneCount": 0,
+      "resourceCosts": { "money": 400, "science": 300 },
+      "skillRequirements": [
+        { "skillId": "biology", "minimumValue": 60 },
+        { "skillId": "medicine", "minimumValue": 50 }
+      ],
+      "researchIds": ["human-performance-optimization"]
+    },
+    "durationDays": 50,
+    "stages": [
+      {
+        "name": "Run the Program",
+        "durationDays": 50,
+        "successThreshold": 70,
+        "skillDrivers": ["biology", "medicine"],
+        "outcomes": {
+          "success": { "narrative": "The program produces results. A cohort of enhanced soldiers is ready — stronger, faster, more durable." },
+          "failure": { "narrative": "Something has gone very wrong in the lab." }
+        },
+        "effects": {
+          "success": [
+            { "type": "create_supersoldier_agents", "chance": 1.0, "parameters": { "count": 4 } }
+          ],
+          "failure": [
+            { "type": "apply_effect_to_zone", "chance": 1.0, "parameters": { "effectId": "zombie-plague", "zone": "lab_zone" } },
+            { "type": "unlock_research", "chance": 1.0, "parameters": { "researchId": "zombie-plague-cure" } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "soylent-green",
+    "name": "Soylent Green",
+    "description": "Develop a cheap, efficient food product to feed empire citizens. Made from a proprietary and confidential ingredient.",
+    "tier": 4,
+    "evilCategory": "grounded",
+    "category": "world-altering",
+    "requirements": {
+      "agentCount": 1,
+      "zoneCount": 0,
+      "resourceCosts": { "money": 200, "science": 150 },
+      "skillRequirements": [
+        { "skillId": "biology", "minimumValue": 50 }
+      ],
+      "researchIds": ["food-processing-research"]
+    },
+    "durationDays": 30,
+    "stages": [
+      {
+        "name": "Launch the Program",
+        "durationDays": 30,
+        "successThreshold": 55,
+        "skillDrivers": ["biology", "logistics"],
+        "outcomes": {
+          "success": { "narrative": "Soylent Green enters production. Empire food costs drop to zero. Citizens are healthy and — unaccountably — there are fewer of them than before." },
+          "failure": { "narrative": "Production fails. The investment is lost." }
+        },
+        "effects": {
+          "success": [
+            { "type": "apply_effect_to_empire", "chance": 1.0, "parameters": { "effectId": "soylent-green-program" } },
+            { "type": "eliminate_food_costs", "chance": 1.0, "parameters": {} },
+            { "type": "begin_citizen_disappearance_mechanic", "chance": 1.0, "parameters": {} }
+          ],
+          "failure": [
+            { "type": "lose_resource", "chance": 1.0, "parameters": { "resource": "money", "amount": 100 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "pigeon-missile-barrage",
+    "name": "Pigeon Missile Barrage",
+    "description": "Deploy a coordinated strike of missile-guided pigeons (or pigeon-guided missiles, depending on available research) against a target zone.",
+    "tier": 4,
+    "evilCategory": "cartoonish",
+    "category": "military-operations",
+    "requirements": {
+      "agentCount": 0,
+      "zoneCount": 1,
+      "resourceCosts": {},
+      "skillRequirements": [],
+      "researchIds": ["avian-ordnance-integration"]
+    },
+    "durationDays": 5,
+    "stages": [
+      {
+        "name": "Release the Payload",
+        "durationDays": 5,
+        "successThreshold": 50,
+        "skillDrivers": ["engineering"],
+        "outcomes": {
+          "success": { "narrative": "The pigeons — or missiles, it depends how you look at it — strike true. The target zone suffers significant military damage." },
+          "failure": { "narrative": "The pigeons go off course. There may be collateral damage in adjacent zones. The After Action Report will be difficult to write." }
+        },
+        "effects": {
+          "success": [
+            { "type": "damage_zone_buildings", "chance": 1.0, "parameters": { "zone": "target", "fraction": 0.4 } },
+            { "type": "injure_or_kill_zone_population", "chance": 0.5, "parameters": { "zone": "target" } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "failure": [
+            { "type": "damage_zone_buildings", "chance": 0.5, "parameters": { "zone": "adjacent", "fraction": 0.2 } },
+            { "type": "gain_evil", "chance": 1.0, "parameters": { "amount": 20 } }
+          ],
+          "always": []
+        }
+      }
+    ]
+  }
+]

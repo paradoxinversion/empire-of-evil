@@ -108,12 +108,6 @@
         "description": "The tile significantly slows down movement, making it very difficult for units to traverse. This can be used strategically to hinder enemy advances or protect key areas."
     },
     {
-        "id": "combat-cover",
-        "name": "Combat Cover",
-        "category": "tile",
-        "description": "The tile provides excellent cover for combat, allowing units to take reduced damage from enemy attacks. This makes it an ideal location for defensive positions and ambushes."
-    },
-    {
         "id": "reduced-visibility",
         "name": "Reduced Visibility",
         "category": "tile",

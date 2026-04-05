@@ -1,12 +1,13 @@
 [
     {
+        "id": "training",
         "name": "Combat Training",
-        "description": "Engage in combat training exercises to improve your combat skills.",
+        "description": "Engage in combat training exercises to improve combat skills. Chance to raise a skill, ceiling-limited by relevant attribute.",
+        "costPerParticipantPerDay": 10,
         "effects": [
             {
                 "chance": 0.5,
                 "type": "skill_increase",
-                "cost": 1,
                 "parameters": {
                     "minIncrease": 0.01,
                     "maxIncrease": 0.1,
@@ -16,13 +17,14 @@
         ]
     },
     {
+        "id": "survey-citizens",
         "name": "Survey Citizens",
-        "description": "Survey citizens to gather intelligence and improve your knowledge.",
+        "description": "Raises intel level on one citizen per participant per day in the participant's zone.",
+        "costPerParticipantPerDay": 1,
         "effects": [
             {
                 "chance": 1,
                 "type": "increase_intel",
-                "cost": 1,
                 "parameters": {
                     "target": "random_citizen",
                     "domestic": true,
@@ -33,13 +35,14 @@
         ]
     },
     {
+        "id": "evil-education",
         "name": "EVIL Education",
-        "description": "Engage in EVIL Education to gather intelligence and improve your knowledge.",
+        "description": "Increases participant loyalty to the empire up to cap.",
+        "costPerParticipantPerDay": 5,
         "effects": [
             {
                 "chance": 1,
                 "type": "increase_loyalty",
-                "cost": 1,
                 "parameters": {
                     "target": "participant",
                     "minIncrease": 0.01,
@@ -49,16 +52,121 @@
         ]
     },
     {
+        "id": "harass-nuns",
         "name": "Harass Nuns",
-        "description": "Harrass nuns",
+        "description": "Raises EVIL. Chance to reduce non-agent citizen loyalty. Chance to trigger a hostile citizen event. This is a dick move. The game knows this.",
+        "costPerParticipantPerDay": 0,
+        "evilCategory": "cartoonish",
         "effects": [
+            {
+                "chance": 1.0,
+                "type": "gain_evil",
+                "parameters": { "amount": 1 }
+            },
+            {
+                "chance": 0.3,
+                "type": "reduce_citizen_loyalty",
+                "parameters": { "target": "non_agent_citizens", "amount": 2 }
+            },
             {
                 "chance": 0.6,
                 "type": "civilian_combat_encounter",
-                "cost": 0,
-                "parameters": {
-                    "baseEnemyCount": 1
-                }
+                "parameters": { "baseEnemyCount": 1 }
+            }
+        ]
+    },
+    {
+        "id": "evil-oratory",
+        "name": "EVIL Oratory",
+        "description": "Small money gain. Chance to increase loyalty of nearby citizens. Small EVIL increase.",
+        "costPerParticipantPerDay": 0,
+        "evilCategory": "cartoonish",
+        "effects": [
+            {
+                "chance": 1.0,
+                "type": "gain_resource",
+                "parameters": { "resource": "money", "minAmount": 1, "maxAmount": 5 }
+            },
+            {
+                "chance": 0.3,
+                "type": "increase_loyalty",
+                "parameters": { "target": "nearby_citizens", "amount": 2 }
+            },
+            {
+                "chance": 1.0,
+                "type": "gain_evil",
+                "parameters": { "amount": 1 }
+            }
+        ]
+    },
+    {
+        "id": "smuggle-resources",
+        "name": "Smuggle Resources",
+        "description": "Chance to gain money. Small EVIL increase. Chance participants are captured by foreign agents.",
+        "costPerParticipantPerDay": 3,
+        "evilCategory": "grounded",
+        "effects": [
+            {
+                "chance": 0.6,
+                "type": "gain_resource",
+                "parameters": { "resource": "money", "minAmount": 5, "maxAmount": 20 }
+            },
+            {
+                "chance": 1.0,
+                "type": "gain_evil",
+                "parameters": { "amount": 1 }
+            },
+            {
+                "chance": 0.15,
+                "type": "capture_participant",
+                "parameters": {}
+            }
+        ]
+    },
+    {
+        "id": "intimidation-campaign",
+        "name": "Intimidation Campaign",
+        "description": "Decreases loyalty in a target rival zone. Increases EVIL.",
+        "costPerParticipantPerDay": 2,
+        "evilCategory": "grounded",
+        "effects": [
+            {
+                "chance": 1.0,
+                "type": "reduce_loyalty_target_zone",
+                "parameters": { "minAmount": 1, "maxAmount": 3 }
+            },
+            {
+                "chance": 1.0,
+                "type": "gain_evil",
+                "parameters": { "amount": 2 }
+            }
+        ]
+    },
+    {
+        "id": "siphon-domestic-accounts",
+        "name": "Siphon Domestic Accounts",
+        "description": "Siphons funds from empire citizens. One-time gain that reduces their economic contribution.",
+        "costPerParticipantPerDay": 0,
+        "evilCategory": "grounded",
+        "effects": [
+            {
+                "chance": 1.0,
+                "type": "siphon_citizen_funds",
+                "parameters": { "target": "empire_citizens" }
+            }
+        ]
+    },
+    {
+        "id": "siphon-global-accounts",
+        "name": "Siphon Global Accounts",
+        "description": "Siphons funds from non-empire citizens in a target zone.",
+        "costPerParticipantPerDay": 0,
+        "evilCategory": "grounded",
+        "effects": [
+            {
+                "chance": 1.0,
+                "type": "siphon_citizen_funds",
+                "parameters": { "target": "target_zone_citizens", "excludeEmpire": true }
             }
         ]
     }

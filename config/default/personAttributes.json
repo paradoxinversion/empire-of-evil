@@ -1,29 +1,11 @@
 [
-    {
-        "name": "Strength"
-    },
-    {
-        "name": "Intelligence"
-    },
-    {
-        "name": "Constitution"
-    },
-    {
-        "name": "Agility"
-    },
-    {
-        "name": "Leadership"
-    },
-    {
-        "name": "Administration"
-    },
-    {
-        "name": "Combat"
-    },
-    {
-        "name": "Empathy"
-    },
-    {
-        "name": "Motivation"
-    }
+    { "id": "strength",       "name": "Strength" },
+    { "id": "intelligence",   "name": "Intelligence" },
+    { "id": "constitution",   "name": "Constitution" },
+    { "id": "agility",        "name": "Agility" },
+    { "id": "leadership",     "name": "Leadership" },
+    { "id": "administration", "name": "Administration" },
+    { "id": "combat",         "name": "Combat" },
+    { "id": "empathy",        "name": "Empathy" },
+    { "id": "motivation",     "name": "Motivation" }
 ]

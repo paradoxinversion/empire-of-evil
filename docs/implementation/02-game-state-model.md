@@ -97,7 +97,7 @@ Config defines **what an effect IS** (its id, category, description). Active eff
 ```typescript
 interface EffectInstance {
     id: string; // unique instance id
-    effectId: string; // references config/effects.json
+    effectId: string; // references config/<config-set>/effects.json
     targetId: string; // entity this instance is on
     targetType: "person" | "zone" | "tile" | "organization";
     parameters?: Record<string, unknown>;
