@@ -28,7 +28,7 @@ Parameters are configurable via `WorldGenParams` and validated early — if the 
 
 ### Map grid
 
-The world is a 2D grid of `mapWidth × mapHeight` cells. Each cell becomes one tile. Tiles are identified by grid coordinates `(x, y)` during generation; after generation they become `Tile` entities in `GameState` with a `typeId` referencing `config/tileTypes.json`.
+The world is a 2D grid of `mapWidth × mapHeight` cells. Each cell becomes one tile. Tiles are identified by grid coordinates `(x, y)` during generation; after generation they become `Tile` entities in `GameState` with a `typeId` referencing `config/<config-set>/tileTypes.json`.
 
 ### Noise-based terrain
 
@@ -41,7 +41,7 @@ Both maps use seeded Perlin (or simplex) noise with configurable scale. The seed
 
 ### Tile type assignment
 
-Tile types are assigned by matching the noise values against each tile type's `terrainConditions` from `config/tileTypes.json`. No thresholds are hard-coded in the engine — all placement logic lives in config.
+Tile types are assigned by matching the noise values against each tile type's `terrainConditions` from `config/<config-set>/tileTypes.json`. No thresholds are hard-coded in the engine — all placement logic lives in config.
 
 For each grid cell, the engine:
 
@@ -84,7 +84,7 @@ Zone formation uses a **greedy flood-fill from random seed tiles**:
 
 Each zone is assigned a `generationWealth` value (0–100) during zone formation. Wealth is derived from:
 
-- **Tile composition** — each tile type declares a `wealthContribution` (0–100) in `config/tileTypes.json`. The base wealth is the average of all tiles' contributions.
+- **Tile composition** — each tile type declares a `wealthContribution` (0–100) in `config/<config-set>/tileTypes.json`. The base wealth is the average of all tiles' contributions.
 - **Noise-based variation** — a third seeded noise map adds local economic variation so not all city-rich zones are identical.
 
 The formula is: `baseWealth = weightedAverage(tile.wealthContribution) * 0.8 + noiseValue * 20`, clamped to 0–100.
@@ -97,7 +97,7 @@ Wealth is intentionally baked in at generation and does not change without playe
 
 Not all zones are inhabited at world start. A zone is classified as **uninhabitable** if:
 
-- Its plurality tile type has `canBeInhabited: false` in `config/tileTypes.json`. Ocean is the canonical example; any custom tile type can opt out of habitation the same way.
+- Its plurality tile type has `canBeInhabited: false` in `config/<config-set>/tileTypes.json`. Ocean is the canonical example; any custom tile type can opt out of habitation the same way.
 - Its `generationWealth` is below `uninhabitedWealthFloor` (configurable). Very low-wealth zones are treated as unpopulated wilderness at generation, even if they are technically accessible.
 
 Tile types with low `wealthContribution` (such as `mountain` at 15, `desert` at 10, `tundra` at 12) will produce zones that frequently fall below `uninhabitedWealthFloor`, making those terrain types sparsely settled by default — without any special per-type logic in the engine.
@@ -115,14 +115,18 @@ Validation runs before any nation or population state is constructed. If it fail
 ### Checks
 
 **Minimum habitable zones:**
+
 ```
 requiredHabitableZones = nationCount * zonesPerNation + 1   // +1 for empire start zone
 ```
+
 If `habitableZoneCount < requiredHabitableZones`, fail:
+
 > "Not enough habitable zones for [nationCount] nations with [zonesPerNation] zones each. Either reduce nation count, reduce zones per nation, or increase map size."
 
 **Minimum contiguity:**
 The BFS expansion used in nation placement requires that each nation's zones be contiguous. If the map is fragmented (many isolated habitable zones separated by ocean or mountains), it is possible that contiguous blocks of `zonesPerNation` zones don't exist for every nation. This is checked after Phase 3 by running a connectivity analysis on the habitable zone graph. If fewer than `nationCount` contiguous blocks of size `≥ zonesPerNation` exist:
+
 > "Map topology cannot accommodate [nationCount] contiguous nations of [zonesPerNation] zones. Try a larger map, fewer nations, or a different seed."
 
 **Zone size sanity:**
@@ -177,6 +181,7 @@ zonePopulation = floor(zone.generationWealth * populationDensity * zoneSize * ra
 ```
 
 Where:
+
 - `populationDensity` is from `WorldGenParams` (a scalar multiplier; higher = more people per wealth unit).
 - `zoneSize` is the tile count of the zone.
 - `randomVariation` is a small ±20% noise factor for natural unevenness.
@@ -197,14 +202,14 @@ buildingCount = floor(zone.generationWealth / 100 * maxBuildingsPerZone * zoneSi
 
 Building type selection is a weighted draw where weights are defined per building type as a function of the zone's `generationWealth`. Richer zones have access to a broader palette and higher weights for expensive building types:
 
-| Wealth range | Available building types (illustrative) |
-|---|---|
-| 0–25 | Basic housing, market stall |
-| 26–50 | Warehouse, clinic, small factory |
-| 51–75 | Bank, hospital, factory |
-| 76–100 | Research lab, financial centre, military base |
+| Wealth range | Available building types (illustrative)       |
+| ------------ | --------------------------------------------- |
+| 0–25         | Basic housing, market stall                   |
+| 26–50        | Warehouse, clinic, small factory              |
+| 51–75        | Bank, hospital, factory                       |
+| 76–100       | Research lab, financial centre, military base |
 
-The exact per-type wealth thresholds and weights are defined in `config/buildings.json` (see `docs/config/buildings.md`) rather than hard-coded. Each building definition includes a `wealthRequirement` (minimum wealth to appear) and a `wealthWeight` curve (how likely it is at various wealth levels above the minimum).
+The exact per-type wealth thresholds and weights are defined in `config/<config-set>/buildings.json` (see `docs/config/buildings.md`) rather than hard-coded. Each building definition includes a `wealthRequirement` (minimum wealth to appear) and a `wealthWeight` curve (how likely it is at various wealth levels above the minimum).
 
 Tile type restrictions are applied before selection: a building whose `buildableOnTileTypes` doesn't include the zone's plurality tile type is excluded from the draw, regardless of wealth.
 
@@ -218,7 +223,7 @@ The empire's starting zone is configured with:
 
 - One designated headquarters building (type defined in config; always placed regardless of wealth).
 - The Overlord entity as a `Person` in the zone (with `agentStatus` set, role `'unassigned'`).
-- A pet `Person` selected from `config/pets.json` based on `WorldGenParams.petTypeId` (or random if absent).
+- A pet `Person` selected from `config/<config-set>/pets.json` based on `WorldGenParams.petTypeId` (or random if absent).
 - Starting resources from `WorldGenParams.startingResources` (or config defaults).
 - EVIL initialized to `{ actual: 0, perceived: 0 }`.
 
@@ -230,41 +235,41 @@ Full parameter reference. All fields except `seed` are required.
 
 ```typescript
 interface WorldGenParams {
-  // Reproducibility
-  seed?: number;                 // omit for random; stored in GameState for display
+    // Reproducibility
+    seed?: number; // omit for random; stored in GameState for display
 
-  // Map dimensions
-  mapWidth: number;              // grid columns
-  mapHeight: number;             // grid rows
+    // Map dimensions
+    mapWidth: number; // grid columns
+    mapHeight: number; // grid rows
 
-  // Terrain
-  terrainProfile?: {
-    noiseScale: number;          // noise frequency; larger = smoother terrain (default 4.0)
-    uninhabitedWealthFloor: number; // zones below this generationWealth are uninhabited at start (default 20)
-  };
+    // Terrain
+    terrainProfile?: {
+        noiseScale: number; // noise frequency; larger = smoother terrain (default 4.0)
+        uninhabitedWealthFloor: number; // zones below this generationWealth are uninhabited at start (default 20)
+    };
 
-  // Zone formation
-  minZoneSize: number;           // minimum tiles per zone (default 2)
-  maxZoneSize: number;           // maximum tiles per zone (default 6)
+    // Zone formation
+    minZoneSize: number; // minimum tiles per zone (default 2)
+    maxZoneSize: number; // maximum tiles per zone (default 6)
 
-  // Nations
-  nationCount: number;           // number of CPU nations
-  zonesPerNation: number;        // zones each nation claims (minimum 3)
-  minNationSpacing: number;      // minimum zone-graph distance between nation origins (default: zonesPerNation / 2)
+    // Nations
+    nationCount: number; // number of CPU nations
+    zonesPerNation: number; // zones each nation claims (minimum 3)
+    minNationSpacing: number; // minimum zone-graph distance between nation origins (default: zonesPerNation / 2)
 
-  // Population
-  populationDensity: number;     // persons-per-wealth-unit scalar (default 1.0)
+    // Population
+    populationDensity: number; // persons-per-wealth-unit scalar (default 1.0)
 
-  // Buildings
-  maxBuildingsPerZone: number;   // upper bound on buildings per zone (default 5)
+    // Buildings
+    maxBuildingsPerZone: number; // upper bound on buildings per zone (default 5)
 
-  // Empire start
-  startingResources?: {
-    money: number;               // default from config
-    science: number;
-    infrastructure: number;
-  };
-  petTypeId?: string;            // ID from config/pets.json; random if omitted
+    // Empire start
+    startingResources?: {
+        money: number; // default from config
+        science: number;
+        infrastructure: number;
+    };
+    petTypeId?: string; // ID from config/<config-set>/pets.json; random if omitted
 }
 ```
 
@@ -276,16 +281,16 @@ interface WorldGenParams {
 
 ```typescript
 class WorldGenError extends Error {
-  constructor(
-    public code:
-      | 'INSUFFICIENT_HABITABLE_ZONES'
-      | 'INSUFFICIENT_CONTIGUOUS_ZONES'
-      | 'ZONE_SIZE_INVALID'
-      | 'ZONES_PER_NATION_TOO_SMALL',
-    message: string      // human-readable, surfaced directly to the player
-  ) {
-    super(message);
-  }
+    constructor(
+        public code:
+            | "INSUFFICIENT_HABITABLE_ZONES"
+            | "INSUFFICIENT_CONTIGUOUS_ZONES"
+            | "ZONE_SIZE_INVALID"
+            | "ZONES_PER_NATION_TOO_SMALL",
+        message: string, // human-readable, surfaced directly to the player
+    ) {
+        super(message);
+    }
 }
 ```
 

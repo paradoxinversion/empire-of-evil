@@ -1,0 +1,63 @@
+[
+  {
+    "id": "cat",
+    "name": "Cat",
+    "description": "A cat. Inscrutable, unpredictable, and occasionally useful.",
+    "actions": [
+      {
+        "id": "knock-something-over",
+        "name": "Knock Something Over",
+        "description": "Triggers a minor chaos event in target zone; slight loyalty disruption.",
+        "effects": [
+          { "type": "trigger_event", "chance": 1.0, "parameters": { "eventType": "minor_chaos", "zone": "target" } },
+          { "type": "lose_loyalty_zone", "chance": 0.5, "parameters": { "amount": 2 } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tiger",
+    "name": "Tiger",
+    "description": "A tiger. Its presence is... motivating.",
+    "actions": [
+      {
+        "id": "motivational-visit",
+        "name": "Motivational Visit",
+        "description": "Sends tiger to 'visit' a disloyal agent; significant loyalty increase (fear-based).",
+        "effects": [
+          { "type": "gain_loyalty_agent", "chance": 1.0, "parameters": { "amount": 30, "target": "disloyal_agent" } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "raven",
+    "name": "Raven",
+    "description": "A raven. Intelligent, loyal, and exceptionally discreet.",
+    "actions": [
+      {
+        "id": "message-delivery",
+        "name": "Message Delivery",
+        "description": "Delivers an untraceable communication; used in certain plot chains.",
+        "effects": [
+          { "type": "deliver_untraceable_message", "chance": 1.0, "parameters": {} }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shark",
+    "name": "Shark (in a tank)",
+    "description": "A shark, in a tank, present at interrogations. Its contribution is atmospheric.",
+    "actions": [
+      {
+        "id": "threatening-display",
+        "name": "Threatening Display",
+        "description": "Used in interrogation events; increases information extraction success.",
+        "effects": [
+          { "type": "boost_interrogation_success", "chance": 1.0, "parameters": { "amount": 0.25 } }
+        ]
+      }
+    ]
+  }
+]

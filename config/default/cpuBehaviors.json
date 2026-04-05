@@ -1,0 +1,92 @@
+[
+  {
+    "id": "none",
+    "profile": "none",
+    "description": "CPU orgs are unaware of the empire or treating it as beneath notice. No active response.",
+    "actionWeights": {
+      "patrol": 10,
+      "investigate": 5,
+      "recruit": 20,
+      "consolidate": 40,
+      "ignore": 25
+    },
+    "retaliationDelayDays": { "tier12": 15, "tier34": 10 },
+    "intelGainPerDay": 0,
+    "aggressionMultiplier": 0.0
+  },
+  {
+    "id": "low",
+    "profile": "low",
+    "description": "CPU orgs are aware of the empire and increasing border security. Espionage begins.",
+    "actionWeights": {
+      "patrol": 20,
+      "investigate": 20,
+      "recruit": 20,
+      "consolidate": 25,
+      "ignore": 15
+    },
+    "retaliationDelayDays": { "tier12": 12, "tier34": 8 },
+    "intelGainPerDay": 1,
+    "aggressionMultiplier": 0.25
+  },
+  {
+    "id": "moderate",
+    "profile": "moderate",
+    "description": "Resistance movements have emerged. CPU orgs are actively countering empire operations.",
+    "actionWeights": {
+      "patrol": 25,
+      "investigate": 25,
+      "recruit": 20,
+      "consolidate": 20,
+      "ignore": 10
+    },
+    "retaliationDelayDays": { "tier12": 10, "tier34": 6 },
+    "intelGainPerDay": 2,
+    "aggressionMultiplier": 0.5
+  },
+  {
+    "id": "high",
+    "profile": "high",
+    "description": "Hero organizations are forming. CPU orgs are coordinating and targeting the empire directly.",
+    "actionWeights": {
+      "patrol": 30,
+      "investigate": 25,
+      "recruit": 20,
+      "consolidate": 15,
+      "ignore": 10
+    },
+    "retaliationDelayDays": { "tier12": 8, "tier34": 5 },
+    "intelGainPerDay": 3,
+    "aggressionMultiplier": 0.75
+  },
+  {
+    "id": "critical",
+    "profile": "critical",
+    "description": "Hero teams are fully deployed. The World Police is mobilizing. Empire is a primary target.",
+    "actionWeights": {
+      "patrol": 35,
+      "investigate": 25,
+      "recruit": 20,
+      "consolidate": 15,
+      "ignore": 5
+    },
+    "retaliationDelayDays": { "tier12": 6, "tier34": 3 },
+    "intelGainPerDay": 5,
+    "aggressionMultiplier": 1.0
+  },
+  {
+    "id": "maximum",
+    "profile": "maximum",
+    "description": "All non-empire orgs treat the empire as their primary threat. Maximum coordinated response.",
+    "actionWeights": {
+      "patrol": 40,
+      "investigate": 25,
+      "recruit": 20,
+      "consolidate": 10,
+      "ignore": 5
+    },
+    "retaliationDelayDays": { "tier12": 5, "tier34": 3 },
+    "intelGainPerDay": 7,
+    "aggressionMultiplier": 1.5
+  }
+]

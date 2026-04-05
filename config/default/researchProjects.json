@@ -1,0 +1,716 @@
+[
+  {
+    "id": "operational-transparency-initiative",
+    "name": "Operational Transparency Initiative",
+    "description": "Deploy basic internal communications infrastructure across empire zones. Unlocks Empire Intranet; improves Survey Citizens activity; minor intel accuracy boost empire-wide.",
+    "branch": "surveillance-control",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": [],
+    "skillDrivers": ["computing", "surveillance"],
+    "unlocks": {
+      "researchIds": ["empire-intranet", "deep-cover-protocols"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "empire-intranet",
+    "name": "Empire Intranet",
+    "description": "Connect empire zones through a proprietary internal network. Unlocks Centralized Telecommunications; enables Free Internet plot.",
+    "branch": "surveillance-control",
+    "cost": 30,
+    "scienceRequired": 30,
+    "completionDays": 20,
+    "prerequisites": ["operational-transparency-initiative"],
+    "skillDrivers": ["computing", "surveillance"],
+    "unlocks": {
+      "researchIds": ["centralized-telecommunications"],
+      "activityIds": [],
+      "plotIds": ["free-internet"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "centralized-telecommunications",
+    "name": "Centralized Telecommunications",
+    "description": "Tap into the communications infrastructure of target zones. Unlocks Surveillance Tap plot; passive intel on tapped zones; adds centralized-telecom effect.",
+    "branch": "surveillance-control",
+    "cost": 40,
+    "scienceRequired": 60,
+    "completionDays": 30,
+    "prerequisites": ["empire-intranet"],
+    "skillDrivers": ["computing", "surveillance"],
+    "unlocks": {
+      "researchIds": ["predictive-behavioral-modeling", "pattern-recognition-systems"],
+      "activityIds": [],
+      "plotIds": ["surveillance-tap"],
+      "effectIds": ["centralized-telecom"]
+    }
+  },
+  {
+    "id": "predictive-behavioral-modeling",
+    "name": "Predictive Behavioral Modeling",
+    "description": "Analyze citizen behavior patterns to anticipate dissent before it manifests. Improves loyalty report accuracy; early warning for revolt/protest events.",
+    "branch": "surveillance-control",
+    "cost": 60,
+    "scienceRequired": 80,
+    "completionDays": 40,
+    "prerequisites": ["centralized-telecommunications"],
+    "skillDrivers": ["computing", "surveillance"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "pattern-recognition-systems",
+    "name": "Pattern Recognition Systems",
+    "description": "Automated analysis of surveillance data to identify foreign operatives by behavioral signature. Improves passive foreign agent detection; improves Counterintelligence Sweep effectiveness.",
+    "branch": "surveillance-control",
+    "cost": 35,
+    "scienceRequired": 40,
+    "completionDays": 25,
+    "prerequisites": ["centralized-telecommunications"],
+    "skillDrivers": ["computing"],
+    "unlocks": {
+      "researchIds": ["counterintelligence-operations-framework"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "deep-cover-protocols",
+    "name": "Deep Cover Protocols",
+    "description": "Formalize methods for establishing and maintaining long-term agent cover identities. Unlocks Forge Identity Documents plot; increases cover identity duration.",
+    "branch": "surveillance-control",
+    "cost": 15,
+    "scienceRequired": 15,
+    "completionDays": 12,
+    "prerequisites": ["operational-transparency-initiative"],
+    "skillDrivers": ["surveillance", "infiltration"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["forge-identity-documents"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "standardized-armaments-program",
+    "name": "Standardized Armaments Program",
+    "description": "Equip empire agents with consistent, reliable weaponry. Small combat effectiveness bonus for all Troop agents.",
+    "branch": "military-hardware",
+    "cost": 15,
+    "scienceRequired": 15,
+    "completionDays": 12,
+    "prerequisites": [],
+    "skillDrivers": ["engineering"],
+    "unlocks": {
+      "researchIds": ["fortification-engineering", "advanced-weapons-development"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "fortification-engineering",
+    "name": "Fortification Engineering",
+    "description": "Develop methods for rapidly reinforcing zone defenses. Unlocks Fortify Zone plot; improves building durability in empire zones.",
+    "branch": "military-hardware",
+    "cost": 35,
+    "scienceRequired": 40,
+    "completionDays": 25,
+    "prerequisites": ["standardized-armaments-program"],
+    "skillDrivers": ["engineering", "logistics"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["fortify-zone"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "advanced-weapons-development",
+    "name": "Advanced Weapons Development",
+    "description": "Push the limits of conventional armament design. Significant combat effectiveness bonus for Troop agents.",
+    "branch": "military-hardware",
+    "cost": 70,
+    "scienceRequired": 90,
+    "completionDays": 45,
+    "prerequisites": ["standardized-armaments-program"],
+    "skillDrivers": ["engineering", "firearms"],
+    "unlocks": {
+      "researchIds": ["miniaturized-locomotion"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "miniaturized-locomotion",
+    "name": "Miniaturized Locomotion",
+    "description": "Explore the engineering of small-scale propulsion and guidance systems. Unlocks Micro Flight Control.",
+    "branch": "military-hardware",
+    "cost": 50,
+    "scienceRequired": 80,
+    "completionDays": 40,
+    "prerequisites": ["advanced-weapons-development"],
+    "skillDrivers": ["engineering", "computing"],
+    "unlocks": {
+      "researchIds": ["micro-flight-control"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "micro-flight-control",
+    "name": "Micro Flight Control",
+    "description": "Develop precision guidance systems for small airborne platforms. Unlocks drone strike capability and improved Sabotage. Required for Pigeon Missile Barrage.",
+    "branch": "military-hardware",
+    "cost": 80,
+    "scienceRequired": 100,
+    "completionDays": 50,
+    "prerequisites": ["miniaturized-locomotion"],
+    "skillDrivers": ["engineering", "computing"],
+    "unlocks": {
+      "researchIds": ["avian-ordnance-integration"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "avian-ordnance-integration",
+    "name": "Avian Ordnance Integration",
+    "description": "Explore the synergistic potential of biological carriers and precision munitions. Unlocks Pigeon Missile Barrage; adds missile-pigeons and pigeon-missiles effects.",
+    "branch": "military-hardware",
+    "cost": 40,
+    "scienceRequired": 50,
+    "completionDays": 30,
+    "prerequisites": ["micro-flight-control", "basic-avian-conditioning"],
+    "skillDrivers": ["engineering", "biology"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["pigeon-missile-barrage"],
+      "effectIds": ["missile-pigeons", "pigeon-missiles"]
+    }
+  },
+  {
+    "id": "structural-optimization-research",
+    "name": "Structural Optimization Research",
+    "description": "Improve the empire's understanding of advanced construction materials. Construction speed improvement; building upkeep cost reduction.",
+    "branch": "materials-engineering",
+    "cost": 15,
+    "scienceRequired": 15,
+    "completionDays": 12,
+    "prerequisites": [],
+    "skillDrivers": ["engineering"],
+    "unlocks": {
+      "researchIds": ["composite-materials-program", "global-hydraulic-infrastructure-mapping"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "composite-materials-program",
+    "name": "Composite Materials Program",
+    "description": "Develop advanced composite materials for specialized applications. Improved building durability.",
+    "branch": "materials-engineering",
+    "cost": 35,
+    "scienceRequired": 45,
+    "completionDays": 28,
+    "prerequisites": ["structural-optimization-research"],
+    "skillDrivers": ["engineering"],
+    "unlocks": {
+      "researchIds": ["hyperrefractive-materials", "atmospheric-engineering-foundations"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "hyperrefractive-materials",
+    "name": "Hyper-refractive Materials",
+    "description": "Synthesize materials capable of manipulating light at previously impossible frequencies. Unlocks Hypno Disco Ball plot; adds hyperrefractive-materials effect.",
+    "branch": "materials-engineering",
+    "cost": 80,
+    "scienceRequired": 100,
+    "completionDays": 50,
+    "prerequisites": ["composite-materials-program"],
+    "skillDrivers": ["engineering", "computing"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["hypno-disco-ball"],
+      "effectIds": ["hyperrefractive-materials"]
+    }
+  },
+  {
+    "id": "atmospheric-engineering-foundations",
+    "name": "Atmospheric Engineering Foundations",
+    "description": "Develop the theoretical and practical basis for large-scale atmospheric intervention. Prerequisite for Blot Out the Sun.",
+    "branch": "materials-engineering",
+    "cost": 100,
+    "scienceRequired": 150,
+    "completionDays": 60,
+    "prerequisites": ["composite-materials-program", "predictive-behavioral-modeling"],
+    "skillDrivers": ["engineering", "biology"],
+    "unlocks": {
+      "researchIds": ["stratospheric-dispersal-systems"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "stratospheric-dispersal-systems",
+    "name": "Stratospheric Dispersal Systems",
+    "description": "Engineer systems capable of deploying particulate matter at stratospheric altitudes with global coverage. Unlocks Blot Out the Sun plot.",
+    "branch": "materials-engineering",
+    "cost": 150,
+    "scienceRequired": 200,
+    "completionDays": 70,
+    "prerequisites": ["atmospheric-engineering-foundations", "miniaturized-locomotion"],
+    "skillDrivers": ["engineering", "computing"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["blot-out-the-sun"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "global-hydraulic-infrastructure-mapping",
+    "name": "Global Hydraulic Infrastructure Mapping",
+    "description": "Comprehensively map and model the world's freshwater distribution systems. Prerequisite for water control.",
+    "branch": "materials-engineering",
+    "cost": 60,
+    "scienceRequired": 80,
+    "completionDays": 40,
+    "prerequisites": ["structural-optimization-research", "centralized-telecommunications"],
+    "skillDrivers": ["engineering", "surveillance"],
+    "unlocks": {
+      "researchIds": ["water-infrastructure-infiltration"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "water-infrastructure-infiltration",
+    "name": "Water Infrastructure Infiltration",
+    "description": "Develop methods for accessing and controlling freshwater distribution nodes. Unlocks Control the World's Water Supply plot.",
+    "branch": "materials-engineering",
+    "cost": 150,
+    "scienceRequired": 200,
+    "completionDays": 70,
+    "prerequisites": ["global-hydraulic-infrastructure-mapping", "advanced-pathogen-research"],
+    "skillDrivers": ["engineering", "biology"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["control-worlds-water-supply"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "basic-medical-protocols",
+    "name": "Basic Medical Protocols",
+    "description": "Standardize medical care across empire facilities. Hospital healing rate improvement; improves First Aid activity effectiveness.",
+    "branch": "biology-medicine",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": [],
+    "skillDrivers": ["medicine"],
+    "unlocks": {
+      "researchIds": ["epidemiological-studies", "basic-avian-conditioning", "nutritional-science-initiative"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "epidemiological-studies",
+    "name": "Epidemiological Studies",
+    "description": "Research the spread and containment of disease in population centers. Improves outbreak management in empire zones. Zombie Plague Cure becomes visible.",
+    "branch": "biology-medicine",
+    "cost": 20,
+    "scienceRequired": 30,
+    "completionDays": 20,
+    "prerequisites": ["basic-medical-protocols"],
+    "skillDrivers": ["biology", "medicine"],
+    "unlocks": {
+      "researchIds": ["advanced-pathogen-research"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "basic-avian-conditioning",
+    "name": "Basic Avian Conditioning",
+    "description": "Study and apply behavioral conditioning techniques to avian subjects. Improves Raven pet special actions. Required for Avian Ordnance Integration.",
+    "branch": "biology-medicine",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": ["basic-medical-protocols"],
+    "skillDrivers": ["biology"],
+    "unlocks": {
+      "researchIds": ["avian-ordnance-integration"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "advanced-pathogen-research",
+    "name": "Advanced Pathogen Research",
+    "description": "Push the boundaries of disease engineering and biological leverage. Unlocks Weaponized Pathogen plot. Required for Water Infrastructure Infiltration and Supersoldier Program.",
+    "branch": "biology-medicine",
+    "cost": 80,
+    "scienceRequired": 100,
+    "completionDays": 50,
+    "prerequisites": ["epidemiological-studies"],
+    "skillDrivers": ["biology"],
+    "unlocks": {
+      "researchIds": ["human-performance-optimization"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "human-performance-optimization",
+    "name": "Human Performance Optimization",
+    "description": "Investigate the upper limits of human physical and cognitive capability. Unlocks Supersoldier Program. Catastrophic failure generates Zombie Plague.",
+    "branch": "biology-medicine",
+    "cost": 150,
+    "scienceRequired": 200,
+    "completionDays": 70,
+    "prerequisites": ["advanced-pathogen-research"],
+    "skillDrivers": ["biology", "medicine"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["supersoldier-program"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "zombie-plague-cure",
+    "name": "Zombie Plague Cure",
+    "description": "Develop a cure for the uncontrolled biological agent produced by a failed Supersoldier Program. Only becomes available after catastrophic failure. Slows plague spread and enables zone reclamation.",
+    "branch": "biology-medicine",
+    "cost": 200,
+    "scienceRequired": 250,
+    "completionDays": 80,
+    "prerequisites": ["human-performance-optimization", "epidemiological-studies"],
+    "skillDrivers": ["biology", "medicine"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "nutritional-science-initiative",
+    "name": "Nutritional Science Initiative",
+    "description": "Research efficient methods of mass food production and citizen nutrition management. Improves citizen health baseline in empire zones.",
+    "branch": "biology-medicine",
+    "cost": 15,
+    "scienceRequired": 15,
+    "completionDays": 12,
+    "prerequisites": ["basic-medical-protocols"],
+    "skillDrivers": ["biology", "medicine"],
+    "unlocks": {
+      "researchIds": ["food-processing-research"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "food-processing-research",
+    "name": "Food Processing Research",
+    "description": "Develop scalable food processing systems for empire-wide deployment. Unlocks Soylent Green plot; adds soylent-green-program effect.",
+    "branch": "biology-medicine",
+    "cost": 35,
+    "scienceRequired": 45,
+    "completionDays": 25,
+    "prerequisites": ["nutritional-science-initiative"],
+    "skillDrivers": ["biology"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["soylent-green"],
+      "effectIds": ["soylent-green-program"]
+    }
+  },
+  {
+    "id": "communications-strategy-framework",
+    "name": "Communications Strategy Framework",
+    "description": "Establish a formal internal approach to citizen messaging and loyalty management. Improves EVIL Oratory activity; unlocks Inspiring Speech plot.",
+    "branch": "social-propaganda",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": [],
+    "skillDrivers": ["oratory", "persuasion"],
+    "unlocks": {
+      "researchIds": ["narrative-control-systems"],
+      "activityIds": [],
+      "plotIds": ["inspiring-speech"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "narrative-control-systems",
+    "name": "Narrative Control Systems",
+    "description": "Develop methodologies for shaping public perception at scale. Improves Spread Conspiracy Theories; unlocks False Flag Operation.",
+    "branch": "social-propaganda",
+    "cost": 30,
+    "scienceRequired": 35,
+    "completionDays": 22,
+    "prerequisites": ["communications-strategy-framework"],
+    "skillDrivers": ["deception", "oratory"],
+    "unlocks": {
+      "researchIds": ["propaganda-department", "behavioral-influence-research"],
+      "activityIds": [],
+      "plotIds": ["false-flag-operation"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "propaganda-department",
+    "name": "Propaganda Department",
+    "description": "Establish a dedicated internal organization for empire-wide influence operations. Unlocks Global Propaganda Campaign; passive perceived EVIL reduction per turn.",
+    "branch": "social-propaganda",
+    "cost": 70,
+    "scienceRequired": 60,
+    "completionDays": 40,
+    "prerequisites": ["narrative-control-systems"],
+    "skillDrivers": ["oratory", "persuasion", "deception"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["global-propaganda-campaign"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "behavioral-influence-research",
+    "name": "Behavioral Influence Research",
+    "description": "Study and systematize the psychological levers of mass loyalty and compliance. Improves Send Ade and Free Internet surveillance backdoor. Required for Hypno Disco Ball.",
+    "branch": "social-propaganda",
+    "cost": 45,
+    "scienceRequired": 70,
+    "completionDays": 35,
+    "prerequisites": ["narrative-control-systems", "basic-medical-protocols"],
+    "skillDrivers": ["persuasion", "deception"],
+    "unlocks": {
+      "researchIds": ["memetic-propagation-studies"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "memetic-propagation-studies",
+    "name": "Memetic Propagation Studies",
+    "description": "Research the mechanics of idea spread through populations with an eye toward weaponization. Unlocks Disinformation Network plot; increases Conspiracy Theory spread rate.",
+    "branch": "social-propaganda",
+    "cost": 70,
+    "scienceRequired": 90,
+    "completionDays": 45,
+    "prerequisites": ["behavioral-influence-research", "predictive-behavioral-modeling"],
+    "skillDrivers": ["deception", "computing"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["disinformation-network"],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "financial-systems-analysis",
+    "name": "Financial Systems Analysis",
+    "description": "Study the economic structures of foreign zones to identify points of leverage. Improves Siphon Zone Accounts; zone economic output reports become more accurate.",
+    "branch": "economic-disruption",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": [],
+    "skillDrivers": ["finance"],
+    "unlocks": {
+      "researchIds": ["advanced-forgeries", "market-manipulation-methodologies"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "advanced-forgeries",
+    "name": "Advanced Forgeries",
+    "description": "Develop the capability to produce convincing fraudulent financial and legal documents. Unlocks Forge Trade Documents, improves Forge Identity Documents, unlocks Funny Money Printing Press; adds counterfeiter effect.",
+    "branch": "economic-disruption",
+    "cost": 20,
+    "scienceRequired": 30,
+    "completionDays": 18,
+    "prerequisites": ["financial-systems-analysis"],
+    "skillDrivers": ["forgery"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["forge-trade-documents", "funny-money-printing-press"],
+      "effectIds": ["counterfeiter"]
+    }
+  },
+  {
+    "id": "market-manipulation-methodologies",
+    "name": "Market Manipulation Methodologies",
+    "description": "Develop techniques for systematically distorting economic activity in target zones. Improves Funny Money Printing Press and The Biggest Tax plots.",
+    "branch": "economic-disruption",
+    "cost": 35,
+    "scienceRequired": 40,
+    "completionDays": 25,
+    "prerequisites": ["financial-systems-analysis"],
+    "skillDrivers": ["finance", "deception"],
+    "unlocks": {
+      "researchIds": ["offshore-infrastructure-development"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "offshore-infrastructure-development",
+    "name": "Offshore Infrastructure Development",
+    "description": "Establish empire financial assets in jurisdictions beyond the reach of foreign orgs. Passive money generation. Insulates empire from Global Financial Crash blowback.",
+    "branch": "economic-disruption",
+    "cost": 80,
+    "scienceRequired": 60,
+    "completionDays": 40,
+    "prerequisites": ["market-manipulation-methodologies"],
+    "skillDrivers": ["finance", "streetwise"],
+    "unlocks": {
+      "researchIds": ["global-financial-crash"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "global-financial-crash",
+    "name": "Global Financial Crash",
+    "description": "Engineer a coordinated collapse of world financial systems. Empire with Offshore Infrastructure active suffers reduced blowback; empire without it suffers alongside everyone else.",
+    "branch": "economic-disruption",
+    "cost": 150,
+    "scienceRequired": 120,
+    "completionDays": 60,
+    "prerequisites": ["offshore-infrastructure-development"],
+    "skillDrivers": ["finance", "computing", "streetwise"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "internal-security-protocols",
+    "name": "Internal Security Protocols",
+    "description": "Establish baseline security practices across all empire operations. Small reduction in foreign agent detection difficulty in empire zones.",
+    "branch": "security-defense",
+    "cost": 10,
+    "scienceRequired": 10,
+    "completionDays": 10,
+    "prerequisites": [],
+    "skillDrivers": ["counter-intelligence"],
+    "unlocks": {
+      "researchIds": ["encryption-protocols", "enhanced-border-enforcement"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "encryption-protocols",
+    "name": "Encryption Protocols",
+    "description": "Deploy advanced cryptographic systems across empire communications. Unlocks Encryption Protocols plot; adds encryption-protocols effect; significantly reduces enemy surveillance plot success rate.",
+    "branch": "security-defense",
+    "cost": 40,
+    "scienceRequired": 50,
+    "completionDays": 28,
+    "prerequisites": ["internal-security-protocols", "operational-transparency-initiative"],
+    "skillDrivers": ["computing", "counter-intelligence"],
+    "unlocks": {
+      "researchIds": ["cyberwarfare-defense"],
+      "activityIds": [],
+      "plotIds": ["encryption-protocols-plot"],
+      "effectIds": ["encryption-protocols"]
+    }
+  },
+  {
+    "id": "cyberwarfare-defense",
+    "name": "Cyberwarfare Defense",
+    "description": "Develop active countermeasures against foreign digital intrusion. Reduces enemy Computing-based plot effectiveness; passive detection of foreign Computing operations.",
+    "branch": "security-defense",
+    "cost": 80,
+    "scienceRequired": 90,
+    "completionDays": 45,
+    "prerequisites": ["encryption-protocols"],
+    "skillDrivers": ["computing"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "enhanced-border-enforcement",
+    "name": "Enhanced Border Enforcement",
+    "description": "Systematize the monitoring and control of agent movement across empire zone borders. Improved detection of foreign agents crossing in; travel time for foreign agents through empire territory increased.",
+    "branch": "security-defense",
+    "cost": 30,
+    "scienceRequired": 20,
+    "completionDays": 20,
+    "prerequisites": ["internal-security-protocols"],
+    "skillDrivers": ["counter-intelligence", "logistics"],
+    "unlocks": {
+      "researchIds": ["counterintelligence-operations-framework"],
+      "activityIds": [],
+      "plotIds": [],
+      "effectIds": []
+    }
+  },
+  {
+    "id": "counterintelligence-operations-framework",
+    "name": "Counterintelligence Operations Framework",
+    "description": "Formalize the empire's approach to identifying, tracking, and neutralizing foreign operatives. Significantly improves Purge Foreign Agents; enables Counterintelligence Sweep standing operation; passive foreign agent identification in high-intel zones.",
+    "branch": "security-defense",
+    "cost": 80,
+    "scienceRequired": 90,
+    "completionDays": 45,
+    "prerequisites": ["enhanced-border-enforcement", "pattern-recognition-systems"],
+    "skillDrivers": ["counter-intelligence", "computing", "surveillance"],
+    "unlocks": {
+      "researchIds": [],
+      "activityIds": [],
+      "plotIds": ["counterintelligence-sweep"],
+      "effectIds": []
+    }
+  }
+]

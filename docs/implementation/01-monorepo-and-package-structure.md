@@ -8,18 +8,31 @@ The project uses **npm workspaces** with two packages: `packages/engine` and `pa
 
 ```
 empire-of-evil/
-├── config/                    # JSON configuration files (source of truth for game data)
-│   ├── activities.json
-│   ├── buildings.json
-│   ├── citizenActions.json
-│   ├── effects.json
-│   ├── evilTiers.json
-│   ├── personAttributes.json
-│   ├── pets.json
-│   ├── plots.json
-│   ├── researchProjects.json
-│   ├── skills.json
-│   └── tileTypes.json
+├── config/                         # JSON configuration files (source of truth for game data)
+|   ├── default                     # Default game configuration
+│   │   ├── activities.json
+│   │   ├── buildings.json
+│   │   ├── citizenActions.json
+│   │   ├── effects.json
+│   │   ├── evilTiers.json
+│   │   ├── personAttributes.json
+│   │   ├── pets.json
+│   │   ├── plots.json
+│   │   ├── researchProjects.json
+│   │   ├── skills.json
+│   │   └── tileTypes.json
+│   └── <custom-config-set>          # Optional custom config set
+│       ├── activities.json
+│       ├── buildings.json
+│       ├── citizenActions.json
+│       ├── effects.json
+│       ├── evilTiers.json
+│       ├── personAttributes.json
+│       ├── pets.json
+│       ├── plots.json
+│       ├── researchProjects.json
+│       ├── skills.json
+│       └── tileTypes.json
 ├── packages/
 │   ├── engine/                # Simulation engine — no browser dependencies
 │   │   ├── src/
@@ -56,9 +69,9 @@ empire-of-evil/
 
 ```json
 {
-  "name": "empire-of-evil",
-  "private": true,
-  "workspaces": ["packages/*"]
+    "name": "empire-of-evil",
+    "private": true,
+    "workspaces": ["packages/*"]
 }
 ```
 
@@ -77,13 +90,13 @@ empire-of-evil/
 ```json
 // tsconfig.base.json
 {
-  "compilerOptions": {
-    "strict": true,
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "exactOptionalPropertyTypes": true
-  }
+    "compilerOptions": {
+        "strict": true,
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "exactOptionalPropertyTypes": true
+    }
 }
 ```
 

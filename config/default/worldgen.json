@@ -1,0 +1,14 @@
+{
+    "mapWidth": 100,
+    "mapHeight": 100,
+    "terrainProfile": {
+        "noiseScale": 4,
+        "uninhabitedWealthFloor": 20
+    },
+    "minZoneSize": 2,
+    "maxZoneSize": 6,
+    "nationCount": 5,
+    "zonesPerNation": 3,
+    "populationDensity": 1.0,
+    "maxBuildingsPerZone": 5
+}

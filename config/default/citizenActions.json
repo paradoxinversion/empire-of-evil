@@ -1,0 +1,327 @@
+[
+  {
+    "id": "go_to_work",
+    "name": "Go to Work",
+    "conditions": {
+      "requiresEmployment": true
+    },
+    "baseWeight": 100,
+    "effects": [
+      {
+        "type": "contribute_to_building_output",
+        "chance": 1.0,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "seek_employment",
+    "name": "Seek Employment",
+    "conditions": {
+      "requiresUnemployment": true
+    },
+    "baseWeight": 50,
+    "effects": [
+      {
+        "type": "attempt_employment",
+        "chance": 0.3,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "protest",
+    "name": "Protest",
+    "conditions": {
+      "maxLoyalty": 30,
+      "minMotivation": 40
+    },
+    "baseWeight": 20,
+    "effects": [
+      {
+        "type": "reduce_zone_stability",
+        "chance": 1.0,
+        "parameters": { "amount": 2 }
+      },
+      {
+        "type": "trigger_event",
+        "chance": 0.15,
+        "parameters": { "eventType": "protest" }
+      }
+    ]
+  },
+  {
+    "id": "pick_a_fight",
+    "name": "Pick a Fight",
+    "conditions": {
+      "maxLoyalty": 40
+    },
+    "baseWeight": 10,
+    "effectWeightModifiers": {
+      "radicalized": 20
+    },
+    "effects": [
+      {
+        "type": "trigger_combat_event",
+        "chance": 0.6,
+        "parameters": { "baseEnemyCount": 1 }
+      }
+    ]
+  },
+  {
+    "id": "go_to_the_bar",
+    "name": "Go to the Bar",
+    "conditions": {},
+    "baseWeight": 30,
+    "effectWeightModifiers": {
+      "party-animal": 40
+    },
+    "effects": [
+      {
+        "type": "gain_morale",
+        "chance": 1.0,
+        "parameters": { "minAmount": 1, "maxAmount": 5 }
+      },
+      {
+        "type": "gain_social_connection",
+        "chance": 0.2,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "go_for_a_walk",
+    "name": "Go for a Walk",
+    "conditions": {},
+    "baseWeight": 40,
+    "effects": [
+      {
+        "type": "gain_health",
+        "chance": 0.5,
+        "parameters": { "minAmount": 1, "maxAmount": 3 }
+      },
+      {
+        "type": "gain_morale",
+        "chance": 0.5,
+        "parameters": { "minAmount": 1, "maxAmount": 2 }
+      }
+    ]
+  },
+  {
+    "id": "create_art",
+    "name": "Create Art",
+    "conditions": {
+      "minAttribute": { "intelligence": 50 }
+    },
+    "baseWeight": 15,
+    "effects": [
+      {
+        "type": "produce_cultural_effect",
+        "chance": 0.3,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "go_tagging",
+    "name": "Go Tagging",
+    "conditions": {
+      "maxLoyalty": 35,
+      "minAttribute": { "agility": 30 }
+    },
+    "baseWeight": 15,
+    "effects": [
+      {
+        "type": "increase_zone_unrest",
+        "chance": 1.0,
+        "parameters": { "amount": 2 }
+      },
+      {
+        "type": "gain_empire_evil",
+        "chance": 0.4,
+        "parameters": { "amount": 1, "requiresEmpireZone": true }
+      }
+    ]
+  },
+  {
+    "id": "set_something_on_fire",
+    "name": "Set Something on Fire",
+    "conditions": {
+      "maxLoyalty": 15,
+      "minAttribute": { "strength": 40 }
+    },
+    "baseWeight": 5,
+    "effectWeightModifiers": {
+      "radicalized": 15
+    },
+    "effects": [
+      {
+        "type": "damage_building",
+        "chance": 0.7,
+        "parameters": { "minDamage": 5, "maxDamage": 20 }
+      },
+      {
+        "type": "trigger_event",
+        "chance": 0.8,
+        "parameters": { "eventType": "arson" }
+      }
+    ]
+  },
+  {
+    "id": "go_shopping",
+    "name": "Go Shopping",
+    "conditions": {
+      "requiresMoney": true
+    },
+    "baseWeight": 35,
+    "effects": [
+      {
+        "type": "spend_money",
+        "chance": 1.0,
+        "parameters": { "minAmount": 1, "maxAmount": 5 }
+      },
+      {
+        "type": "gain_morale",
+        "chance": 0.5,
+        "parameters": { "minAmount": 1, "maxAmount": 3 }
+      }
+    ]
+  },
+  {
+    "id": "laze_at_home",
+    "name": "Laze at Home",
+    "conditions": {
+      "maxMotivation": 30
+    },
+    "baseWeight": 25,
+    "effects": [
+      {
+        "type": "lose_loyalty",
+        "chance": 0.1,
+        "parameters": { "amount": 1 }
+      }
+    ]
+  },
+  {
+    "id": "stare_at_the_wall_and_cry",
+    "name": "Stare at the Wall and Cry",
+    "conditions": {
+      "maxMorale": 20
+    },
+    "baseWeight": 10,
+    "effects": [
+      {
+        "type": "lose_health",
+        "chance": 0.2,
+        "parameters": { "amount": 1 }
+      }
+    ]
+  },
+  {
+    "id": "binge_on_conspiracies",
+    "name": "Binge on Conspiracies",
+    "conditions": {
+      "requiresEffectId": "conspiracy-theories"
+    },
+    "baseWeight": 40,
+    "effects": [
+      {
+        "type": "deepen_effect",
+        "chance": 0.5,
+        "parameters": { "effectId": "conspiracy-theories" }
+      },
+      {
+        "type": "spread_effect_to_citizen",
+        "chance": 0.2,
+        "parameters": { "effectId": "conspiracy-theories" }
+      }
+    ]
+  },
+  {
+    "id": "start_a_project",
+    "name": "Start a Project",
+    "conditions": {
+      "minAttribute": { "intelligence": 60 },
+      "requiresNoActiveProject": true
+    },
+    "baseWeight": 20,
+    "effects": [
+      {
+        "type": "begin_personal_project",
+        "chance": 1.0,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "finish_a_project",
+    "name": "Finish a Project",
+    "conditions": {
+      "requiresProjectNearCompletion": true
+    },
+    "baseWeight": 80,
+    "effects": [
+      {
+        "type": "complete_personal_project",
+        "chance": 1.0,
+        "parameters": {}
+      },
+      {
+        "type": "gain_skill",
+        "chance": 0.4,
+        "parameters": {}
+      }
+    ]
+  },
+  {
+    "id": "spend_time_with_a_friend",
+    "name": "Spend Time with a Friend",
+    "conditions": {
+      "requiresSocialConnections": true
+    },
+    "baseWeight": 35,
+    "effects": [
+      {
+        "type": "gain_loyalty",
+        "chance": 0.4,
+        "parameters": { "amount": 1 }
+      },
+      {
+        "type": "gain_morale",
+        "chance": 0.6,
+        "parameters": { "minAmount": 1, "maxAmount": 3 }
+      }
+    ]
+  },
+  {
+    "id": "got_sick",
+    "name": "Got Sick",
+    "conditions": {
+      "requiresZoneEffectId": "outbreak",
+      "maxAttribute": { "constitution": 50 }
+    },
+    "baseWeight": 30,
+    "effects": [
+      {
+        "type": "gain_effect",
+        "chance": 0.4,
+        "parameters": { "effectId": "sick" }
+      }
+    ]
+  },
+  {
+    "id": "death",
+    "name": "Death",
+    "conditions": {
+      "maxHealth": 0
+    },
+    "baseWeight": 100,
+    "effects": [
+      {
+        "type": "die",
+        "chance": 1.0,
+        "parameters": {}
+      }
+    ]
+  }
+]
