@@ -8,14 +8,14 @@ Pre-implementation. Architecture is fully designed in `docs/implementation/`; on
 
 ## Build & Dev Commands
 
-The workspace is npm workspaces (`packages/*`). Once set up:
+The workspace is pnpm workspaces (`packages/*`). Once set up:
 
 ```
-npm install                          # install all workspace deps
-npm run build -w @empire-of-evil/engine
-npm run build -w @empire-of-evil/web
-npm run dev -w @empire-of-evil/web   # Vite dev server
-npm test -w @empire-of-evil/engine   # engine tests (no browser required)
+pnpm install                                      # install all workspace deps
+pnpm --filter @empire-of-evil/engine build
+pnpm --filter @empire-of-evil/web build
+pnpm --filter @empire-of-evil/web dev             # Vite dev server
+pnpm --filter @empire-of-evil/engine test         # engine tests (no browser required)
 ```
 
 ## Architecture

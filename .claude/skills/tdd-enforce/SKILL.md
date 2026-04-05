@@ -52,7 +52,7 @@ test('filters citizens below minimum skill threshold', () => {
 
 // Bad — tests implementation
 test('calls Array.filter internally', () => {
-  const spy = jest.spyOn(Array.prototype, 'filter');
+  const spy = vi.spyOn(Array.prototype, 'filter'); // vi imported from 'vitest'
   filterByMinSkill([], 'stealth', 5);
   expect(spy).toHaveBeenCalled();
 });
@@ -63,7 +63,7 @@ test('calls Array.filter internally', () => {
 Run the test. It must fail.
 
 ```bash
-npm test -w @empire-of-evil/engine -- --testPathPattern="path/to/test"
+pnpm --filter @empire-of-evil/engine test -- run src/path/to/test.test.ts
 ```
 
 Confirm:
@@ -89,7 +89,7 @@ function filterByMinSkill(citizens, skill, min) {
 Run the test again. It must pass. All previously passing tests must still pass.
 
 ```bash
-npm test -w @empire-of-evil/engine
+pnpm --filter @empire-of-evil/engine test
 ```
 
 If other tests broke, fix them before moving on.
@@ -142,7 +142,7 @@ Before marking any feature complete:
 - [ ] Every new function has at least one test that watched it fail first
 - [ ] Edge cases from the enumeration list have tests (or a noted reason they're omitted)
 - [ ] Tests assert on observable outputs, not internal structure
-- [ ] All tests pass (`npm test -w @empire-of-evil/engine`)
+- [ ] All tests pass (`pnpm --filter @empire-of-evil/engine test`)
 - [ ] No mocks used where real data would work
 - [ ] Refactor pass done: code is clean, names are clear, no duplication
 
