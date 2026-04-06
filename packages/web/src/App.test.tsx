@@ -29,6 +29,7 @@ const mockReadyGameState: Partial<GameState> = {
   persons: {},
   nations: {},
   pendingEvents: [],
+  eventLog: [],
 };
 
 beforeEach(() => {

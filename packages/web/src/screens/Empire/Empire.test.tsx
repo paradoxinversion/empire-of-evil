@@ -25,6 +25,7 @@ const mockGameState: Partial<GameState> = {
     'person-1': { id: 'person-1', name: 'The Overlord', zoneId: 'z1', homeZoneId: 'z1', governingOrganizationId: 'org-1', attributes: {}, skills: {}, loyalties: {}, intelLevel: 0, health: 100, money: 0, activeEffectIds: [], dead: false, agentStatus: { job: 'unassigned', salary: 0 } },
   },
   pendingEvents: [],
+  eventLog: [],
   nations: { 'n1': { id: 'n1', name: 'Test Nation', size: 1, governingOrganizationId: 'org-1' } },
 };
 

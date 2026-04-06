@@ -32,7 +32,7 @@ const ZONES_COLUMNS = [
 
 export function EmpireScreen() {
   const gameState = useGameState();
-  const { empire, zones, plots, activities, persons, pendingEvents, nations } = gameState;
+  const { empire, zones, plots, activities, persons, eventLog, nations } = gameState;
   const { resources, evil } = empire;
 
   const tier = getEvilTier(evil.perceived);
@@ -63,7 +63,7 @@ export function EmpireScreen() {
   const operationsRows = [...plotRows, ...activityRows];
 
   // Controlled zones table rows
-  const zoneRows: Row[] = Object.values(zones).map(z => ({
+  const zoneRows: Row[] = Object.values(zones).filter(z => z.governingOrganizationId === empire.id).map(z => ({
     _key: z.id,
     zone: z.name,
     nation: nations[z.nationId]?.name ?? '—',
@@ -71,8 +71,8 @@ export function EmpireScreen() {
     status: <Tag variant="stable">STABLE</Tag>,
   }));
 
-  // Recent activity feed (last 5 events)
-  const recentEvents = pendingEvents.slice(-5).reverse();
+  // Recent activity feed (last 5 resolved events)
+  const recentEvents = eventLog.slice(-5).reverse();
 
   return (
     <div>
@@ -151,11 +151,11 @@ export function EmpireScreen() {
             {recentEvents.length === 0 ? (
               <div className="text-text-muted text-[11px] py-2">No recent events.</div>
             ) : (
-              recentEvents.map(event => (
+              recentEvents.map(record => (
                 <FeedEntry
-                  key={event.id}
-                  day={event.createdOnDate + 1}
-                  text={event.title}
+                  key={record.event.id}
+                  day={record.event.createdOnDate + 1}
+                  text={record.event.title}
                   type="internal"
                 />
               ))
