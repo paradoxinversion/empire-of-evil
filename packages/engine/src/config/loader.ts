@@ -19,6 +19,8 @@ import {
   TileTypesSchema,
   WorldGenConfigSchema,
 } from './schemas/index.js';
+import type { ResearchProjectDefinition } from './schemas/index.js';
+export type { ResearchProjectDefinition } from './schemas/index.js';
 
 export type TileTypeDefinition = {
   icon: string;
@@ -75,7 +77,7 @@ export type Config = {
   evilTiers: unknown[];
   personAttributes: unknown[];
   plots: unknown[];
-  researchProjects: unknown[];
+  researchProjects: ResearchProjectDefinition[];
   skills: unknown[];
 };
 
@@ -97,7 +99,7 @@ export function loadConfig(configDir: string): Config {
     evilTiers: EvilTiersSchema.parse(readJson(configDir, 'evilTiers.json')) as unknown[],
     personAttributes: PersonAttributesSchema.parse(readJson(configDir, 'personAttributes.json')) as unknown[],
     plots: PlotsSchema.parse(readJson(configDir, 'plots.json')) as unknown[],
-    researchProjects: ResearchProjectsSchema.parse(readJson(configDir, 'researchProjects.json')) as unknown[],
+    researchProjects: ResearchProjectsSchema.parse(readJson(configDir, 'researchProjects.json')) as ResearchProjectDefinition[],
     skills: SkillsSchema.parse(readJson(configDir, 'skills.json')) as unknown[],
   };
 }

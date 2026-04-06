@@ -29,7 +29,7 @@ export type { AdvanceResult } from './simulation/advance.js';
 
 export { resolveEvent } from './events/resolve.js';
 export { generateWorld } from './worldGen/index.js';
-export type { Config, TileTypeDefinition } from './config/loader.js';
+export type { Config, TileTypeDefinition, ResearchProjectDefinition } from './config/loader.js';
 export { applyEffect } from './effects/apply.js';
 export type { EffectDeclaration } from './effects/apply.js';
 export type { EffectContext, EffectResolver } from './effects/resolvers.js';
@@ -47,7 +47,19 @@ export {
   getBuildingUpkeepByZone,
   getDailyAgentSalaries,
   getZoneTaxIncome,
+  getResearchProject,
+  isResearchCompleted,
+  isResearchActive,
+  isResearchAvailable,
+  getResearchProgressPct,
 } from './state/queries.js';
+
+export {
+  startResearch,
+  cancelResearch,
+  assignAgentToResearch,
+  removeAgentFromResearch,
+} from './simulation/research.js';
 
 export {
   createTile,

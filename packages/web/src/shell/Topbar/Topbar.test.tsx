@@ -19,6 +19,7 @@ const mockGameState: Partial<GameState> = {
     innerCircleIds: [],
     unlockedPlotIds: [],
     unlockedActivityIds: [],
+      unlockedResearchIds: [],
   },
   pendingEvents: [],
 };

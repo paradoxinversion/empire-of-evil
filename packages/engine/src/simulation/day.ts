@@ -8,8 +8,9 @@ import { simulateCitizens } from "./citizens.js";
 import { advancePlots } from "../plots/index.js";
 import { executeActivities } from "../activities/index.js";
 import { generateEvents } from "../events/generators/index.js";
+import { advanceResearch } from "./research.js";
 
-export const runDay = (state: GameState): void => {
+export const runDay = (state: GameState, config: Config): void => {
     state.date += 1;
 
     // 1. Tick effect durations
@@ -28,10 +29,10 @@ export const runDay = (state: GameState): void => {
     executeActivities(state);
 
     // 6. Research advancement
-    advanceResearch(state);
+    advanceResearch(state, config);
 
     // 7. Resource settlement
-    settleResources(state);
+    settleResources(state, config);
 
     // 8. CPU org actions
     processCpuOrgs(state);
@@ -45,8 +46,6 @@ export const runDay = (state: GameState): void => {
 const tickEffects = (_state: GameState): void => {};
 
 const processBuildingOutput = (_state: GameState): void => {};
-
-const advanceResearch = (_state: GameState): void => {};
 
 export const settleResources = (state: GameState, config?: Config): void => {
     if (!config) return;

@@ -174,6 +174,7 @@ export const generateWorld = (params: WorldGenParams, config: Config): GameState
       innerCircleIds: [],
       unlockedPlotIds: [],
       unlockedActivityIds: [],
+      unlockedResearchIds: [],
     },
     date: 0,
     worldSeed,

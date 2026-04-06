@@ -109,6 +109,7 @@ export interface EmpireState {
     innerCircleIds: string[];
     unlockedPlotIds: string[];
     unlockedActivityIds: string[];
+    unlockedResearchIds: string[];
 }
 
 // ─── Active simulation records ─────────────────────────────────────────────────

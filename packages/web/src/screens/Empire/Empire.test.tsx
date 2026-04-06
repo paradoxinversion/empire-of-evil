@@ -17,6 +17,7 @@ const mockGameState: Partial<GameState> = {
     innerCircleIds: [],
     unlockedPlotIds: [],
     unlockedActivityIds: [],
+      unlockedResearchIds: [],
   },
   zones: { 'z1': { id: 'z1', name: 'Zone Alpha', nationId: 'n1', governingOrganizationId: 'org-1', tileIds: [], buildingIds: [], generationWealth: 10, economicOutput: 500, population: 1000, intelLevel: 0, taxRate: 0.1, activeEffectIds: [] } },
   plots: {},

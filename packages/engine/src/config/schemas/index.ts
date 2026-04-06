@@ -32,7 +32,28 @@ export const EvilTiersSchema = z.array(z.object({}).passthrough());
 export const PersonAttributesSchema = z.array(z.object({}).passthrough());
 export const PetsSchema = z.array(z.object({}).passthrough());
 export const PlotsSchema = z.array(z.object({}).passthrough());
-export const ResearchProjectsSchema = z.array(z.object({}).passthrough());
+const ResearchUnlocksSchema = z.object({
+    researchIds: z.array(z.string()),
+    activityIds: z.array(z.string()),
+    plotIds:     z.array(z.string()),
+    effectIds:   z.array(z.string()),
+});
+
+export const ResearchProjectSchema = z.object({
+    id:              z.string(),
+    name:            z.string(),
+    description:     z.string(),
+    branch:          z.string(),
+    cost:            z.number(),
+    scienceRequired: z.number(),
+    completionDays:  z.number().int().positive(),
+    prerequisites:   z.array(z.string()),
+    skillDrivers:    z.array(z.string()),
+    unlocks:         ResearchUnlocksSchema,
+});
+
+export const ResearchProjectsSchema = z.array(ResearchProjectSchema);
+export type ResearchProjectDefinition = z.infer<typeof ResearchProjectSchema>;
 export const SkillsSchema = z.array(z.object({}).passthrough());
 const TileTypeDefinitionSchema = z.object({
     icon: z.string(),

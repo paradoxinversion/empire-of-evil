@@ -6,7 +6,7 @@ import type {
     Squad,
     Building,
 } from "../types/index.js";
-import type { Config } from "../config/loader.js";
+import type { Config, ResearchProjectDefinition } from "../config/loader.js";
 
 export const getZone = (state: GameState, id: string): Zone => {
     const zone = state.zones[id];
@@ -127,3 +127,55 @@ export const getDailyAgentSalaries = (state: GameState): number =>
 
 export const getZoneTaxIncome = (zone: Zone): number =>
     zone.economicOutput * zone.taxRate;
+
+// ─── Research queries ─────────────────────────────────────────────────────────
+
+export const getResearchProject = (
+    config: Config,
+    projectId: string,
+): ResearchProjectDefinition => {
+    const project = config.researchProjects.find(p => p.id === projectId);
+    if (!project) throw new Error(`Research project not found: ${projectId}`);
+    return project;
+};
+
+export const isResearchCompleted = (
+    state: GameState,
+    projectId: string,
+): boolean => state.empire.unlockedResearchIds.includes(projectId);
+
+export const isResearchActive = (
+    state: GameState,
+    projectId: string,
+): boolean =>
+    Object.values(state.research).some(r => r.projectId === projectId);
+
+export const isResearchAvailable = (
+    state: GameState,
+    config: Config,
+    projectId: string,
+): boolean => {
+    if (isResearchCompleted(state, projectId)) return false;
+    if (isResearchActive(state, projectId)) return false;
+    const project = config.researchProjects.find(p => p.id === projectId);
+    if (!project) return false;
+    return project.prerequisites.every(id => isResearchCompleted(state, id));
+};
+
+export const getResearchProgressPct = (
+    state: GameState,
+    config: Config,
+    researchId: string,
+): number => {
+    const record = state.research[researchId];
+    if (!record) return 0;
+    const project = config.researchProjects.find(p => p.id === record.projectId);
+    if (!project) return 0;
+    const byScore = project.scienceRequired > 0
+        ? record.accumulatedScore / project.scienceRequired
+        : 0;
+    const byDays = project.completionDays > 0
+        ? (project.completionDays - record.daysRemaining) / project.completionDays
+        : 0;
+    return Math.min(100, Math.round(Math.max(byScore, byDays) * 100));
+};

@@ -22,6 +22,7 @@ const mockReadyGameState: Partial<GameState> = {
     innerCircleIds: [],
     unlockedPlotIds: [],
     unlockedActivityIds: [],
+      unlockedResearchIds: [],
   },
   zones: {},
   plots: {},

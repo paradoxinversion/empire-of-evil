@@ -1,4 +1,5 @@
 import type { GameState, InterruptEvent } from '../types/index.js';
+import type { Config } from '../config/loader.js';
 import { runDay } from './day.js';
 
 export type AdvanceResult =
@@ -7,10 +8,11 @@ export type AdvanceResult =
 
 export function* advanceTime(
   state: GameState,
-  targetDate: number
+  targetDate: number,
+  config: Config,
 ): Generator<AdvanceResult> {
   while (state.date < targetDate) {
-    runDay(state);
+    runDay(state, config);
     const interrupts = state.pendingEvents.filter(
       (e): e is InterruptEvent => e.requiresResolution
     );

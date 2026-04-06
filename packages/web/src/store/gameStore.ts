@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { GameState, GameEvent, WorldGenParams, StandingOrder } from '@empire-of-evil/engine';
-import type { Config } from '@empire-of-evil/engine';
+import type { Config, ResearchProjectDefinition } from '@empire-of-evil/engine';
 
 // Import bundled config JSON files (Vite resolves these at build time)
 import tileTypes from '../../../../config/default/tileTypes.json';
@@ -30,7 +30,7 @@ export const BUNDLED_CONFIG: Config = {
   evilTiers: evilTiers as unknown[],
   personAttributes: personAttributes as unknown[],
   plots: plots as unknown[],
-  researchProjects: researchProjects as unknown[],
+  researchProjects: researchProjects as ResearchProjectDefinition[],
   skills: skills as unknown[],
 };
 
@@ -61,6 +61,10 @@ export type GameStore = {
   removeAgentFromSquad: (squadId: string, agentId: string) => void;
   updateSquadOrders: (squadId: string, orders: StandingOrder) => void;
   setZoneTaxRate: (zoneId: string, taxRate: number) => void;
+  startResearch: (projectId: string) => void;
+  cancelResearch: (researchId: string) => void;
+  assignAgentToResearch: (researchId: string, agentId: string) => void;
+  removeAgentFromResearch: (researchId: string, agentId: string) => void;
 };
 
 export const useGameStore = create<GameStore>((set, get) => {
@@ -114,7 +118,7 @@ export const useGameStore = create<GameStore>((set, get) => {
       const { gameState } = get();
       if (!gameState) return;
       import('@empire-of-evil/engine').then(({ advanceTime }) => {
-        simulationGenerator = advanceTime(gameState, targetDate);
+        simulationGenerator = advanceTime(gameState, targetDate, BUNDLED_CONFIG);
         set({ status: 'running', targetDate });
         animationFrameId = requestAnimationFrame(stepSimulation);
       });
@@ -143,7 +147,7 @@ export const useGameStore = create<GameStore>((set, get) => {
       const { activeInterrupts, targetDate, gameState } = get();
       if (activeInterrupts.length > 0 || !targetDate || !gameState) return;
       import('@empire-of-evil/engine').then(({ advanceTime }) => {
-        simulationGenerator = advanceTime(gameState, targetDate);
+        simulationGenerator = advanceTime(gameState, targetDate, BUNDLED_CONFIG);
         set({ status: 'running' });
         animationFrameId = requestAnimationFrame(stepSimulation);
       });
@@ -215,6 +219,42 @@ export const useGameStore = create<GameStore>((set, get) => {
       if (!zone) return;
       zone.taxRate = Math.max(0, Math.min(1, taxRate));
       set(s => ({ version: s.version + 1 }));
+    },
+
+    startResearch: (projectId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      import('@empire-of-evil/engine').then(({ startResearch }) => {
+        startResearch(gameState, projectId, BUNDLED_CONFIG);
+        set(s => ({ version: s.version + 1 }));
+      });
+    },
+
+    cancelResearch: (researchId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      import('@empire-of-evil/engine').then(({ cancelResearch }) => {
+        cancelResearch(gameState, researchId);
+        set(s => ({ version: s.version + 1 }));
+      });
+    },
+
+    assignAgentToResearch: (researchId, agentId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      import('@empire-of-evil/engine').then(({ assignAgentToResearch }) => {
+        assignAgentToResearch(gameState, researchId, agentId);
+        set(s => ({ version: s.version + 1 }));
+      });
+    },
+
+    removeAgentFromResearch: (researchId, agentId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      import('@empire-of-evil/engine').then(({ removeAgentFromResearch }) => {
+        removeAgentFromResearch(gameState, researchId, agentId);
+        set(s => ({ version: s.version + 1 }));
+      });
     },
   };
 });
