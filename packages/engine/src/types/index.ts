@@ -194,6 +194,7 @@ export interface GameState {
 
   empire: EmpireState;
   date: number;
+  worldSeed: number;
 
   pendingEvents: GameEvent[];
   eventLog: GameEventRecord[];
@@ -203,9 +204,23 @@ export interface GameState {
 
 export interface WorldGenParams {
   seed?: number;
-  nationCount: number;
-  zonesPerNation: number;
-  populationDensity: number;
   mapWidth: number;
   mapHeight: number;
+  terrainProfile?: {
+    noiseScale: number;
+    uninhabitedWealthFloor: number;
+  };
+  minZoneSize: number;
+  maxZoneSize: number;
+  nationCount: number;
+  zonesPerNation: number;
+  minNationSpacing?: number;
+  populationDensity: number;
+  maxBuildingsPerZone: number;
+  startingResources?: {
+    money: number;
+    science: number;
+    infrastructure: number;
+  };
+  petTypeId?: string;
 }

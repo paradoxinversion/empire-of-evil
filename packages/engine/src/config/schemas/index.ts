@@ -52,3 +52,19 @@ const TileTypeDefinitionSchema = z.object({
 });
 
 export const TileTypesSchema = z.record(z.string(), TileTypeDefinitionSchema);
+
+export const WorldGenConfigSchema = z.object({
+    mapWidth: z.number().int().positive(),
+    mapHeight: z.number().int().positive(),
+    terrainProfile: z.object({
+        noiseScale: z.number().positive(),
+        uninhabitedWealthFloor: z.number().min(0).max(100),
+    }).optional(),
+    minZoneSize: z.number().int().min(1),
+    maxZoneSize: z.number().int().positive(),
+    nationCount: z.number().int().positive(),
+    zonesPerNation: z.number().int().min(3),
+    minNationSpacing: z.number().int().positive().optional(),
+    populationDensity: z.number().positive(),
+    maxBuildingsPerZone: z.number().int().positive(),
+});

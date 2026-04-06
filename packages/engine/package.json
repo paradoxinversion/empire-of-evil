@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsc",
     "test": "vitest run"
   },
   "dependencies": {
+    "simplex-noise": "^4.0.3",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@types/node": "^25.5.2",
     "typescript": "^5.5.0",
     "vitest": "^3.0.0"
   }
