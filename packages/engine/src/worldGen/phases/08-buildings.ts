@@ -78,7 +78,7 @@ export function placeBuildings(
                 typeId: selected.id,
                 zoneId: zone.id,
                 governingOrganizationId: govOrgId,
-                tileId,
+                ...(tileId !== undefined ? { tileId } : {}),
             });
             result[building.id] = building;
             buildingIds.push(building.id);
