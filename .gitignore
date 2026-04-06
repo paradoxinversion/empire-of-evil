@@ -4,3 +4,5 @@ dist
 # TypeScript incremental buildinfo
 *.tsbuildinfo
 tsconfig.tsbuildinfo
+
+output

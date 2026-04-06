@@ -11,6 +11,9 @@ import type {
 let _nextId = 1;
 const nextId = (prefix: string) => `${prefix}-${_nextId++}`;
 
+/** Reset the ID counter — used by worldgen to ensure deterministic IDs per run. */
+export const resetIdCounter = (startValue = 1): void => { _nextId = startValue; };
+
 export const createTile = (overrides: Partial<Tile> & { zoneId: string; typeId: string }): Tile => ({
   id: nextId('tile'),
   activeEffectIds: [],
