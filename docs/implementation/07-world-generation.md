@@ -194,7 +194,7 @@ Persons are placed in `state.persons` keyed by ID. The zone's `population` field
 
 ## Phase 8 — Building Placement
 
-Buildings are placed in each inhabited zone according to a **wealth-weighted probability table**. The number of buildings in a zone scales with zone size and wealth:
+Buildings are placed on tiles in each inhabited zone according to a **wealth-weighted probability table**. The number of buildings on a tile (and in the zone overall) scales with zone size and wealth:
 
 ```
 buildingCount = floor(zone.generationWealth / 100 * maxBuildingsPerZone * zoneSize / avgZoneSize)
