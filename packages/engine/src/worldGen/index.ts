@@ -131,6 +131,7 @@ export const generateWorld = (params: WorldGenParams, config: Config): GameState
       economicOutput: 0,
       population: zonePops.get(zc.id) ?? 0,
       intelLevel: 0,
+      taxRate: 0.1,
       activeEffectIds: [],
     };
   }
@@ -157,6 +158,7 @@ export const generateWorld = (params: WorldGenParams, config: Config): GameState
     buildings: allBuildings,
     persons: allPersons,
     governingOrganizations: organizations,
+    squads: {},
     plots: {},
     activities: {},
     research: {},

@@ -1,1 +1,1 @@
-export const PersonnelScreen = () => <div>Personnel</div>;
+export { PersonnelScreen } from './PersonnelScreen';

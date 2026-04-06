@@ -6,6 +6,7 @@ import type {
   Person,
   GoverningOrganization,
   EffectInstance,
+  Squad,
 } from '../types/index.js';
 
 let _nextId = 1;
@@ -30,6 +31,7 @@ export const createZone = (
   economicOutput: 0,
   population: 0,
   intelLevel: 0,
+  taxRate: 0.1,
   activeEffectIds: [],
   ...overrides,
 });
@@ -82,6 +84,14 @@ export const createGoverningOrganization = (
   id: nextId('go'),
   intelLevel: 0,
   activeEffectIds: [],
+  ...overrides,
+});
+
+export const createSquad = (
+  overrides: Partial<Squad> & { name: string }
+): Squad => ({
+  id: nextId('squad'),
+  memberIds: [],
   ...overrides,
 });
 

@@ -20,6 +20,8 @@ export type {
   EventChoice,
   EventCategory,
   GameEventRecord,
+  Squad,
+  StandingOrder,
 } from './types/index.js';
 
 export { advanceTime } from './simulation/advance.js';
@@ -36,6 +38,15 @@ export {
   getZone,
   getPersonsInZone,
   getActiveEffectsOnPerson,
+  getSquad,
+  getAgentSquad,
+  getSquadMembers,
+  getDailyBuildingIncome,
+  getBuildingIncomeByZone,
+  getDailyBuildingUpkeep,
+  getBuildingUpkeepByZone,
+  getDailyAgentSalaries,
+  getZoneTaxIncome,
 } from './state/queries.js';
 
 export {
@@ -46,4 +57,5 @@ export {
   createPerson,
   createGoverningOrganization,
   createEffectInstance,
+  createSquad,
 } from './factories/index.js';

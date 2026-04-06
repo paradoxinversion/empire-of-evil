@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { GameState, GameEvent, WorldGenParams } from '@empire-of-evil/engine';
+import type { GameState, GameEvent, WorldGenParams, StandingOrder } from '@empire-of-evil/engine';
 import type { Config } from '@empire-of-evil/engine';
 
 // Import bundled config JSON files (Vite resolves these at build time)
@@ -18,7 +18,7 @@ import researchProjects from '../../../../config/default/researchProjects.json';
 import skills from '../../../../config/default/skills.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const BUNDLED_CONFIG: Config = {
+export const BUNDLED_CONFIG: Config = {
   tileTypes: tileTypes as Config['tileTypes'],
   buildings: buildings as Config['buildings'],
   pets: pets as Config['pets'],
@@ -56,6 +56,11 @@ export type GameStore = {
   pauseAdvance: () => void;
   resolveEvent: (eventId: string, choiceIndex?: number) => void;
   resumeAfterInterrupt: () => void;
+  createSquad: (name: string, homeZoneId?: string) => void;
+  addAgentToSquad: (squadId: string, agentId: string) => void;
+  removeAgentFromSquad: (squadId: string, agentId: string) => void;
+  updateSquadOrders: (squadId: string, orders: StandingOrder) => void;
+  setZoneTaxRate: (zoneId: string, taxRate: number) => void;
 };
 
 export const useGameStore = create<GameStore>((set, get) => {
@@ -153,6 +158,63 @@ export const useGameStore = create<GameStore>((set, get) => {
     loadGame: (json) => {
       const gameState = JSON.parse(json) as GameState;
       set({ gameState, status: 'ready', version: 1 });
+    },
+
+    createSquad: (name, homeZoneId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      import('@empire-of-evil/engine').then(({ createSquad }) => {
+        const squad = createSquad({
+          name,
+          ...(homeZoneId !== undefined ? { homeZoneId } : {}),
+        });
+        gameState.squads[squad.id] = squad;
+        set(s => ({ version: s.version + 1 }));
+      });
+    },
+
+    addAgentToSquad: (squadId, agentId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      const squad = gameState.squads[squadId];
+      if (!squad || squad.memberIds.includes(agentId)) return;
+      squad.memberIds.push(agentId);
+      const person = gameState.persons[agentId];
+      if (person?.agentStatus) {
+        person.agentStatus.squadId = squadId;
+      }
+      set(s => ({ version: s.version + 1 }));
+    },
+
+    removeAgentFromSquad: (squadId, agentId) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      const squad = gameState.squads[squadId];
+      if (!squad) return;
+      squad.memberIds = squad.memberIds.filter(id => id !== agentId);
+      const person = gameState.persons[agentId];
+      if (person?.agentStatus?.squadId === squadId) {
+        delete person.agentStatus.squadId;
+      }
+      set(s => ({ version: s.version + 1 }));
+    },
+
+    updateSquadOrders: (squadId, orders) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      const squad = gameState.squads[squadId];
+      if (!squad) return;
+      squad.standingOrders = orders;
+      set(s => ({ version: s.version + 1 }));
+    },
+
+    setZoneTaxRate: (zoneId, taxRate) => {
+      const { gameState } = get();
+      if (!gameState) return;
+      const zone = gameState.zones[zoneId];
+      if (!zone) return;
+      zone.taxRate = Math.max(0, Math.min(1, taxRate));
+      set(s => ({ version: s.version + 1 }));
     },
   };
 });

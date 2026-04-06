@@ -30,6 +30,7 @@ export interface Zone {
   economicOutput: number;
   population: number;
   intelLevel: number;
+  taxRate: number;
   activeEffectIds: string[];
 }
 
@@ -172,6 +173,26 @@ export interface GameEventRecord {
   choiceIndex?: number;
 }
 
+// ─── Squads ───────────────────────────────────────────────────────────────────
+
+export type StandingOrder =
+  | 'IDLE'
+  | 'DEFEND_ZONE'
+  | 'RUN_RECONNAISSANCE'
+  | 'MAINTAIN_ACTIVITY'
+  | 'COUNTERINTELLIGENCE'
+  | 'MANAGE_STABILITY'
+  | 'ESCORT_OVERLORD';
+
+export interface Squad {
+  id: string;
+  name: string;
+  memberIds: string[];
+  leaderId?: string;
+  homeZoneId?: string;
+  standingOrders?: StandingOrder;
+}
+
 // ─── GameState ────────────────────────────────────────────────────────────────
 
 export interface GameState {
@@ -182,6 +203,7 @@ export interface GameState {
   persons: Record<string, Person>;
   governingOrganizations: Record<string, GoverningOrganization>;
 
+  squads: Record<string, Squad>;
   plots: Record<string, ActivePlot>;
   activities: Record<string, ActiveActivity>;
   research: Record<string, ActiveResearch>;
