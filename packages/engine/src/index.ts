@@ -27,7 +27,6 @@ export type { AdvanceResult } from './simulation/advance.js';
 
 export { resolveEvent } from './events/resolve.js';
 export { generateWorld } from './worldGen/index.js';
-export { loadConfig } from './config/loader.js';
 export type { Config } from './config/loader.js';
 export { applyEffect } from './effects/apply.js';
 export type { EffectDeclaration } from './effects/apply.js';
