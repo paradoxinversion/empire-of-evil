@@ -3,6 +3,9 @@ import type { PetDefinition } from '../../config/loader.js';
 import { createPerson, createBuilding } from '../../factories/index.js';
 import { seedFrom } from '../prng.js';
 
+const STARTING_LOYALTY = 40;
+const STARTING_AGENT_COUNT = 10;
+
 interface EmpireInitParams {
   petTypeId?: string;
   startingResources?: { money: number; science: number; infrastructure: number };
@@ -34,6 +37,7 @@ export function initializeEmpire(
   params: EmpireInitParams,
   defaultResources: { money: number; science: number; infrastructure: number },
   worldSeed: number,
+  populationPersons: Record<string, Person> = {},
 ): EmpireInitResult {
   const persons: Record<string, Person> = {};
   const buildings: Record<string, Building> = {};
@@ -77,6 +81,32 @@ export function initializeEmpire(
   persons[petPerson.id] = petPerson;
 
   const resources = params.startingResources ?? defaultResources;
+
+  // Subject setup: all zone citizens become empire subjects
+  const allZoneCitizens = Object.values(populationPersons).filter(
+    p => p.zoneId === empireOriginZoneId,
+  );
+
+  for (const citizen of allZoneCitizens) {
+    persons[citizen.id] = {
+      ...citizen,
+      governingOrganizationId: empireOrgId,
+      loyalties: { ...citizen.loyalties, [empireOrgId]: STARTING_LOYALTY },
+    };
+  }
+
+  // Agent recruitment: living citizens only, seeded shuffle, take up to STARTING_AGENT_COUNT
+  const livingZoneCitizens = allZoneCitizens.filter(p => !p.dead);
+  const { prng: recruitPrng } = seedFrom(worldSeed ^ 0xf00dcafe);
+  const shuffled = [...livingZoneCitizens].sort(() => recruitPrng() - 0.5);
+  const recruits = shuffled.slice(0, STARTING_AGENT_COUNT);
+
+  for (const recruit of recruits) {
+    persons[recruit.id] = {
+      ...persons[recruit.id]!,
+      agentStatus: { job: 'unassigned', salary: 0 },
+    };
+  }
 
   return {
     persons,

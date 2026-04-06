@@ -91,6 +91,7 @@ export const generateWorld = (params: WorldGenParams, config: Config): GameState
   const defaultResources = params.startingResources ?? { money: 500, science: 0, infrastructure: 100 };
   const empireInit = initializeEmpire(
     empireOriginZoneId, empireOrgId, config.pets, params, defaultResources, worldSeed,
+    populationPersons,
   );
 
   // Assemble tiles record
@@ -123,7 +124,7 @@ export const generateWorld = (params: WorldGenParams, config: Config): GameState
       id: zc.id,
       name: `Zone ${zc.id}`,
       nationId,
-      governingOrganizationId: zoneOrgLookup[zc.id] ?? empireOrgId,
+      governingOrganizationId: zoneOrgLookup[zc.id] ?? '',
       tileIds: zc.tileIds,
       buildingIds: zoneBuildingIds.get(zc.id) ?? [],
       generationWealth: zc.generationWealth,

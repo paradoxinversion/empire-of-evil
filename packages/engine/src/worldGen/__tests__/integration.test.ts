@@ -101,4 +101,12 @@ describe('generateWorld integration', () => {
     });
     expect(empireZoneId).toBeDefined();
   });
+
+  test('exactly 1 zone is controlled by the empire at game start', () => {
+    const state = generateWorld(smallParams, config);
+    const empireControlledZones = Object.values(state.zones).filter(
+      z => z.governingOrganizationId === state.empire.id,
+    );
+    expect(empireControlledZones).toHaveLength(1);
+  });
 });
