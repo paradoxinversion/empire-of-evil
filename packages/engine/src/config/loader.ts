@@ -21,6 +21,7 @@ import {
 } from './schemas/index.js';
 
 export type TileTypeDefinition = {
+  icon: string;
   name: string;
   description: string;
   buildingRestrictions: string[];

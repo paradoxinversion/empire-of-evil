@@ -6,12 +6,12 @@ import type { TileTypeDefinition } from '../../config/loader.js';
 
 const minimalTileTypes: Record<string, TileTypeDefinition> = {
   ocean: {
-    name: 'Ocean', description: '', buildingRestrictions: [], effects: [],
+    icon: '~', name: 'Ocean', description: '', buildingRestrictions: [], effects: [],
     terrainConditions: { elevationMin: 0, elevationMax: 0.38, moistureMin: 0, moistureMax: 1, priority: 100 },
     canBeInhabited: false, wealthContribution: 0, isOcean: true,
   },
   plains: {
-    name: 'Plains', description: '', buildingRestrictions: [], effects: [],
+    icon: '.', name: 'Plains', description: '', buildingRestrictions: [], effects: [],
     terrainConditions: { elevationMin: 0, elevationMax: 1, moistureMin: 0, moistureMax: 1, priority: 1 },
     canBeInhabited: true, wealthContribution: 45,
   },
@@ -20,7 +20,7 @@ const minimalTileTypes: Record<string, TileTypeDefinition> = {
 // All-plains tile types (no ocean to simplify assertions)
 const allPlainsTileTypes: Record<string, TileTypeDefinition> = {
   plains: {
-    name: 'Plains', description: '', buildingRestrictions: [], effects: [],
+    icon: '.', name: 'Plains', description: '', buildingRestrictions: [], effects: [],
     terrainConditions: { elevationMin: 0, elevationMax: 1, moistureMin: 0, moistureMax: 1, priority: 1 },
     canBeInhabited: true, wealthContribution: 45,
   },

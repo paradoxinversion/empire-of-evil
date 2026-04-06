@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { GameState, AgentJob } from '@empire-of-evil/engine';
 import { useGameState } from '../../hooks/useGameState';
 import { TileMap } from '../../components/TileMap/TileMap';
+import { TILE_TYPE_NAMES } from '../../utils/mapUtils';
 import { Panel } from '../../components/Panel/Panel';
 import { DataTable } from '../../components/DataTable/DataTable';
 import { FeedEntry } from '../../components/FeedEntry/FeedEntry';
@@ -15,19 +16,6 @@ import type { TagVariant } from '../../components/Tag/Tag';
 
 const INTEL_CITIZENS_THRESHOLD = 20;
 const INTEL_NAMES_THRESHOLD = 40;
-
-const TILE_TYPE_NAMES: Record<string, string> = {
-  ocean: 'Ocean',
-  mountain: 'Mountain',
-  coastal: 'Coastal',
-  swamp: 'Swamp',
-  tundra: 'Tundra',
-  city: 'City',
-  forest: 'Forest',
-  plains: 'Plains',
-  desert: 'Desert',
-  wilderness: 'Wilderness',
-};
 
 const LAYER_LABELS: Record<'political' | 'intel', string> = {
   political: 'POLITICAL',

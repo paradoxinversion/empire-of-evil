@@ -1,4 +1,15 @@
-import type { Tile, Zone, Nation } from '@empire-of-evil/engine';
+import type { Tile, Zone, Nation, TileTypeDefinition } from '@empire-of-evil/engine';
+import tileTypesJson from '../../../../config/default/tileTypes.json';
+
+const _tileTypes = tileTypesJson as Record<string, TileTypeDefinition>;
+
+export const TILE_TYPE_NAMES: Record<string, string> = Object.fromEntries(
+  Object.entries(_tileTypes).map(([id, def]) => [id, def.name])
+);
+
+export const TILE_TYPE_ICONS: Record<string, string> = Object.fromEntries(
+  Object.entries(_tileTypes).map(([id, def]) => [id, def.icon])
+);
 
 export function parseTileCoords(id: string): { x: number; y: number } | null {
   let rest: string;

@@ -35,6 +35,7 @@ export const PlotsSchema = z.array(z.object({}).passthrough());
 export const ResearchProjectsSchema = z.array(z.object({}).passthrough());
 export const SkillsSchema = z.array(z.object({}).passthrough());
 const TileTypeDefinitionSchema = z.object({
+    icon: z.string(),
     name: z.string(),
     description: z.string(),
     buildingRestrictions: z.array(z.string()),

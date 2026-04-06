@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Tile, Zone, Nation } from '@empire-of-evil/engine';
 import {
   buildPoliticalColorMap,
   buildIntelColorMap,
   parseTileCoords,
   deriveMapBounds,
+  TILE_TYPE_ICONS,
+  TILE_TYPE_NAMES,
 } from '../../utils/mapUtils';
 
 interface TileMapProps {
@@ -41,11 +43,14 @@ export function TileMap({
   const tilesRef = useRef(tiles);
   const zonesRef = useRef(zones);
   const mapBoundsRef = useRef(deriveMapBounds(tiles));
+  const [showOverlay, setShowOverlay] = useState(false);
+  const showOverlayRef = useRef(false);
 
-  // Keep refs in sync with props
+  // Keep refs in sync with props/state
   selectedZoneIdRef.current = selectedZoneId;
   tilesRef.current = tiles;
   zonesRef.current = zones;
+  showOverlayRef.current = showOverlay;
 
   const tileColorMap = useMemo(() => {
     return layer === 'political'
@@ -113,6 +118,30 @@ export function TileMap({
             tileSize,
             tileSize,
           );
+        }
+      }
+    }
+
+    if (showOverlayRef.current) {
+      for (let y = yStart; y <= yEnd; y++) {
+        for (let x = xStart; x <= xEnd; x++) {
+          if (tileSize < 5) continue;
+          const tile =
+            tilesRef.current[`tile-${x}-${y}`] ??
+            tilesRef.current[`ocean-${x}-${y}`];
+          if (!tile) continue;
+          const icon = TILE_TYPE_ICONS[tile.typeId];
+          if (!icon) continue;
+          const fontSize = Math.max(4, Math.floor(tileSize * 0.7));
+          ctx.font = `${fontSize}px monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const cx = Math.floor(pan.x + x * tileSize + tileSize / 2);
+          const cy = Math.floor(pan.y + y * tileSize + tileSize / 2);
+          ctx.fillStyle = 'rgba(0,0,0,0.55)';
+          ctx.fillText(icon, cx + 1, cy + 1);
+          ctx.fillStyle = 'rgba(220,210,180,0.90)';
+          ctx.fillText(icon, cx, cy);
         }
       }
     }
@@ -232,6 +261,51 @@ export function TileMap({
       className="relative w-full overflow-hidden bg-[#0b1a2e] rounded-sm border border-border-subtle cursor-crosshair"
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
+      <button
+        type="button"
+        onClick={() => {
+          showOverlayRef.current = !showOverlayRef.current;
+          setShowOverlay(showOverlayRef.current);
+          drawMap();
+        }}
+        className={[
+          'absolute top-2 right-2 z-10 font-mono text-[10px] tracking-[0.08em] px-2.5 py-1',
+          'border cursor-pointer transition-colors',
+          showOverlay
+            ? 'text-text-primary border-accent-red'
+            : 'text-text-muted border-border-subtle hover:text-text-secondary',
+        ].join(' ')}
+      >
+        TERRAIN
+      </button>
+      {showOverlay && (
+        <div
+          className="absolute bottom-2 left-2 z-10 font-mono text-[10px] text-text-secondary"
+          style={{
+            background: 'rgba(13,15,17,0.88)',
+            border: '1px solid #1f2530',
+            padding: '6px 8px',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              columnGap: '12px',
+              rowGap: '2px',
+            }}
+          >
+            {Object.entries(TILE_TYPE_ICONS).map(([typeId, icon]) => (
+              <div key={typeId} style={{ display: 'flex', gap: '5px' }}>
+                <span style={{ color: 'rgba(220,210,180,0.90)', minWidth: '10px', textAlign: 'center' }}>
+                  {icon}
+                </span>
+                <span>{TILE_TYPE_NAMES[typeId] ?? typeId}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
