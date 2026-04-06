@@ -1,0 +1,848 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap');
+  .eoe-wrap { font-family: 'IBM Plex Sans', monospace; background: #0d0f11; color: #e2e8f0; min-height: 600px; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden; font-size: 13px; }
+  .eoe-topbar { background: #13161a; border-bottom: 1px solid #1f2530; height: 44px; display: flex; align-items: center; padding: 0 16px; gap: 0; flex-shrink: 0; z-index: 10; }
+  .eoe-topbar-left { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #94a3b8; flex: 1; }
+  .eoe-topbar-center { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #475569; letter-spacing: 0.06em; position: absolute; left: 50%; transform: translateX(-50%); }
+  .eoe-topbar-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+  .eoe-evil-pill { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 2px; background: #1f0d0d; color: #c0392b; border: 1px solid #7f1d1d; cursor: default; }
+  .eoe-money { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #e2e8f0; }
+  .eoe-cashflow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #16a34a; }
+  .eoe-advance-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 5px 12px; background: #c0392b; color: #e2e8f0; border: none; border-radius: 2px; cursor: pointer; }
+  .eoe-body { display: flex; flex: 1; min-height: 0; }
+  .eoe-sidebar { background: #13161a; border-right: 1px solid #1f2530; width: 200px; flex-shrink: 0; display: flex; flex-direction: column; padding: 8px 0; }
+  .eoe-nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; color: #94a3b8; font-size: 12px; letter-spacing: 0.05em; transition: background 0.1s; border-left: 2px solid transparent; }
+  .eoe-nav-item:hover { background: #1a1e24; color: #e2e8f0; }
+  .eoe-nav-item.active { background: #212830; color: #e2e8f0; border-left-color: #c0392b; }
+  .eoe-nav-icon { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
+  .eoe-sidebar-bottom { margin-top: auto; padding: 12px 14px; border-top: 1px solid #1f2530; }
+  .eoe-evil-widget { margin-bottom: 12px; }
+  .eoe-widget-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: #475569; margin-bottom: 4px; }
+  .eoe-widget-value { font-family: 'IBM Plex Mono', monospace; font-size: 22px; color: #ea580c; line-height: 1; margin-bottom: 2px; }
+  .eoe-widget-tier { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: #ea580c; margin-bottom: 6px; }
+  .eoe-gauge { height: 2px; background: #1f2530; border-radius: 1px; }
+  .eoe-gauge-fill { height: 100%; background: #ea580c; border-radius: 1px; }
+  .eoe-infra-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #16a34a; margin-bottom: 4px; }
+  .eoe-content { flex: 1; overflow-y: auto; padding: 20px; background: #0d0f11; }
+  .eoe-screen-title { font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #e2e8f0; margin-bottom: 16px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+  .eoe-panel { background: #13161a; border: 1px solid #1f2530; border-radius: 4px; padding: 14px; margin-bottom: 12px; }
+  .eoe-panel-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #475569; margin-bottom: 10px; }
+  .eoe-stat-row { display: flex; gap: 1px; margin-bottom: 12px; }
+  .eoe-stat { background: #13161a; border: 1px solid #1f2530; padding: 12px 14px; flex: 1; }
+  .eoe-stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: #475569; margin-bottom: 6px; }
+  .eoe-stat-value { font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: #e2e8f0; line-height: 1; margin-bottom: 3px; }
+  .eoe-stat-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #16a34a; }
+  .eoe-stat-sub.neg { color: #dc2626; }
+  .eoe-stat-sub.warn { color: #d97706; }
+  .eoe-grid-2 { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 12px; margin-bottom: 12px; }
+  .eoe-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 12px; }
+  table.eoe-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.eoe-table th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: #475569; text-align: left; padding: 0 8px 8px 0; border-bottom: 1px solid #1f2530; font-weight: 400; }
+  table.eoe-table td { padding: 7px 8px 7px 0; border-bottom: 1px solid #1a1e24; color: #94a3b8; vertical-align: middle; }
+  table.eoe-table tr:hover td { background: #1a1e24; color: #e2e8f0; cursor: pointer; }
+  table.eoe-table td:first-child { color: #e2e8f0; }
+  .eoe-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 2px; }
+  .tag-operative { background: #1e3a8a; color: #93c5fd; }
+  .tag-scientist { background: #14532d; color: #86efac; }
+  .tag-troop { background: #450a0a; color: #fca5a5; }
+  .tag-admin { background: #451a03; color: #fdba74; }
+  .tag-unassigned { background: #1f2530; color: #475569; }
+  .tag-active { background: #14532d; color: #86efac; }
+  .tag-traveling { background: #1e3a8a; color: #93c5fd; }
+  .tag-injured { background: #450a0a; color: #fca5a5; }
+  .tag-plot { background: #1f0d0d; color: #c0392b; }
+  .tag-activity { background: #1e3a8a; color: #93c5fd; }
+  .tag-stable { background: #14532d; color: #86efac; }
+  .tag-unrest { background: #451a03; color: #fdba74; }
+  .tag-t1 { background: #1f2530; color: #94a3b8; }
+  .tag-t2 { background: #1e3a8a; color: #93c5fd; }
+  .tag-t3 { background: #451a03; color: #fdba74; }
+  .tag-t4 { background: #7f1d1d; color: #fca5a5; }
+  .tag-ready { background: #14532d; color: #86efac; }
+  .tag-research { background: #1f2530; color: #475569; }
+  .tag-hostile { background: #450a0a; color: #fca5a5; }
+  .tag-neutral { background: #1f2530; color: #475569; }
+  .eoe-bar-wrap { background: #1f2530; height: 4px; border-radius: 2px; overflow: hidden; }
+  .eoe-bar-fill { height: 100%; border-radius: 2px; }
+  .eoe-feed-entry { padding: 8px 0; border-bottom: 1px solid #1a1e24; display: flex; gap: 10px; }
+  .eoe-feed-dot { width: 2px; flex-shrink: 0; border-radius: 1px; align-self: stretch; }
+  .eoe-feed-dot.intel { background: #2563eb; }
+  .eoe-feed-dot.intercept { background: #d97706; }
+  .eoe-feed-dot.internal { background: #c0392b; }
+  .eoe-feed-dot.news { background: #1f2530; }
+  .eoe-feed-day { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #475569; width: 38px; flex-shrink: 0; padding-top: 1px; }
+  .eoe-feed-text { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+  .eoe-feed-text strong { color: #e2e8f0; font-weight: 500; }
+  .eoe-progress { background: #1f2530; height: 3px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .eoe-progress-fill { height: 100%; background: #2563eb; }
+  .eoe-divider { border: none; border-top: 1px solid #1f2530; margin: 12px 0; }
+  .eoe-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: #475569; margin-bottom: 8px; }
+  .eoe-plot-detail { background: #13161a; border: 1px solid #2a3140; border-radius: 4px; padding: 14px; }
+  .eoe-plot-title { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #e2e8f0; margin-bottom: 6px; }
+  .eoe-plot-desc { font-size: 12px; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+  .eoe-req-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #94a3b8; padding: 3px 0; }
+  .eoe-req-check { color: #16a34a; font-size: 11px; }
+  .eoe-req-x { color: #dc2626; font-size: 11px; }
+  .eoe-launch-btn { background: #c0392b; color: #e2e8f0; border: none; border-radius: 2px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; margin-top: 12px; width: 100%; }
+  .eoe-launch-btn:disabled { background: #1f2530; color: #475569; cursor: not-allowed; }
+  .eoe-research-node { background: #1a1e24; border: 1px solid #2a3140; border-radius: 4px; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; transition: border-color 0.1s; }
+  .eoe-research-node:hover { border-color: #3a4455; }
+  .eoe-research-node.completed { border-color: #14532d; opacity: 0.7; }
+  .eoe-research-node.active { border-color: #2563eb; }
+  .eoe-research-node.available { border-color: #2a3140; }
+  .eoe-research-node.locked { opacity: 0.4; }
+  .eoe-node-name { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #e2e8f0; margin-bottom: 3px; }
+  .eoe-node-status { font-size: 10px; color: #475569; }
+  .eoe-node-status.done { color: #16a34a; }
+  .eoe-node-status.prog { color: #2563eb; }
+  .eoe-node-status.avail { color: #94a3b8; }
+  .eoe-aar { background: #0d0f11; }
+  .eoe-aar-header { border-bottom: 1px solid #1f2530; padding-bottom: 14px; margin-bottom: 14px; }
+  .eoe-aar-classify { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: #475569; margin-bottom: 4px; }
+  .eoe-aar-subject { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: #e2e8f0; margin-bottom: 8px; }
+  .eoe-aar-meta { display: flex; gap: 16px; font-size: 11px; color: #475569; }
+  .eoe-aar-outcome { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 2px; background: #14532d; color: #86efac; }
+  .eoe-aar-section { margin-bottom: 14px; }
+  .eoe-aar-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: #475569; margin-bottom: 8px; }
+  .eoe-aar-log-entry { font-size: 11px; color: #94a3b8; line-height: 1.6; padding: 3px 0; border-left: 2px solid #1f2530; padding-left: 10px; margin-bottom: 4px; }
+  .eoe-aar-log-entry strong { color: #e2e8f0; }
+  .eoe-effect-row { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 0; }
+  .eoe-effect-pos { color: #16a34a; }
+  .eoe-effect-neg { color: #dc2626; }
+  .eoe-event-screen { max-width: 600px; margin: 0 auto; }
+  .eoe-event-type { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: #475569; margin-bottom: 8px; }
+  .eoe-event-title { font-family: 'IBM Plex Mono', monospace; font-size: 22px; color: #e2e8f0; margin-bottom: 16px; line-height: 1.2; }
+  .eoe-event-body { font-size: 13px; color: #94a3b8; line-height: 1.8; margin-bottom: 16px; }
+  .eoe-event-effects { background: #13161a; border: 1px solid #1f2530; border-radius: 4px; padding: 12px; margin-bottom: 16px; }
+  .eoe-event-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .eoe-opt-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 8px 14px; background: #1a1e24; border: 1px solid #2a3140; border-radius: 2px; color: #e2e8f0; cursor: pointer; }
+  .eoe-opt-btn:hover { background: #212830; border-color: #3a4455; }
+  .eoe-opt-btn.destructive { background: #1f0d0d; border-color: #7f1d1d; color: #fca5a5; }
+  .eoe-opt-btn.destructive:hover { background: #450a0a; }
+  .eoe-intercept-card { background: #13161a; border: 1px solid #2a3140; border-left: 3px solid #d97706; border-radius: 4px; padding: 12px; margin-bottom: 8px; font-style: italic; font-size: 12px; color: #94a3b8; line-height: 1.7; }
+  .eoe-intercept-header { font-style: normal; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: #475569; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .eoe-map-mock { background: #0d1117; border: 1px solid #1f2530; border-radius: 4px; height: 220px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .eoe-zone { position: absolute; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 9px; cursor: pointer; transition: opacity 0.1s; }
+  .eoe-zone:hover { opacity: 0.8; }
+  .eoe-map-legend { position: absolute; bottom: 8px; right: 8px; display: flex; flex-direction: column; gap: 3px; }
+  .eoe-legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px; color: #475569; }
+  .eoe-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .eoe-profile-panel { background: #13161a; border: 1px solid #1f2530; border-radius: 4px; padding: 14px; }
+  .eoe-profile-name { font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #e2e8f0; margin-bottom: 4px; }
+  .eoe-attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .eoe-attr-row { display: flex; flex-direction: column; }
+  .eoe-attr-label { font-size: 9px; color: #475569; letter-spacing: 0.08em; margin-bottom: 2px; }
+  .eoe-attr-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e2e8f0; }
+  .eoe-btn-row { display: flex; gap: 6px; margin-top: 10px; }
+  .eoe-action-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; padding: 5px 10px; background: #1a1e24; border: 1px solid #2a3140; border-radius: 2px; color: #94a3b8; cursor: pointer; }
+  .eoe-action-btn.red { color: #fca5a5; border-color: #7f1d1d; background: #1f0d0d; }
+  .tab-bar { display: flex; border-bottom: 1px solid #1f2530; margin-bottom: 12px; }
+  .tab-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; padding: 8px 14px; color: #475569; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab-btn.active { color: #e2e8f0; border-bottom-color: #c0392b; }
+  .eoe-bell { position: relative; cursor: pointer; }
+  .eoe-badge { position: absolute; top: -4px; right: -4px; background: #c0392b; border-radius: 50%; width: 14px; height: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+  .screen-tab-bar { display: flex; gap: 2px; margin-bottom: 16px; }
+  .screen-tab { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; padding: 6px 12px; background: #13161a; border: 1px solid #1f2530; border-radius: 2px; color: #475569; cursor: pointer; }
+  .screen-tab.active { background: #212830; border-color: #2a3140; color: #e2e8f0; }
+  .eoe-research-branch { margin-bottom: 16px; }
+  .eoe-branch-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #475569; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #1f2530; }
+  .eoe-research-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .eoe-economy-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #1a1e24; font-size: 12px; }
+  .eoe-economy-row .label { color: #94a3b8; }
+  .eoe-economy-row .value { font-family: 'IBM Plex Mono', monospace; color: #e2e8f0; }
+  .eoe-economy-row .value.pos { color: #16a34a; }
+  .eoe-economy-row .value.neg { color: #dc2626; }
+</style>
+
+<div class="eoe-wrap">
+  <div class="eoe-topbar">
+    <div class="eoe-topbar-left">EMPIRE OF EVIL INC.</div>
+    <div class="eoe-topbar-center">DAY 47 — 14 MARCH, YEAR 1</div>
+    <div class="eoe-topbar-right">
+      <div class="eoe-bell">
+        <svg width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="eoe-badge">3</div>
+      </div>
+      <div class="eoe-evil-pill">THREAT</div>
+      <div>
+        <span class="eoe-money">$1,247,430</span>
+        <span class="eoe-cashflow"> +$8,240/day</span>
+      </div>
+      <button class="eoe-advance-btn" onclick="advanceDay()">ADVANCE ▾</button>
+    </div>
+  </div>
+
+  <div class="eoe-body">
+    <div class="eoe-sidebar">
+      <div id="nav-empire" class="eoe-nav-item active" onclick="showScreen('empire')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        EMPIRE
+      </div>
+      <div id="nav-intel" class="eoe-nav-item" onclick="showScreen('intel')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        INTEL
+      </div>
+      <div id="nav-personnel" class="eoe-nav-item" onclick="showScreen('personnel')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        PERSONNEL
+      </div>
+      <div id="nav-economy" class="eoe-nav-item" onclick="showScreen('economy')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        ECONOMY
+      </div>
+      <div id="nav-science" class="eoe-nav-item" onclick="showScreen('science')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v11m0 0H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4M9 14h6"/></svg>
+        SCIENCE
+      </div>
+      <div id="nav-plots" class="eoe-nav-item" onclick="showScreen('plots')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+        PLOTS
+      </div>
+      <div id="nav-activities" class="eoe-nav-item" onclick="showScreen('activities')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        ACTIVITIES
+      </div>
+      <div id="nav-event" class="eoe-nav-item" onclick="showScreen('event')" style="margin-top:4px; border-top:1px solid #1f2530; padding-top:10px;">
+        <svg class="eoe-nav-icon" fill="none" stroke="#d97706" stroke-width="1.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span style="color:#d97706;">EVENT</span>
+      </div>
+      <div id="nav-aar" class="eoe-nav-item" onclick="showScreen('aar')">
+        <svg class="eoe-nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        AAR
+      </div>
+
+      <div class="eoe-sidebar-bottom">
+        <div class="eoe-evil-widget">
+          <div class="eoe-widget-label">EVIL RATING</div>
+          <div class="eoe-widget-value">47</div>
+          <div class="eoe-widget-tier">THREAT</div>
+          <div class="eoe-gauge"><div class="eoe-gauge-fill" style="width:47%"></div></div>
+        </div>
+        <div>
+          <div class="eoe-widget-label">INFRASTRUCTURE</div>
+          <div class="eoe-infra-val">12 / 15 ZONES</div>
+          <div class="eoe-gauge"><div class="eoe-gauge-fill" style="width:80%; background:#16a34a;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eoe-content" id="main-content"></div>
+  </div>
+</div>
+
+<script>
+var currentScreen = 'empire';
+
+var screens = {
+  empire: function() {
+    return `
+      <div class="eoe-screen-title">EMPIRE OVERVIEW</div>
+      <div class="eoe-stat-row">
+        <div class="eoe-stat"><div class="eoe-stat-label">MONEY</div><div class="eoe-stat-value">$1,247,430</div><div class="eoe-stat-sub">+$8,240/day</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">SCIENCE</div><div class="eoe-stat-value">2,847</div><div class="eoe-stat-sub">+140/day</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">INFRASTRUCTURE</div><div class="eoe-stat-value">12/15</div><div class="eoe-stat-sub warn">80% capacity</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">EVIL</div><div class="eoe-stat-value" style="color:#ea580c;">47</div><div class="eoe-stat-sub warn">THREAT tier</div></div>
+      </div>
+      <div class="eoe-grid-2">
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">ACTIVE OPERATIONS</div>
+          <table class="eoe-table">
+            <thead><tr><th>OPERATION</th><th>TYPE</th><th>TARGET</th><th>AGENTS</th><th>ETA</th></tr></thead>
+            <tbody>
+              <tr><td>Reconnaissance</td><td><span class="eoe-tag tag-plot">PLOT</span></td><td>Veldoria</td><td>2</td><td>3 days</td></tr>
+              <tr><td>Survey Citizens</td><td><span class="eoe-tag tag-activity">ACTIVITY</span></td><td>Ashmark</td><td>1</td><td>ongoing</td></tr>
+              <tr><td>Spread Conspiracy Theories</td><td><span class="eoe-tag tag-plot">PLOT</span></td><td>Thornfield</td><td>1</td><td>7 days</td></tr>
+              <tr><td>EVIL Oratory</td><td><span class="eoe-tag tag-activity">ACTIVITY</span></td><td>Ashmark</td><td>3</td><td>ongoing</td></tr>
+              <tr><td>Sabotage</td><td><span class="eoe-tag tag-plot">PLOT</span></td><td>Port Elsin</td><td>2</td><td>12 days</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="eoe-panel" style="margin-bottom:12px;">
+            <div class="eoe-panel-title">EMPIRE STATUS</div>
+            <div class="eoe-economy-row"><span class="label">Zones controlled</span><span class="value">12</span></div>
+            <div class="eoe-economy-row"><span class="label">Total agents</span><span class="value">47</span></div>
+            <div class="eoe-economy-row"><span class="label">Agents on assignment</span><span class="value">32</span></div>
+            <div class="eoe-economy-row" style="border:none;"><span class="label">Hero org activity</span><span class="eoe-tag tag-unrest" style="font-size:10px;">MODERATE</span></div>
+          </div>
+          <div class="eoe-panel">
+            <div class="eoe-panel-title">WORLD THREAT</div>
+            <div style="font-size:11px; color:#94a3b8; margin-bottom:6px;">The ReVengers <span class="eoe-tag tag-hostile" style="font-size:9px;">ACTIVE</span></div>
+            <div style="font-size:11px; color:#94a3b8; margin-bottom:6px;">The Lamplight Society <span class="eoe-tag tag-hostile" style="font-size:9px;">ACTIVE</span></div>
+            <div style="font-size:11px; color:#475569;">Null/Void <span class="eoe-tag tag-neutral" style="font-size:9px;">DORMANT</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="eoe-grid-2">
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">RECENT ACTIVITY</div>
+          <div class="eoe-feed-entry"><div class="eoe-feed-dot intel"></div><div class="eoe-feed-day">DAY 47</div><div class="eoe-feed-text"><strong>Intelligence Report:</strong> Unusual agent movement near Thornfield border.</div></div>
+          <div class="eoe-feed-entry"><div class="eoe-feed-dot intercept"></div><div class="eoe-feed-day">DAY 46</div><div class="eoe-feed-text"><strong>Intercepted:</strong> "The empire's reach is... concerning, honestly."</div></div>
+          <div class="eoe-feed-entry"><div class="eoe-feed-dot internal"></div><div class="eoe-feed-day">DAY 45</div><div class="eoe-feed-text"><strong>Research complete:</strong> Narrative Control Systems. New plots unlocked.</div></div>
+          <div class="eoe-feed-entry"><div class="eoe-feed-dot news"></div><div class="eoe-feed-day">DAY 44</div><div class="eoe-feed-text">Zone of Pelmont changes hands. Now under Nordica control.</div></div>
+          <div class="eoe-feed-entry"><div class="eoe-feed-dot internal"></div><div class="eoe-feed-day">DAY 43</div><div class="eoe-feed-text"><strong>Agent recruited:</strong> Mira Cosse — high Intelligence, Scientist candidate.</div></div>
+        </div>
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">CONTROLLED ZONES</div>
+          <table class="eoe-table">
+            <thead><tr><th>ZONE</th><th>OUTPUT</th><th>LOYALTY</th><th>STATUS</th></tr></thead>
+            <tbody>
+              <tr><td>Ashmark</td><td style="color:#16a34a;">$3,200/d</td><td><div class="eoe-bar-wrap" style="width:60px;"><div class="eoe-bar-fill" style="width:72%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-stable">STABLE</span></td></tr>
+              <tr><td>Veldoria</td><td style="color:#16a34a;">$2,100/d</td><td><div class="eoe-bar-wrap" style="width:60px;"><div class="eoe-bar-fill" style="width:45%;background:#d97706;"></div></div></td><td><span class="eoe-tag tag-unrest">UNREST</span></td></tr>
+              <tr><td>Greyvast</td><td style="color:#d97706;">$980/d</td><td><div class="eoe-bar-wrap" style="width:60px;"><div class="eoe-bar-fill" style="width:31%;background:#dc2626;"></div></div></td><td><span class="eoe-tag tag-unrest">UNREST</span></td></tr>
+              <tr><td>Port Elsin</td><td style="color:#16a34a;">$1,840/d</td><td><div class="eoe-bar-wrap" style="width:60px;"><div class="eoe-bar-fill" style="width:61%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-stable">STABLE</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  },
+
+  intel: function() {
+    return `
+      <div class="eoe-screen-title">INTELLIGENCE</div>
+      <div style="display:grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap:12px;">
+        <div>
+          <div class="eoe-panel" style="padding:0; overflow:hidden;">
+            <div class="eoe-map-mock">
+              <div class="eoe-zone" style="left:8%;top:12%;width:18%;height:22%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;">NORDICA</div>
+              <div class="eoe-zone" style="left:30%;top:8%;width:22%;height:18%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;font-size:8px;">THARION</div>
+              <div class="eoe-zone" style="left:56%;top:10%;width:20%;height:20%;background:#2d1a1a;color:#f87171;border:1px solid #7f1d1d;">EMPIRE</div>
+              <div class="eoe-zone" style="left:56%;top:33%;width:16%;height:16%;background:#2d1a1a;color:#f87171;border:1px solid #7f1d1d;font-size:8px;">EMPIRE</div>
+              <div class="eoe-zone" style="left:10%;top:40%;width:24%;height:20%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;">VELMARK</div>
+              <div class="eoe-zone" style="left:36%;top:38%;width:18%;height:22%;background:#1a2a1a;color:#4ade80;border:1px solid #14532d;">ARDENIA</div>
+              <div class="eoe-zone" style="left:14%;top:66%;width:28%;height:20%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;">SOUTHMARCH</div>
+              <div class="eoe-zone" style="left:44%;top:64%;width:24%;height:22%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;">ESTIVA</div>
+              <div class="eoe-zone" style="left:72%;top:52%;width:18%;height:28%;background:#1a3a5c;color:#60a5fa;border:1px solid #1e40af;font-size:8px;">KELDRAN</div>
+              <div class="eoe-map-legend">
+                <div class="eoe-legend-item"><div class="eoe-legend-dot" style="background:#7f1d1d;"></div>Empire</div>
+                <div class="eoe-legend-item"><div class="eoe-legend-dot" style="background:#1e40af;"></div>Foreign</div>
+                <div class="eoe-legend-item"><div class="eoe-legend-dot" style="background:#14532d;"></div>Allied</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;padding:8px;border-top:1px solid #1f2530;">
+              <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:4px 8px;background:#212830;border:1px solid #2a3140;border-radius:2px;color:#e2e8f0;cursor:pointer;">POLITICAL</button>
+              <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:4px 8px;background:#13161a;border:1px solid #1f2530;border-radius:2px;color:#475569;cursor:pointer;">LOYALTY</button>
+              <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:4px 8px;background:#13161a;border:1px solid #1f2530;border-radius:2px;color:#475569;cursor:pointer;">INTEL LVL</button>
+              <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:4px 8px;background:#13161a;border:1px solid #1f2530;border-radius:2px;color:#475569;cursor:pointer;">MILITARY</button>
+            </div>
+          </div>
+          <div class="eoe-panel">
+            <div class="eoe-panel-title">INTEL FEED</div>
+            <div class="eoe-feed-entry"><div class="eoe-feed-dot intel"></div><div class="eoe-feed-day">DAY 47</div><div class="eoe-feed-text"><strong>Recon report:</strong> Thornfield — 3 unidentified high-Combat agents. Nature unclear.</div></div>
+            <div class="eoe-feed-entry"><div class="eoe-feed-dot intercept"></div><div class="eoe-feed-day">DAY 46</div><div class="eoe-feed-text"><em>"...the project is on schedule. Do not use this channel again."</em></div></div>
+            <div class="eoe-feed-entry"><div class="eoe-feed-dot intel"></div><div class="eoe-feed-day">DAY 45</div><div class="eoe-feed-text"><strong>Foreign Agent Detected:</strong> Empire zone Veldoria — 1 agent flagged.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="eoe-panel">
+            <div class="eoe-panel-title">ZONE: VELDORIA — DETAIL</div>
+            <div class="tab-bar">
+              <div class="tab-btn active">OVERVIEW</div>
+              <div class="tab-btn">CITIZENS</div>
+              <div class="tab-btn">ACTIVITY</div>
+            </div>
+            <div class="eoe-economy-row"><span class="label">Nation</span><span class="value">Nordica</span></div>
+            <div class="eoe-economy-row"><span class="label">Controlling org</span><span class="value">Empire</span></div>
+            <div class="eoe-economy-row"><span class="label">Terrain</span><span class="value">City</span></div>
+            <div class="eoe-economy-row"><span class="label">Population</span><span class="value">4,312</span></div>
+            <div class="eoe-economy-row"><span class="label">Economic output</span><span class="value pos">$2,100/day</span></div>
+            <div class="eoe-economy-row" style="border:none;"><span class="label">Intel level</span><span class="value">64 / 100</span></div>
+            <div class="eoe-progress" style="margin-top:4px;margin-bottom:12px;"><div class="eoe-progress-fill" style="width:64%;"></div></div>
+            <div class="eoe-section-label">KNOWN BUILDINGS</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:2;">Office (×2) &nbsp;·&nbsp; Bank &nbsp;·&nbsp; Hospital &nbsp;·&nbsp; Lab (×1) &nbsp;·&nbsp; Residence (×6)</div>
+            <hr class="eoe-divider">
+            <div class="eoe-section-label">STATUS EFFECTS</div>
+            <span class="eoe-tag" style="background:#1a1e24;color:#94a3b8;margin-right:4px;">None active</span>
+          </div>
+          <div class="eoe-panel">
+            <div class="eoe-panel-title">FOREIGN ORGANIZATIONS</div>
+            <table class="eoe-table">
+              <thead><tr><th>ORG</th><th>OPINION</th><th>STATUS</th></tr></thead>
+              <tbody>
+                <tr><td>Nordica</td><td style="color:#d97706;">32</td><td><span class="eoe-tag tag-neutral">NEUTRAL</span></td></tr>
+                <tr><td>Velmark</td><td style="color:#dc2626;">8</td><td><span class="eoe-tag tag-hostile">HOSTILE</span></td></tr>
+                <tr><td>The ReVengers</td><td style="color:#dc2626;">0</td><td><span class="eoe-tag tag-hostile">HERO ORG</span></td></tr>
+                <tr><td>Ardenia</td><td style="color:#16a34a;">61</td><td><span class="eoe-tag tag-active">ALLIED</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  personnel: function() {
+    return `
+      <div class="eoe-screen-title">PERSONNEL</div>
+      <div class="screen-tab-bar">
+        <div class="screen-tab active">ALL AGENTS</div>
+        <div class="screen-tab">SQUADS</div>
+        <div class="screen-tab">INNER CIRCLE</div>
+      </div>
+      <div style="display:grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap:12px;">
+        <div class="eoe-panel">
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <input type="text" placeholder="Search agents..." style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11px;background:#1a1e24;border:1px solid #2a3140;border-radius:2px;padding:5px 8px;color:#e2e8f0;"/>
+            <select style="font-family:'IBM Plex Mono',monospace;font-size:10px;background:#1a1e24;border:1px solid #2a3140;border-radius:2px;padding:5px 8px;color:#94a3b8;">
+              <option>All Departments</option><option>Scientist</option><option>Operative</option><option>Troop</option>
+            </select>
+          </div>
+          <table class="eoe-table">
+            <thead><tr><th>NAME</th><th>DEPT</th><th>LOCATION</th><th>LOYALTY</th><th>STATUS</th></tr></thead>
+            <tbody>
+              <tr onclick="selectAgent('Mira Cosse')"><td>Mira Cosse ★</td><td><span class="eoe-tag tag-scientist">SCIENTIST</span></td><td>Ashmark</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:88%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-active">ACTIVE</span></td></tr>
+              <tr onclick="selectAgent('Dorn Hael')"><td>Dorn Hael</td><td><span class="eoe-tag tag-operative">OPERATIVE</span></td><td>Thornfield</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:71%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-plot">ON PLOT</span></td></tr>
+              <tr onclick="selectAgent('Sova Reln')"><td>Sova Reln</td><td><span class="eoe-tag tag-troop">TROOP</span></td><td>Port Elsin</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:65%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-active">ACTIVE</span></td></tr>
+              <tr onclick="selectAgent('Pell Vastir')"><td>Pell Vastir</td><td><span class="eoe-tag tag-admin">ADMIN</span></td><td>Ashmark</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:55%;background:#d97706;"></div></div></td><td><span class="eoe-tag tag-active">ACTIVE</span></td></tr>
+              <tr onclick="selectAgent('Ula Mend')"><td>Ula Mend</td><td><span class="eoe-tag tag-operative">OPERATIVE</span></td><td>Veldoria</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:42%;background:#d97706;"></div></div></td><td><span class="eoe-tag tag-traveling">TRAVELING</span></td></tr>
+              <tr onclick="selectAgent('Brek Thoss')"><td>Brek Thoss</td><td><span class="eoe-tag tag-troop">TROOP</span></td><td>Greyvast</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:30%;background:#dc2626;"></div></div></td><td><span class="eoe-tag tag-injured">INJURED</span></td></tr>
+              <tr onclick="selectAgent('Cal Yorn')"><td>Cal Yorn</td><td><span class="eoe-tag tag-unassigned">UNASSIGNED</span></td><td>Ashmark</td><td><div class="eoe-bar-wrap" style="width:50px;"><div class="eoe-bar-fill" style="width:78%;background:#16a34a;"></div></div></td><td><span class="eoe-tag tag-active">ACTIVE</span></td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:10px;color:#475569;margin-top:8px;">47 agents total. Showing 7.</div>
+        </div>
+        <div class="eoe-profile-panel" id="agent-profile">
+          <div style="font-size:11px;color:#475569;text-align:center;padding:40px 0;">Select an agent to view their profile.</div>
+        </div>
+      </div>`;
+  },
+
+  economy: function() {
+    return `
+      <div class="eoe-screen-title">ECONOMY</div>
+      <div class="eoe-stat-row">
+        <div class="eoe-stat"><div class="eoe-stat-label">CURRENT FUNDS</div><div class="eoe-stat-value">$1,247,430</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">DAILY INCOME</div><div class="eoe-stat-value" style="color:#16a34a;">+$22,140</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">DAILY EXPENSES</div><div class="eoe-stat-value" style="color:#dc2626;">-$13,900</div></div>
+        <div class="eoe-stat"><div class="eoe-stat-label">NET DAILY</div><div class="eoe-stat-value" style="color:#16a34a;">+$8,240</div><div class="eoe-stat-sub">31 months runway</div></div>
+      </div>
+      <div class="eoe-grid-3">
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">INCOME SOURCES</div>
+          <div class="eoe-economy-row"><span class="label">Building income</span><span class="value pos">+$14,200</span></div>
+          <div class="eoe-economy-row"><span class="label">Citizen taxes</span><span class="value pos">+$6,800</span></div>
+          <div class="eoe-economy-row" style="border:none;"><span class="label">Activity income</span><span class="value pos">+$1,140</span></div>
+        </div>
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">EXPENSE BREAKDOWN</div>
+          <div class="eoe-economy-row"><span class="label">Agent salaries</span><span class="value neg">-$7,050</span></div>
+          <div class="eoe-economy-row"><span class="label">Building upkeep</span><span class="value neg">-$4,200</span></div>
+          <div class="eoe-economy-row"><span class="label">Active plots</span><span class="value neg">-$1,800</span></div>
+          <div class="eoe-economy-row" style="border:none;"><span class="label">Activities</span><span class="value neg">-$850</span></div>
+        </div>
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">TAX POLICY</div>
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Current rate: <span style="color:#e2e8f0;font-family:'IBM Plex Mono',monospace;">18%</span></div>
+          <input type="range" min="0" max="50" value="18" style="width:100%;margin-bottom:8px;" oninput="document.getElementById('tax-out').textContent=this.value+'%'"/>
+          <div style="font-size:10px;color:#475569;">Rate: <span id="tax-out" style="color:#94a3b8;">18%</span></div>
+          <div style="font-size:10px;color:#475569;margin-top:6px;">High rates reduce loyalty over time.</div>
+        </div>
+      </div>
+      <div class="eoe-panel">
+        <div class="eoe-panel-title">ZONE FINANCIAL OVERVIEW</div>
+        <table class="eoe-table">
+          <thead><tr><th>ZONE</th><th>BUILDING INCOME</th><th>TAX INCOME</th><th>UPKEEP</th><th>NET</th></tr></thead>
+          <tbody>
+            <tr><td>Ashmark</td><td style="color:#16a34a;">$5,400</td><td style="color:#16a34a;">$1,800</td><td style="color:#dc2626;">-$1,600</td><td style="color:#16a34a;">$5,600</td></tr>
+            <tr><td>Veldoria</td><td style="color:#16a34a;">$3,800</td><td style="color:#16a34a;">$1,200</td><td style="color:#dc2626;">-$1,400</td><td style="color:#16a34a;">$3,600</td></tr>
+            <tr><td>Port Elsin</td><td style="color:#16a34a;">$2,900</td><td style="color:#16a34a;">$980</td><td style="color:#dc2626;">-$1,200</td><td style="color:#16a34a;">$2,680</td></tr>
+            <tr><td>Greyvast</td><td style="color:#d97706;">$980</td><td style="color:#16a34a;">$420</td><td style="color:#dc2626;">-$800</td><td style="color:#d97706;">$600</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="eoe-panel">
+        <div class="eoe-panel-title">30-DAY PROJECTION</div>
+        <svg width="100%" height="80" viewBox="0 0 600 80" style="display:block;">
+          <polyline points="0,65 60,58 120,50 180,44 240,38 300,33 360,28 420,22 480,17 540,12 600,8" fill="none" stroke="#16a34a" stroke-width="1.5"/>
+          <line x1="0" y1="75" x2="600" y2="75" stroke="#1f2530" stroke-width="0.5"/>
+          <text x="0" y="78" fill="#475569" font-size="9" font-family="IBM Plex Mono">Day 47</text>
+          <text x="270" y="78" fill="#475569" font-size="9" font-family="IBM Plex Mono">Day 62</text>
+          <text x="540" y="78" fill="#475569" font-size="9" font-family="IBM Plex Mono">Day 77</text>
+        </svg>
+      </div>`;
+  },
+
+  science: function() {
+    return `
+      <div class="eoe-screen-title">SCIENCE & RESEARCH</div>
+      <div style="display:grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap:12px;">
+        <div>
+          <div class="eoe-panel" style="max-height:460px;overflow-y:auto;">
+            <div class="eoe-research-branch">
+              <div class="eoe-branch-title">SURVEILLANCE & CONTROL</div>
+              <div class="eoe-research-row">
+                <div class="eoe-research-node completed"><div class="eoe-node-name">Operational Transparency</div><div class="eoe-node-status done">✓ COMPLETE</div></div>
+                <div class="eoe-research-node completed"><div class="eoe-node-name">Empire Intranet</div><div class="eoe-node-status done">✓ COMPLETE</div></div>
+                <div class="eoe-research-node active"><div class="eoe-node-name">Centralized Telecom</div><div class="eoe-node-status prog">● IN PROGRESS — 8d</div><div class="eoe-progress" style="margin-top:4px;"><div class="eoe-progress-fill" style="width:60%;"></div></div></div>
+              </div>
+              <div class="eoe-research-row" style="margin-top:6px;">
+                <div class="eoe-research-node locked"><div class="eoe-node-name">Predictive Behavioral</div><div class="eoe-node-status">LOCKED</div></div>
+                <div class="eoe-research-node locked"><div class="eoe-node-name">Pattern Recognition</div><div class="eoe-node-status">LOCKED</div></div>
+                <div class="eoe-research-node available"><div class="eoe-node-name">Deep Cover Protocols</div><div class="eoe-node-status avail">AVAILABLE</div></div>
+              </div>
+            </div>
+            <div class="eoe-research-branch">
+              <div class="eoe-branch-title">SOCIAL & PROPAGANDA</div>
+              <div class="eoe-research-row">
+                <div class="eoe-research-node completed"><div class="eoe-node-name">Comms Strategy</div><div class="eoe-node-status done">✓ COMPLETE</div></div>
+                <div class="eoe-research-node active"><div class="eoe-node-name">Narrative Control Sys.</div><div class="eoe-node-status prog">● IN PROGRESS — 5d</div><div class="eoe-progress" style="margin-top:4px;"><div class="eoe-progress-fill" style="width:75%;"></div></div></div>
+                <div class="eoe-research-node locked"><div class="eoe-node-name">Propaganda Dept.</div><div class="eoe-node-status">LOCKED</div></div>
+              </div>
+            </div>
+            <div class="eoe-research-branch">
+              <div class="eoe-branch-title">MILITARY & HARDWARE</div>
+              <div class="eoe-research-row">
+                <div class="eoe-research-node completed"><div class="eoe-node-name">Std. Armaments</div><div class="eoe-node-status done">✓ COMPLETE</div></div>
+                <div class="eoe-research-node available"><div class="eoe-node-name">Fortification Eng.</div><div class="eoe-node-status avail">AVAILABLE</div></div>
+                <div class="eoe-research-node locked"><div class="eoe-node-name">Advanced Weapons Dev.</div><div class="eoe-node-status">LOCKED</div></div>
+              </div>
+            </div>
+            <div class="eoe-research-branch">
+              <div class="eoe-branch-title">BIOLOGY & MEDICINE</div>
+              <div class="eoe-research-row">
+                <div class="eoe-research-node completed"><div class="eoe-node-name">Basic Med. Protocols</div><div class="eoe-node-status done">✓ COMPLETE</div></div>
+                <div class="eoe-research-node available"><div class="eoe-node-name">Epidemiological Studies</div><div class="eoe-node-status avail">AVAILABLE</div></div>
+                <div class="eoe-research-node available"><div class="eoe-node-name">Avian Conditioning</div><div class="eoe-node-status avail">AVAILABLE</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="eoe-panel">
+            <div class="eoe-panel-title">ACTIVE RESEARCH</div>
+            <div style="background:#1a1e24;border:1px solid #2a3140;border-radius:4px;padding:10px;margin-bottom:8px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;margin-bottom:4px;">Centralized Telecommunications</div>
+              <div style="font-size:10px;color:#475569;margin-bottom:6px;">Surveillance & Control</div>
+              <div class="eoe-progress"><div class="eoe-progress-fill" style="width:60%;"></div></div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:4px;">8 days remaining</div>
+              <div style="font-size:10px;color:#475569;margin-top:4px;">Agents: Mira Cosse (Computing 62)</div>
+            </div>
+            <div style="background:#1a1e24;border:1px solid #2a3140;border-radius:4px;padding:10px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e2e8f0;margin-bottom:4px;">Narrative Control Systems</div>
+              <div style="font-size:10px;color:#475569;margin-bottom:6px;">Social & Propaganda</div>
+              <div class="eoe-progress"><div class="eoe-progress-fill" style="width:75%;background:#d97706;"></div></div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:4px;">5 days remaining</div>
+              <div style="font-size:10px;color:#475569;margin-top:4px;">Agents: Dorn Hael (Deception 54)</div>
+            </div>
+          </div>
+          <div class="eoe-plot-detail" style="margin-top:12px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#475569;margin-bottom:6px;">PROJECT DETAIL</div>
+            <div class="eoe-plot-title">Propaganda Department</div>
+            <div class="eoe-plot-desc">Establish a dedicated internal organization for empire-wide influence operations. Unlocks Global Propaganda Campaign and passive perceived EVIL reduction.</div>
+            <div class="eoe-section-label">REQUIREMENTS</div>
+            <div class="eoe-req-row"><span class="eoe-req-x">✗</span> Narrative Control Systems</div>
+            <div class="eoe-req-row"><span class="eoe-req-check">✓</span> Money: $8,000</div>
+            <div class="eoe-req-row"><span class="eoe-req-check">✓</span> Science: 400</div>
+            <button class="eoe-launch-btn" disabled>LOCKED — PREREQUISITE IN PROGRESS</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  plots: function() {
+    return `
+      <div class="eoe-screen-title">PLOTS</div>
+      <div style="display:grid; grid-template-columns: minmax(0,2fr) minmax(0,3fr); gap:12px;">
+        <div class="eoe-panel" style="max-height:520px;overflow-y:auto;">
+          <div class="tab-bar" style="margin-bottom:10px;">
+            <div class="tab-btn active">AVAILABLE</div>
+            <div class="tab-btn">ACTIVE (3)</div>
+          </div>
+          <div class="eoe-section-label">ESPIONAGE & INTELLIGENCE</div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Reconnaissance')">
+            <span style="font-size:12px;color:#e2e8f0;">Reconnaissance</span>
+            <span class="eoe-tag tag-t1">T1</span>
+          </div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Surveillance Tap')">
+            <span style="font-size:12px;color:#e2e8f0;">Surveillance Tap</span>
+            <span class="eoe-tag tag-t1">T1</span>
+          </div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Purge Foreign Agents')">
+            <span style="font-size:12px;color:#e2e8f0;">Purge Foreign Agents</span>
+            <span class="eoe-tag tag-t2">T2</span>
+          </div>
+          <div class="eoe-section-label" style="margin-top:10px;">POLITICAL MANIPULATION</div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Send Ade')">
+            <span style="font-size:12px;color:#e2e8f0;">Send Ade</span>
+            <span class="eoe-tag tag-t2">T2</span>
+          </div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Inspiring Speech')">
+            <span style="font-size:12px;color:#e2e8f0;">Inspiring Speech</span>
+            <span class="eoe-tag tag-t1">T1</span>
+          </div>
+          <div class="eoe-section-label" style="margin-top:10px;">SOCIAL ENGINEERING</div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Spread Conspiracy Theories')">
+            <span style="font-size:12px;color:#e2e8f0;">Spread Conspiracy Theories</span>
+            <span class="eoe-tag tag-t1">T1</span>
+          </div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('False Flag Operation')">
+            <span style="font-size:12px;color:#e2e8f0;">False Flag Operation</span>
+            <span class="eoe-tag tag-t2">T2</span>
+          </div>
+          <div class="eoe-section-label" style="margin-top:10px;">MILITARY</div>
+          <div style="padding:7px 0;border-bottom:1px solid #1a1e24;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="selectPlot('Takeover Zone')">
+            <span style="font-size:12px;color:#e2e8f0;">Takeover Zone</span>
+            <span class="eoe-tag tag-t3">T3</span>
+          </div>
+          <div class="eoe-section-label" style="margin-top:10px;">TIER 4 — WORLD-ALTERING</div>
+          <div style="padding:7px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;opacity:0.5;" onclick="selectPlot('Hypno Disco Ball')">
+            <span style="font-size:12px;color:#94a3b8;">Hypno Disco Ball</span>
+            <span class="eoe-tag tag-t4">T4</span>
+          </div>
+        </div>
+        <div id="plot-detail-panel" class="eoe-plot-detail">
+          <div style="font-size:11px;color:#475569;text-align:center;padding:40px 0;">Select a plot to view details.</div>
+        </div>
+      </div>`;
+  },
+
+  activities: function() {
+    return `
+      <div class="eoe-screen-title">ACTIVITIES</div>
+      <div style="display:grid; grid-template-columns: minmax(0,2fr) minmax(0,3fr); gap:12px;">
+        <div class="eoe-panel">
+          <div class="eoe-panel-title">AVAILABLE ACTIVITIES</div>
+          <table class="eoe-table">
+            <thead><tr><th>ACTIVITY</th><th>COST/DAY</th><th>ASSIGNED</th></tr></thead>
+            <tbody>
+              <tr><td>Training</td><td>$10/agent</td><td>0</td></tr>
+              <tr style="background:#1a1e24;"><td>EVIL Oratory</td><td>Free</td><td style="color:#16a34a;">3</td></tr>
+              <tr><td>EVIL Education</td><td>$5/agent</td><td>0</td></tr>
+              <tr><td>Survey Citizens</td><td>$1/agent</td><td style="color:#16a34a;">1</td></tr>
+              <tr><td>Smuggle Resources</td><td>$3/agent</td><td>0</td></tr>
+              <tr><td>Intimidation Campaign</td><td>$2/agent</td><td>0</td></tr>
+              <tr><td>Harass Nuns</td><td>Free</td><td style="color:#dc2626;">0</td></tr>
+              <tr><td>Siphon Domestic Accounts</td><td>—</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="eoe-plot-detail" style="margin-bottom:12px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#475569;margin-bottom:6px;">ACTIVE ACTIVITY</div>
+            <div class="eoe-plot-title">EVIL Oratory</div>
+            <div class="eoe-plot-desc">Agents deliver rousing addresses to empire citizens. Generates small income, increases loyalty of nearby citizens, and contributes marginally to the empire's infamy. No cost. No restraint required.</div>
+            <div class="eoe-section-label">ASSIGNED AGENTS (3)</div>
+            <div style="background:#1a1e24;border-radius:4px;padding:8px;margin-bottom:6px;font-size:11px;color:#e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+              Dorn Hael <span style="color:#94a3b8;">Oratory 58</span> <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:#1f0d0d;border:1px solid #7f1d1d;border-radius:2px;color:#fca5a5;padding:2px 6px;cursor:pointer;">REMOVE</button>
+            </div>
+            <div style="background:#1a1e24;border-radius:4px;padding:8px;margin-bottom:6px;font-size:11px;color:#e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+              Cal Yorn <span style="color:#94a3b8;">Oratory 41</span> <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:#1f0d0d;border:1px solid #7f1d1d;border-radius:2px;color:#fca5a5;padding:2px 6px;cursor:pointer;">REMOVE</button>
+            </div>
+            <div style="background:#1a1e24;border-radius:4px;padding:8px;margin-bottom:10px;font-size:11px;color:#e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+              Pell Vastir <span style="color:#94a3b8;">Oratory 29</span> <button style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:#1f0d0d;border:1px solid #7f1d1d;border-radius:2px;color:#fca5a5;padding:2px 6px;cursor:pointer;">REMOVE</button>
+            </div>
+            <button style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:7px 12px;background:#1a1e24;border:1px solid #2a3140;border-radius:2px;color:#94a3b8;cursor:pointer;width:100%;margin-bottom:10px;">+ ASSIGN AGENT</button>
+            <div style="background:#1a1e24;border-radius:4px;padding:10px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#475569;margin-bottom:6px;">OUTPUT ESTIMATE</div>
+              <div style="font-size:12px;color:#94a3b8;">~<span style="color:#16a34a;font-family:'IBM Plex Mono',monospace;">$340</span> income/day</div>
+              <div style="font-size:12px;color:#94a3b8;">~<span style="color:#d97706;font-family:'IBM Plex Mono',monospace;">+0.3</span> loyalty/day (nearby citizens)</div>
+              <div style="font-size:12px;color:#94a3b8;">~<span style="color:#c0392b;font-family:'IBM Plex Mono',monospace;">+0.1</span> EVIL/day</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  event: function() {
+    return `
+      <div class="eoe-event-screen">
+        <div style="background:#451a03;border:1px solid #d97706;border-radius:2px;padding:4px 12px;margin-bottom:20px;display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;color:#fdba74;">SIMULATION PAUSED — EVENT REQUIRES RESOLUTION</div>
+        <div class="eoe-event-type">INTERNAL REPORT — PERSONNEL</div>
+        <div class="eoe-event-title">Gone Too Far</div>
+        <hr class="eoe-divider">
+        <div class="eoe-event-body">
+          Agent <strong style="color:#e2e8f0;">Brek Thoss</strong> (Zone: Greyvast) has exceeded his authority in the most permanent way possible. A civilian is dead.<br><br>
+          Field reports indicate the incident occurred during a routine loyalty enforcement visit. Agent Thoss has filed no incident report. Zone citizens are aware. The situation in Greyvast was already precarious; loyalty is at 31% and declining.<br><br>
+          How this matter is handled will be observed by other agents and citizens alike.
+        </div>
+        <div class="eoe-event-effects">
+          <div class="eoe-panel-title" style="margin-bottom:6px;">CURRENT EFFECTS</div>
+          <div class="eoe-effect-row eoe-effect-neg">- Civilian killed (Greyvast)</div>
+          <div class="eoe-effect-row eoe-effect-neg">- Zone loyalty: Greyvast −8 (immediate)</div>
+          <div class="eoe-effect-row eoe-effect-neg">- Citizen retaliation: possible</div>
+        </div>
+        <div class="eoe-section-label">SELECT RESPONSE</div>
+        <div class="eoe-event-options">
+          <button class="eoe-opt-btn" onclick="resolveEvent('Physical Punishment')">PHYSICAL PUNISHMENT<br><span style="font-size:9px;color:#475569;">Agent loses HP. Zone loyalty +5.</span></button>
+          <button class="eoe-opt-btn destructive" onclick="resolveEvent('Terminate Agent')">TERMINATE AGENT<br><span style="font-size:9px;color:#7f1d1d;">Agent killed. Zone loyalty +12.</span></button>
+          <button class="eoe-opt-btn" onclick="resolveEvent('Fire Agent')">FIRE AGENT<br><span style="font-size:9px;color:#475569;">Agent dismissed. Loyalty +4.</span></button>
+          <button class="eoe-opt-btn" style="border-color:#7f1d1d;color:#fca5a5;" onclick="resolveEvent('Give Bonus')">GIVE BONUS<br><span style="font-size:9px;color:#7f1d1d;">Agent paid. EVIL +2.</span></button>
+        </div>
+      </div>`;
+  },
+
+  aar: function() {
+    return `
+      <div class="eoe-aar">
+        <div class="eoe-aar-header">
+          <div class="eoe-aar-classify">INTERNAL DOCUMENT — AFTER ACTION REPORT — EYES ONLY</div>
+          <div class="eoe-aar-subject">Operation: Reconnaissance — Port Elsin</div>
+          <div class="eoe-aar-meta">
+            <span>DAY 44 — 11 MARCH, YEAR 1</span>
+            <span>Agents: Ula Mend, Dorn Hael</span>
+            <span>Target: Port Elsin (Velmark)</span>
+            <span class="eoe-aar-outcome">SUCCESS</span>
+          </div>
+        </div>
+        <div class="eoe-aar-section">
+          <div class="eoe-aar-section-title">EXECUTIVE SUMMARY</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.8;">Agents Mend and Hael successfully completed a surveillance sweep of Port Elsin without incident. Zone intelligence level has been raised to 64. Previous margin of error on zone reports has been reduced from ±22 to ±9. The Velmark organization appears to maintain standard security protocols. No anomalies detected.</div>
+        </div>
+        <hr class="eoe-divider">
+        <div class="eoe-aar-section">
+          <div class="eoe-aar-section-title">OPERATIONAL LOG</div>
+          <div class="eoe-aar-log-entry"><strong>Day 1:</strong> Agents depart Ashmark. Travel time estimated at 3 days via wilderness route.</div>
+          <div class="eoe-aar-log-entry"><strong>Day 4:</strong> Agents arrive Port Elsin. Agent Mend establishes observation post near the commercial district.</div>
+          <div class="eoe-aar-log-entry"><strong>Day 5:</strong> Surveillance sweep initiated. Agents document building layout, guard patterns, and visible citizen activity. Agent Hael notes an unusual concentration of high-capability individuals near the eastern warehouse district.</div>
+          <div class="eoe-aar-log-entry"><strong>Day 6:</strong> Secondary sweep confirms prior observations. Warehouse activity identified as likely logistics operation, not security. Agent Mend successfully accesses city infrastructure records. No contact made with local populace.</div>
+          <div class="eoe-aar-log-entry"><strong>Day 7:</strong> Agents depart without detection. Return journey uneventful.</div>
+        </div>
+        <hr class="eoe-divider">
+        <div class="eoe-aar-section">
+          <div class="eoe-aar-section-title">PERSONNEL REPORT</div>
+          <table class="eoe-table">
+            <thead><tr><th>NAME</th><th>ROLE</th><th>STATUS</th><th>NOTES</th></tr></thead>
+            <tbody>
+              <tr><td>Ula Mend</td><td>Lead Operative</td><td><span class="eoe-tag tag-active">ACTIVE</span></td><td>Surveillance +3 (skill gain)</td></tr>
+              <tr><td>Dorn Hael</td><td>Support</td><td><span class="eoe-tag tag-active">ACTIVE</span></td><td>No changes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <hr class="eoe-divider">
+        <div class="eoe-aar-section">
+          <div class="eoe-aar-section-title">RESOURCE EFFECTS</div>
+          <div class="eoe-effect-row eoe-effect-pos">+ Intel level: Port Elsin raised to 64 (was 22)</div>
+          <div class="eoe-effect-row eoe-effect-pos">+ Report accuracy: Port Elsin ±9 margin (was ±22)</div>
+          <div class="eoe-effect-row eoe-effect-neg">- Cost: $840 (agent travel + operational)</div>
+          <div class="eoe-effect-row eoe-effect-neg">- EVIL: +1</div>
+          <div class="eoe-effect-row" style="color:#475569;">· Skill gain: Ula Mend — Surveillance 47 → 50</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="eoe-opt-btn" onclick="showScreen('empire')">CLOSE REPORT</button>
+          <button class="eoe-opt-btn" onclick="showScreen('personnel')">VIEW PERSONNEL RECORDS</button>
+        </div>
+      </div>`;
+  }
+};
+
+function showScreen(name) {
+  currentScreen = name;
+  document.querySelectorAll('.eoe-nav-item').forEach(function(el) { el.classList.remove('active'); });
+  var navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('main-content').innerHTML = screens[name]();
+}
+
+function selectAgent(name) {
+  var profiles = {
+    'Mira Cosse': { dept: 'SCIENTIST', loc: 'Ashmark', loyalty: 88, str: 42, con: 58, agi: 51, int: 81, lead: 44, admin: 39, combat: 36, emp: 67, status: 'ACTIVE', skills: 'Biology 71 · Computing 62 · Medicine 44' },
+    'Dorn Hael': { dept: 'OPERATIVE', loc: 'Thornfield', loyalty: 71, str: 61, con: 55, agi: 74, int: 63, lead: 48, admin: 31, combat: 62, emp: 41, status: 'ON PLOT', skills: 'Infiltration 68 · Deception 54 · Surveillance 47' },
+    'Sova Reln': { dept: 'TROOP', loc: 'Port Elsin', loyalty: 65, str: 78, con: 72, agi: 65, int: 44, lead: 57, admin: 28, combat: 81, emp: 38, status: 'ACTIVE', skills: 'Firearms 74 · Melee 67 · Tactics 52' },
+    'Pell Vastir': { dept: 'ADMINISTRATOR', loc: 'Ashmark', loyalty: 55, str: 39, con: 48, agi: 42, int: 59, lead: 52, admin: 74, combat: 31, emp: 61, status: 'ACTIVE', skills: 'Logistics 69 · Finance 61 · Administration 74' },
+    'Ula Mend': { dept: 'OPERATIVE', loc: 'Veldoria', loyalty: 42, str: 51, con: 47, agi: 69, int: 58, lead: 38, admin: 29, combat: 55, emp: 52, status: 'TRAVELING', skills: 'Surveillance 50 · Infiltration 61 · Persuasion 44' },
+    'Brek Thoss': { dept: 'TROOP', loc: 'Greyvast', loyalty: 30, str: 74, con: 69, agi: 58, int: 31, lead: 41, admin: 22, combat: 77, emp: 14, status: 'INJURED', skills: 'Melee 72 · Firearms 58 · Intimidation 63' },
+    'Cal Yorn': { dept: 'UNASSIGNED', loc: 'Ashmark', loyalty: 78, str: 52, con: 61, agi: 57, int: 66, lead: 49, admin: 44, combat: 48, emp: 58, status: 'ACTIVE', skills: 'Oratory 41 · Persuasion 38 · Streetwise 52' }
+  };
+  var p = profiles[name];
+  if (!p) return;
+  var loyaltyColor = p.loyalty > 60 ? '#16a34a' : p.loyalty > 35 ? '#d97706' : '#dc2626';
+  var statusClass = p.status === 'ACTIVE' ? 'tag-active' : p.status === 'ON PLOT' ? 'tag-plot' : p.status === 'TRAVELING' ? 'tag-traveling' : 'tag-injured';
+  document.getElementById('agent-profile').innerHTML = `
+    <div class="eoe-profile-name">${name}</div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+      <span class="eoe-tag tag-${p.dept.toLowerCase().replace(' ','-')}">${p.dept}</span>
+      <span class="eoe-tag ${statusClass}">${p.status}</span>
+      <span style="font-size:11px;color:#475569;">${p.loc}</span>
+    </div>
+    <div class="eoe-section-label">LOYALTY — EMPIRE</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div class="eoe-bar-wrap" style="flex:1;"><div class="eoe-bar-fill" style="width:${p.loyalty}%;background:${loyaltyColor};"></div></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:${loyaltyColor};">${p.loyalty}</span>
+    </div>
+    <div class="eoe-attr-grid">
+      <div class="eoe-attr-row"><div class="eoe-attr-label">STRENGTH</div><div class="eoe-attr-val">${p.str}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">CONSTITUTION</div><div class="eoe-attr-val">${p.con}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">AGILITY</div><div class="eoe-attr-val">${p.agi}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">INTELLIGENCE</div><div class="eoe-attr-val">${p.int}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">LEADERSHIP</div><div class="eoe-attr-val">${p.lead}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">ADMINISTRATION</div><div class="eoe-attr-val">${p.admin}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">COMBAT</div><div class="eoe-attr-val">${p.combat}</div></div>
+      <div class="eoe-attr-row"><div class="eoe-attr-label">EMPATHY</div><div class="eoe-attr-val">${p.emp}</div></div>
+    </div>
+    <div class="eoe-section-label" style="margin-top:10px;">SKILLS</div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.9;">${p.skills}</div>
+    <div class="eoe-btn-row">
+      <button class="eoe-action-btn">REASSIGN</button>
+      <button class="eoe-action-btn">MOVE</button>
+      <button class="eoe-action-btn red">TERMINATE</button>
+    </div>`;
+}
+
+var plotDetails = {
+  'Reconnaissance': { tier: 'T1', cat: 'ESPIONAGE & INTELLIGENCE', desc: 'Gather intelligence on a foreign zone. Raises zone intel level; reduces margin of error on subsequent reports. A prerequisite for more ambitious operations.', req: [{ok:true,txt:'1+ agents available'},{ok:true,txt:'Target zone selected'},{ok:false,txt:'Target zone: not selected'}], time: '7–10 days (incl. travel)', evil: '+1', ready: true },
+  'Spread Conspiracy Theories': { tier: 'T1', cat: 'SOCIAL ENGINEERING', desc: 'Seed conspiracy theories among citizens in a target zone. A portion of citizens gain the Conspiracy Theory status effect, reducing their intelligence and potentially shifting loyalty toward the empire. Effects spread person-to-person daily.', req: [{ok:true,txt:'Deception skill agent'},{ok:true,txt:'Money: $200'},{ok:false,txt:'Target zone: not selected'}], time: '5 days', evil: '+2', ready: false },
+  'Surveillance Tap': { tier: 'T1', cat: 'ESPIONAGE & INTELLIGENCE', desc: 'Plant listening devices in key locations in a target zone. While active, provides an ongoing intelligence feed and begins generating Intercepted Communication events for that zone.', req: [{ok:true,txt:'Surveillance skill agent'},{ok:false,txt:'Centralized Telecom research'},{ok:false,txt:'Target zone: not selected'}], time: '4 days', evil: '+1', ready: false },
+  'False Flag Operation': { tier: 'T2', cat: 'SOCIAL ENGINEERING', desc: 'Attribute an empire action or a fabricated incident to another organization. Reduces perceived EVIL and damages the target org\'s reputation with others. If exposed, perceived EVIL increases significantly.', req: [{ok:true,txt:'Forgery skill agent'},{ok:true,txt:'Deception skill agent'},{ok:false,txt:'Target organization: not selected'}], time: '8 days', evil: '−3 perceived', ready: false },
+  'Send Ade': { tier: 'T2', cat: 'POLITICAL MANIPULATION', desc: 'Infiltrate a target zone with cult-like loyalty manipulation. Send them some ade. Cool-ade. Tons and tons of Cool-ade. A portion of citizens develop loyalty to the empire. Player may push further for higher gains and higher risk.', req: [{ok:true,txt:'Persuasion skill agent'},{ok:true,txt:'Oratory skill agent'},{ok:true,txt:'Money: $1,200'},{ok:false,txt:'Target zone: not selected'}], time: '12 days', evil: '+3', ready: false },
+  'Inspiring Speech': { tier: 'T1', cat: 'POLITICAL MANIPULATION', desc: 'The Overlord or a high-Oratory agent delivers a rousing address to empire citizens. Generates an empire-wide loyalty boost. Effect scales with the delivering agent\'s Oratory skill.', req: [{ok:true,txt:'Oratory skill agent (Overlord preferred)'},{ok:true,txt:'Communications Strategy research'}], time: '1 day', evil: '+1', ready: true },
+  'Purge Foreign Agents': { tier: 'T2', cat: 'ESPIONAGE & INTELLIGENCE', desc: 'Sweep an empire zone for foreign operatives. At low citizen intel levels, innocent citizens may be caught in the sweep — triggering loyalty loss and potential escalation events.', req: [{ok:true,txt:'Counterintelligence skill agent'},{ok:true,txt:'Surveillance skill agent'},{ok:false,txt:'Target empire zone: not selected'}], time: '6 days', evil: '+2', ready: false },
+  'Takeover Zone': { tier: 'T3', cat: 'MILITARY', desc: 'Attempt to seize control of a foreign zone. Core military victory mechanic. Preceding with Reconnaissance and Destabilize Zone significantly improves success odds. Combat encounter generated on execution.', req: [{ok:true,txt:'1+ Troop agents'},{ok:false,txt:'Target zone: not selected'},{ok:false,txt:'Recommended: prior Recon (improves success)'}], time: '3–14 days (incl. travel)', evil: '+8', ready: false },
+  'Hypno Disco Ball': { tier: 'T4', cat: 'TIER 4 — WORLD-ALTERING', desc: 'Deploy a hyper-refractive light installation capable of broadcasting hypnotic frequencies across an entire zone. Mass loyalty conversion. Affected citizens have a great time, actually. Intelligence reduced.', req: [{ok:false,txt:'Hyper-refractive Materials research'},{ok:false,txt:'Engineering skill agent'},{ok:false,txt:'Scientist agent'},{ok:false,txt:'Science: 800 (current: 340)'}], time: '21 days', evil: '+15', ready: false }
+};
+
+function selectPlot(name) {
+  var p = plotDetails[name];
+  if (!p) return;
+  var reqHtml = p.req.map(function(r){ return '<div class="eoe-req-row"><span class="' + (r.ok ? 'eoe-req-check' : 'eoe-req-x') + '">' + (r.ok ? '✓' : '✗') + '</span> ' + r.txt + '</div>'; }).join('');
+  document.getElementById('plot-detail-panel').innerHTML = `
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+      <span class="eoe-tag tag-t${p.tier.charAt(1)}">${p.tier}</span>
+      <span style="font-size:10px;color:#475569;letter-spacing:0.08em;">${p.cat}</span>
+    </div>
+    <div class="eoe-plot-title">${name}</div>
+    <div class="eoe-plot-desc">${p.desc}</div>
+    <div class="eoe-section-label">REQUIREMENTS</div>
+    ${reqHtml}
+    <hr class="eoe-divider">
+    <div style="display:flex;gap:16px;font-size:11px;color:#94a3b8;margin-bottom:12px;">
+      <span>Execution time: <span style="color:#e2e8f0;">${p.time}</span></span>
+      <span>EVIL impact: <span style="color:#c0392b;">${p.evil}</span></span>
+    </div>
+    <button class="eoe-launch-btn" ${p.ready ? '' : 'disabled'}>${p.ready ? 'LAUNCH PLOT' : 'REQUIREMENTS NOT MET'}</button>`;
+}
+
+function resolveEvent(choice) {
+  var content = document.getElementById('main-content');
+  var effects = {
+    'Physical Punishment': { text: 'Agent Brek Thoss has been disciplined. Zone loyalty in Greyvast increases moderately. Agent Thoss remains operational at reduced effectiveness while recovering.', effects: ['+Greyvast loyalty: +5', '−Agent Thoss HP: −18', '·EVIL: no change'] },
+    'Terminate Agent': { text: 'Agent Brek Thoss has been TERMINATED. The decision has been communicated to empire personnel via standard channels. Zone citizens are aware of the outcome. Loyalty in Greyvast improves significantly. Empire agents note the precedent.', effects: ['−Agent Thoss: TERMINATED', '+Greyvast loyalty: +12', '+Empire-wide agent loyalty: +2', '+EVIL: +1'] },
+    'Fire Agent': { text: 'Agent Brek Thoss has been dismissed from imperial service. He is now a civilian in Greyvast, with substantially diminished loyalty to the empire. The zone\'s response has been muted. Thoss has made no statement.', effects: ['−Agent Thoss: FIRED (now hostile citizen)', '+Greyvast loyalty: +4', '·EVIL: no change'] },
+    'Give Bonus': { text: 'Agent Brek Thoss has been compensated for his initiative. Empire accounting has processed the disbursement. Zone response has been unfavorable. Word has gotten around.', effects: ['+Agent Thoss loyalty: +18', '−Greyvast loyalty: −6', '+EVIL: +2', '−Money: $500'] }
+  };
+  var e = effects[choice];
+  var efHtml = e.effects.map(function(ef){ var col = ef.startsWith('+') ? '#16a34a' : ef.startsWith('−') ? '#dc2626' : '#475569'; return '<div class="eoe-effect-row" style="color:'+col+';">'+ef+'</div>'; }).join('');
+  content.innerHTML = `<div class="eoe-event-screen">
+    <div class="eoe-event-type">EVENT RESOLVED — GONE TOO FAR</div>
+    <div class="eoe-event-title" style="font-size:16px;margin-bottom:12px;">Response: ${choice}</div>
+    <hr class="eoe-divider">
+    <div class="eoe-event-body">${e.text}</div>
+    <div class="eoe-event-effects">${efHtml}</div>
+    <div style="font-size:11px;color:#475569;margin-bottom:16px;">Simulation will resume when you continue.</div>
+    <button class="eoe-opt-btn" onclick="showScreen('empire')">CONTINUE</button>
+  </div>`;
+}
+
+function advanceDay() {
+  var topDate = document.querySelector('.eoe-topbar-center');
+  var days = ['47','48','49','50'];
+  var months = ['14 MARCH', '15 MARCH', '16 MARCH', '17 MARCH'];
+  var i = 0;
+  var iv = setInterval(function(){
+    i++;
+    if (i >= days.length) { clearInterval(iv); return; }
+    topDate.textContent = 'DAY ' + days[i] + ' — ' + months[i] + ', YEAR 1';
+  }, 300);
+}
+
+showScreen('empire');
+</script>

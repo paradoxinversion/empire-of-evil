@@ -1,5 +1,38 @@
 import { create } from 'zustand';
 import type { GameState, GameEvent, WorldGenParams } from '@empire-of-evil/engine';
+import type { Config } from '@empire-of-evil/engine';
+
+// Import bundled config JSON files (Vite resolves these at build time)
+import tileTypes from '../../../../config/default/tileTypes.json';
+import buildings from '../../../../config/default/buildings.json';
+import pets from '../../../../config/default/pets.json';
+import worldgenDefaults from '../../../../config/default/worldgen.json';
+import activities from '../../../../config/default/activities.json';
+import citizenActions from '../../../../config/default/citizenActions.json';
+import cpuBehaviors from '../../../../config/default/cpuBehaviors.json';
+import effects from '../../../../config/default/effects.json';
+import evilTiers from '../../../../config/default/evilTiers.json';
+import personAttributes from '../../../../config/default/personAttributes.json';
+import plots from '../../../../config/default/plots.json';
+import researchProjects from '../../../../config/default/researchProjects.json';
+import skills from '../../../../config/default/skills.json';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const BUNDLED_CONFIG: Config = {
+  tileTypes: tileTypes as Config['tileTypes'],
+  buildings: buildings as Config['buildings'],
+  pets: pets as Config['pets'],
+  worldgen: worldgenDefaults as Config['worldgen'],
+  activities: activities as unknown[],
+  citizenActions: citizenActions as unknown[],
+  cpuBehaviors: cpuBehaviors as unknown[],
+  effects: effects as unknown[],
+  evilTiers: evilTiers as unknown[],
+  personAttributes: personAttributes as unknown[],
+  plots: plots as unknown[],
+  researchProjects: researchProjects as unknown[],
+  skills: skills as unknown[],
+};
 
 export type SimulationStatus =
   | 'idle'
@@ -67,7 +100,7 @@ export const useGameStore = create<GameStore>((set, get) => {
 
     newGame: (params) => {
       import('@empire-of-evil/engine').then(({ generateWorld }) => {
-        const gameState = generateWorld(params);
+        const gameState = generateWorld(params, BUNDLED_CONFIG);
         set({ gameState, status: 'ready', version: 1 });
       });
     },
