@@ -38,6 +38,47 @@ export default function PlotDetailPanel({
     const cancelPlot = useGameStore((s) => s.cancelPlot);
     const assignAgentToPlot = useGameStore((s) => s.assignAgentToPlot);
     const removeAgentFromPlot = useGameStore((s) => s.removeAgentFromPlot);
+    const currentDay = useGameStore((s) => s.gameState?.date ?? 0);
+
+    // Precompute stage drivers and per-agent daily contribution for active plots
+    const activeRecord =
+        "record" in (enriched as any)
+            ? (enriched as EnrichedActivePlot).record
+            : null;
+    const currentStage =
+        "record" in (enriched as any)
+            ? (enriched as EnrichedActivePlot).definition?.stages?.[
+                  (enriched as EnrichedActivePlot).record.currentStageIndex
+              ]
+            : null;
+    const stageDrivers: string[] = (currentStage?.skillDrivers ??
+        []) as string[];
+    const computeAgentDaily = (p: Person) => {
+        if (!stageDrivers || stageDrivers.length === 0) return 0;
+        const sum = stageDrivers.reduce(
+            (acc, d) => acc + ((p.skills as any)?.[d] ?? 0),
+            0,
+        );
+        return Math.round(sum / stageDrivers.length);
+    };
+    const dailyTotal = activeRecord
+        ? (enriched as EnrichedActivePlot).assignedAgents.reduce(
+              (acc, p) => acc + computeAgentDaily(p),
+              0,
+          )
+        : 0;
+    const successThreshold = (currentStage as any)?.successThreshold ?? 0;
+    const accumulated = activeRecord
+        ? (activeRecord.accumulatedSuccessScore ?? 0)
+        : 0;
+    const remainingScore = Math.max(0, successThreshold - accumulated);
+    const expectedDaysNeeded =
+        dailyTotal > 0 ? Math.ceil(remainingScore / dailyTotal) : Infinity;
+    const predictedFinishDay =
+        activeRecord && isFinite(expectedDaysNeeded)
+            ? currentDay +
+              Math.min(activeRecord.daysRemaining, expectedDaysNeeded)
+            : null;
 
     return (
         <Panel title={def?.name ?? "Plot Detail"}>
@@ -61,6 +102,53 @@ export default function PlotDetailPanel({
                     </div>
                 </div>
 
+                {/* Active meta: target, stage, ETA */}
+                {"record" in (enriched as any) && (
+                    <div className="flex gap-4 text-[11px] text-text-muted">
+                        <div>
+                            <div className="font-mono text-[9px] text-text-muted">
+                                TARGET
+                            </div>
+                            <div className="text-text-secondary">
+                                {(enriched as EnrichedActivePlot).targetLabel ??
+                                    "—"}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="font-mono text-[9px] text-text-muted">
+                                STAGE
+                            </div>
+                            <div className="text-text-secondary">
+                                {(enriched as EnrichedActivePlot).definition
+                                    ?.stages?.[
+                                    (enriched as EnrichedActivePlot).record
+                                        .currentStageIndex
+                                ]?.name ??
+                                    `Stage ${(enriched as EnrichedActivePlot).record.currentStageIndex + 1}`}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="font-mono text-[9px] text-text-muted">
+                                ETA
+                            </div>
+                            <div className="text-text-secondary">
+                                {(enriched as EnrichedActivePlot).record
+                                    .daysRemaining > 0
+                                    ? `${(enriched as EnrichedActivePlot).record.daysRemaining}d`
+                                    : "—"}
+                            </div>
+                            {activeRecord && isFinite(expectedDaysNeeded) && (
+                                <div className="text-[10px] text-text-muted">
+                                    {`in ${Math.min(
+                                        (enriched as EnrichedActivePlot).record
+                                            .daysRemaining,
+                                        expectedDaysNeeded,
+                                    )}d`}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
                 {"record" in (enriched as any) && (
                     <div>
                         <div className="text-text-muted text-[11px] mb-1">
@@ -145,9 +233,15 @@ export default function PlotDetailPanel({
                                         key={person.id}
                                         className="flex items-center justify-between py-1 border-b border-bg-elevated last:border-0"
                                     >
-                                        <span className="font-mono text-[11px] text-text-primary">
-                                            {person.name}
-                                        </span>
+                                        <div>
+                                            <div className="font-mono text-[11px] text-text-primary">
+                                                {person.name}
+                                            </div>
+                                            <div className="text-[10px] text-text-muted">
+                                                Contrib:{" "}
+                                                {computeAgentDaily(person)}/day
+                                            </div>
+                                        </div>
                                         <ActionButton
                                             variant="destructive"
                                             onClick={() =>
