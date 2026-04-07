@@ -72,6 +72,10 @@ export type GameStore = {
     removeAgentFromResearch: (researchId: string, agentId: string) => void;
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
+    startActivity: (activityDefinitionId: string) => void;
+    cancelActivity: (activeActivityId: string) => void;
+    assignAgentToActivity: (activityId: string, agentId: string) => void;
+    removeAgentFromActivity: (activityId: string, agentId: string) => void;
 };
 
 export const useGameStore = create<GameStore>((set, get) => {
@@ -350,6 +354,101 @@ export const useGameStore = create<GameStore>((set, get) => {
                         if (!plot) return;
                         if (plot.assignedAgentIds.includes(agentId)) return;
                         plot.assignedAgentIds.push(agentId);
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        startActivity: (activityDefinitionId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.startActivity === "function") {
+                        m.startActivity(
+                            gameState,
+                            activityDefinitionId,
+                            BUNDLED_CONFIG,
+                        );
+                    } else {
+                        const def = (BUNDLED_CONFIG.activities as any[]).find(
+                            (p) => p.id === activityDefinitionId,
+                        );
+                        if (!def) return;
+                        const id = `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+                        const ap = {
+                            id,
+                            activityDefinitionId: activityDefinitionId,
+                            assignedAgentIds: [],
+                            daysRemaining: 1,
+                            status: "active",
+                        } as any;
+                        gameState.activities[ap.id] = ap;
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        cancelActivity: (activeActivityId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.cancelActivity === "function") {
+                        m.cancelActivity(gameState, activeActivityId);
+                    } else {
+                        delete gameState.activities[activeActivityId];
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        assignAgentToActivity: (activityId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.assignAgentToActivity === "function") {
+                        m.assignAgentToActivity(gameState, activityId, agentId);
+                    } else {
+                        const act = gameState.activities[activityId];
+                        if (!act) return;
+                        if (act.assignedAgentIds.includes(agentId)) return;
+                        act.assignedAgentIds.push(agentId);
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        removeAgentFromActivity: (activityId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.removeAgentFromActivity === "function") {
+                        m.removeAgentFromActivity(
+                            gameState,
+                            activityId,
+                            agentId,
+                        );
+                    } else {
+                        const act = gameState.activities[activityId];
+                        if (!act) return;
+                        act.assignedAgentIds = act.assignedAgentIds.filter(
+                            (id) => id !== agentId,
+                        );
                     }
                     set((s) => ({ version: s.version + 1 }));
                 })
