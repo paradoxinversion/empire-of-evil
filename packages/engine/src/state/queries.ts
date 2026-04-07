@@ -134,7 +134,7 @@ export const getResearchProject = (
     config: Config,
     projectId: string,
 ): ResearchProjectDefinition => {
-    const project = config.researchProjects.find(p => p.id === projectId);
+    const project = config.researchProjects.find((p) => p.id === projectId);
     if (!project) throw new Error(`Research project not found: ${projectId}`);
     return project;
 };
@@ -148,7 +148,7 @@ export const isResearchActive = (
     state: GameState,
     projectId: string,
 ): boolean =>
-    Object.values(state.research).some(r => r.projectId === projectId);
+    Object.values(state.research).some((r) => r.projectId === projectId);
 
 export const isResearchAvailable = (
     state: GameState,
@@ -157,9 +157,9 @@ export const isResearchAvailable = (
 ): boolean => {
     if (isResearchCompleted(state, projectId)) return false;
     if (isResearchActive(state, projectId)) return false;
-    const project = config.researchProjects.find(p => p.id === projectId);
+    const project = config.researchProjects.find((p) => p.id === projectId);
     if (!project) return false;
-    return project.prerequisites.every(id => isResearchCompleted(state, id));
+    return project.prerequisites.every((id) => isResearchCompleted(state, id));
 };
 
 export const getResearchProgressPct = (
@@ -169,13 +169,42 @@ export const getResearchProgressPct = (
 ): number => {
     const record = state.research[researchId];
     if (!record) return 0;
-    const project = config.researchProjects.find(p => p.id === record.projectId);
+    const project = config.researchProjects.find(
+        (p) => p.id === record.projectId,
+    );
     if (!project) return 0;
-    const byScore = project.scienceRequired > 0
-        ? record.accumulatedScore / project.scienceRequired
-        : 0;
-    const byDays = project.completionDays > 0
-        ? (project.completionDays - record.daysRemaining) / project.completionDays
-        : 0;
+    const byScore =
+        project.scienceRequired > 0
+            ? record.accumulatedScore / project.scienceRequired
+            : 0;
+    const byDays =
+        project.completionDays > 0
+            ? (project.completionDays - record.daysRemaining) /
+              project.completionDays
+            : 0;
     return Math.min(100, Math.round(Math.max(byScore, byDays) * 100));
+};
+
+export const getEmpireTiles = (state: GameState, zoneId?: string): string[] => {
+    const tileIds = new Set<string>();
+    for (const zone of Object.values(state.zones)) {
+        if (zone.governingOrganizationId === state.empire.id) {
+            if (!zoneId || zone.id === zoneId) {
+                zone.tileIds.forEach((id) =>
+                    state.tiles[id]
+                        ? tileIds.add(id)
+                        : console.warn(
+                              `Tile ID ${id} from zone ${zone.id} not found in tiles record`,
+                          ),
+                );
+            }
+        }
+    }
+    return Array.from(tileIds);
+};
+
+export const getZoneTiles = (state: GameState, zoneId: string): string[] => {
+    const zone = state.zones[zoneId];
+    if (!zone) throw new Error(`Zone not found: ${zoneId}`);
+    return zone.tileIds;
 };

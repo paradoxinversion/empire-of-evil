@@ -6,7 +6,11 @@ import type {
     Tile,
 } from "../types/index.js";
 import type { Config } from "../config/loader.js";
-import { resetIdCounter } from "../factories/index.js";
+import {
+    createNation,
+    createZone,
+    resetIdCounter,
+} from "../factories/index.js";
 import { seedFrom } from "./prng.js";
 import { generateTerrain } from "./phases/01-terrain.js";
 import { formZones, resetZoneCounter } from "./phases/02-zones.js";
@@ -98,7 +102,11 @@ export const generateWorld = (
     });
 
     // Phase 5: Nation placement
-    const { nationZones: nationZoneMap, empireOriginZoneId } = placeNations(
+    const {
+        nationZones: nationZoneMap,
+        empireOriginZoneId,
+        empireOriginTile,
+    } = placeNations(
         zoneCandidates,
         habitableZoneIds,
         adjacency,
@@ -162,6 +170,7 @@ export const generateWorld = (
     };
     const empireInit = initializeEmpire(
         empireOriginZoneId,
+        empireOriginTile,
         empireOrgId,
         config.pets,
         params,
@@ -228,7 +237,35 @@ export const generateWorld = (
             taxRate: 0.1,
             activeEffectIds: [],
         };
+        zc.tileIds.forEach((tileId) => {
+            if (!tiles[tileId]) {
+                throw new Error(
+                    `Tile ID ${tileId} from zone ${zc.id} not found in tiles record`,
+                );
+            }
+
+            tiles[tileId].governingOrganizationId =
+                zones[zc.id]!.governingOrganizationId;
+        });
     }
+
+    // Create the empire's origin zone as a new zone (overwriting any existing zone on that tile, which should be uninhabited)
+    const empireNation = createNation({
+        name: "Empire",
+        governingOrganizationId: empireOrgId,
+    });
+
+    const empireOriginZone = createZone({
+        governingOrganizationId: empireInit.empireId,
+        name: "Empire Origin Zone",
+        nationId: empireNation.id,
+        tileIds: [empireOriginTile],
+        generationWealth: 0,
+    });
+
+    zones[empireOriginZoneId] = empireOriginZone;
+    // make the empire start tile a new zone
+    tiles[empireOriginTile].zoneId = empireOriginZoneId;
     // Add empire origin's buildings (HQ) to its zone
     if (zones[empireOriginZoneId]) {
         zones[empireOriginZoneId]!.buildingIds.push(empireInit.hqBuildingId);
@@ -245,6 +282,7 @@ export const generateWorld = (
             governingOrganizationId: orgId,
         };
     }
+    nations[empireNation.id] = empireNation;
 
     // Merge all persons and buildings
     const allPersons = { ...populationPersons, ...empireInit.persons };
