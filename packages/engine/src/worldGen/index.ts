@@ -254,15 +254,24 @@ export const generateWorld = (
         name: "Empire",
         governingOrganizationId: empireOrgId,
     });
-
+    // remove the empire tile from its original zone (if it was assigned to one) so it can be its own zone
+    const originalZoneId = tiles[empireOriginTile].zoneId;
+    if (originalZoneId) {
+        const originalZone = zones[originalZoneId];
+        if (originalZone) {
+            originalZone.tileIds = originalZone.tileIds.filter(
+                (id) => id !== empireOriginTile,
+            );
+        }
+    }
     const empireOriginZone = createZone({
         governingOrganizationId: empireInit.empireId,
-        name: "Empire Origin Zone",
+        name: "EVIL HQ",
         nationId: empireNation.id,
         tileIds: [empireOriginTile],
         generationWealth: 0,
     });
-
+    empireOriginZone.intelLevel = 75;
     zones[empireOriginZoneId] = empireOriginZone;
     // make the empire start tile a new zone
     tiles[empireOriginTile].zoneId = empireOriginZoneId;
