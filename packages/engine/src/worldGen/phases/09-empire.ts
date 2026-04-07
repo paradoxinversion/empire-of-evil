@@ -1,7 +1,14 @@
 import type { Person, Building } from "../../types/index.js";
-import type { PetDefinition } from "../../config/loader.js";
-import { createPerson, createBuilding } from "../../factories/index.js";
-import { seedFrom } from "../prng.js";
+import type {
+    AttributeDefinition,
+    PetDefinition,
+} from "../../config/loader.js";
+import {
+    createPerson,
+    createBuilding,
+    getRandomAttributeValue,
+} from "../../factories/index.js";
+import { Prng, seedFrom } from "../prng.js";
 
 const STARTING_LOYALTY = 65;
 const STARTING_AGENT_COUNT = 10;
@@ -47,6 +54,9 @@ export function initializeEmpire(
     },
     worldSeed: number,
     populationPersons: Record<string, Person> = {},
+    prng: Prng,
+    attributes: AttributeDefinition[] = [],
+    skills: AttributeDefinition[] = [],
 ): EmpireInitResult {
     const persons: Record<string, Person> = {};
     const buildings: Record<string, Building> = {};
@@ -69,6 +79,18 @@ export function initializeEmpire(
         loyalties: { [empireOrgId]: 100 },
         agentStatus: { job: "unassigned", salary: 0 },
     });
+    overlord.attributes = Object.fromEntries(
+        attributes.map((attr) => [
+            attr.id,
+            getRandomAttributeValue(prng, 10, 100, 25), // Overlord starts with higher attributes on average
+        ]),
+    );
+    overlord.skills = Object.fromEntries(
+        skills.map((skill) => [
+            skill.id,
+            getRandomAttributeValue(prng, 10, 100, 20), // Overlord starts with higher skills on average
+        ]),
+    );
     persons[overlord.id] = overlord;
 
     // Pet selection
@@ -88,6 +110,7 @@ export function initializeEmpire(
         homeZoneId: empireOriginZoneId,
         governingOrganizationId: empireOrgId,
     });
+
     persons[petPerson.id] = petPerson;
 
     const resources = params.startingResources ?? defaultResources;

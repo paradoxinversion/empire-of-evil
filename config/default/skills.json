@@ -1,102 +1,127 @@
 [
     {
         "id": "firearms",
+        "name": "Firearms",
         "attributeCap": "combat"
     },
     {
         "id": "melee",
+        "name": "Melee",
         "attributeCap": "combat"
     },
     {
         "id": "tactics",
+        "name": "Tactics",
         "attributeCap": "leadership"
     },
     {
         "id": "evasion",
+        "name": "Evasion",
         "attributeCap": "agility"
     },
     {
         "id": "field-medicine",
+        "name": "Field Medicine",
         "attributeCap": "intelligence"
     },
     {
         "id": "biology",
+        "name": "Biology",
         "attributeCap": "intelligence"
     },
     {
         "id": "engineering",
+        "name": "Engineering",
         "attributeCap": "intelligence"
     },
     {
         "id": "computing",
+        "name": "Computing",
         "attributeCap": "intelligence"
     },
     {
         "id": "logistics",
+        "name": "Logistics",
         "attributeCap": "administration"
     },
     {
         "id": "finance",
+        "name": "Finance",
         "attributeCap": "administration"
     },
     {
         "id": "medicine",
+        "name": "Medicine",
         "attributeCap": "intelligence"
     },
     {
         "id": "first-aid",
+        "name": "First Aid",
         "attributeCap": "intelligence"
     },
     {
         "id": "surveillance",
+        "name": "Surveillance",
         "attributeCap": "intelligence"
     },
     {
         "id": "infiltration",
+        "name": "Infiltration",
         "attributeCap": "agility"
     },
     {
         "id": "counter-intelligence",
+        "name": "Counter-Intelligence",
         "attributeCap": "intelligence"
     },
     {
         "id": "forgery",
+        "name": "Forgery",
         "attributeCap": "intelligence"
     },
     {
         "id": "persuasion",
+        "name": "Persuasion",
         "attributeCap": "empathy"
     },
     {
         "id": "intimidation",
+        "name": "Intimidation",
         "attributeCap": "combat"
     },
     {
         "id": "oratory",
+        "name": "Oratory",
         "attributeCap": "empathy"
     },
     {
         "id": "deception",
+        "name": "Deception",
         "attributeCap": "intelligence"
     },
     {
         "id": "delegation",
+        "name": "Delegation",
         "attributeCap": "leadership"
     },
     {
         "id": "training",
+        "name": "Training",
         "attributeCap": "leadership"
     },
     {
         "id": "smuggling",
+        "name": "Smuggling",
         "attributeCap": "agility"
     },
     {
         "id": "larceny",
+        "name": "Larceny",
         "attributeCap": "agility"
     },
     {
         "id": "streetwise",
+        "name": "Streetwise",
         "attributeCap": "intelligence"
     }
 ]
