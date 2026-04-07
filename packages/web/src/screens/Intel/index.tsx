@@ -1,1 +1,1 @@
-export const IntelScreen = () => <div>Intel</div>;
+export { IntelScreen } from './IntelScreen';

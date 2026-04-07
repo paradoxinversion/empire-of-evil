@@ -1,1 +1,1 @@
-export const ScienceScreen = () => <div>Science</div>;
+export { ScienceScreen } from './ScienceScreen.js';

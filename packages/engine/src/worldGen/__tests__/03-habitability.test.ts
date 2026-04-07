@@ -4,17 +4,17 @@ import type { ZoneCandidate } from '../types.js';
 import type { TileTypeDefinition } from '../../config/loader.js';
 
 const habitablePlains: TileTypeDefinition = {
-  name: 'Plains', description: '', buildingRestrictions: [], effects: [],
+  icon: '.', name: 'Plains', description: '', buildingRestrictions: [], effects: [],
   terrainConditions: { elevationMin: 0, elevationMax: 1, moistureMin: 0, moistureMax: 1, priority: 1 },
   canBeInhabited: true, wealthContribution: 45,
 };
 const uninhabitableMountain: TileTypeDefinition = {
-  name: 'Mountain', description: '', buildingRestrictions: [], effects: [],
+  icon: '▲', name: 'Mountain', description: '', buildingRestrictions: [], effects: [],
   terrainConditions: { elevationMin: 0.7, elevationMax: 1, moistureMin: 0, moistureMax: 1, priority: 90 },
   canBeInhabited: false, wealthContribution: 15,
 };
 const oceanType: TileTypeDefinition = {
-  name: 'Ocean', description: '', buildingRestrictions: [], effects: [],
+  icon: '~', name: 'Ocean', description: '', buildingRestrictions: [], effects: [],
   terrainConditions: { elevationMin: 0, elevationMax: 0.38, moistureMin: 0, moistureMax: 1, priority: 100 },
   canBeInhabited: false, wealthContribution: 0, isOcean: true,
 };

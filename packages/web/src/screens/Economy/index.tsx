@@ -1,1 +1,1 @@
-export const EconomyScreen = () => <div>Economy</div>;
+export { EconomyScreen } from './EconomyScreen';

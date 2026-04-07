@@ -1,5 +1,6 @@
 {
     "ocean": {
+        "icon": "~",
         "name": "Ocean",
         "description": "A vast body of water. Impassable without naval capability; acts as a natural barrier between nations.",
         "buildingRestrictions": ["all"],
@@ -16,6 +17,7 @@
         "wealthContribution": 0
     },
     "mountain": {
+        "icon": "▲",
         "name": "Mountain",
         "description": "A towering natural formation, often rich in minerals and resources.",
         "buildingRestrictions": ["bank"],
@@ -31,6 +33,7 @@
         "wealthContribution": 15
     },
     "coastal": {
+        "icon": "≈",
         "name": "Coastal",
         "description": "Low-lying land along the water's edge. Supports fishing and trade but is vulnerable to flooding.",
         "buildingRestrictions": ["bank"],
@@ -46,6 +49,7 @@
         "wealthContribution": 35
     },
     "swamp": {
+        "icon": "%",
         "name": "Swamp",
         "description": "Waterlogged lowland thick with vegetation. Difficult to traverse and build on.",
         "buildingRestrictions": ["bank", "military-base"],
@@ -61,6 +65,7 @@
         "wealthContribution": 20
     },
     "tundra": {
+        "icon": "*",
         "name": "Tundra",
         "description": "Cold, high-altitude terrain with sparse vegetation. Harsh conditions limit settlement.",
         "buildingRestrictions": ["bank"],
@@ -76,6 +81,7 @@
         "wealthContribution": 12
     },
     "city": {
+        "icon": "#",
         "name": "City",
         "description": "A bustling urban area with many resources and opportunities.",
         "buildingRestrictions": [],
@@ -91,6 +97,7 @@
         "wealthContribution": 80
     },
     "forest": {
+        "icon": "♣",
         "name": "Forest",
         "description": "Dense woodland. Rich in natural resources but slows movement and limits visibility.",
         "buildingRestrictions": ["bank"],
@@ -106,6 +113,7 @@
         "wealthContribution": 30
     },
     "plains": {
+        "icon": ".",
         "name": "Plains",
         "description": "Flat, open grassland. Easy to traverse and well-suited for agriculture and basic industry.",
         "buildingRestrictions": [],
@@ -121,6 +129,7 @@
         "wealthContribution": 45
     },
     "desert": {
+        "icon": ":",
         "name": "Desert",
         "description": "Arid, sun-scorched terrain. Sparse population and scarce resources, but passable.",
         "buildingRestrictions": ["bank"],
@@ -136,6 +145,7 @@
         "wealthContribution": 10
     },
     "wilderness": {
+        "icon": "?",
         "name": "Wilderness",
         "description": "Untamed natural areas, often difficult to traverse but rich in resources.",
         "buildingRestrictions": ["bank"],

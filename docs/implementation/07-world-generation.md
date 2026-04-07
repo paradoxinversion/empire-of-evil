@@ -63,7 +63,7 @@ Oceans must be contiguous and plausible. After initial tile assignment, a **bord
 
 ### Zones span multiple tiles
 
-A zone is a named region made up of one or more contiguous tiles. Zones are the unit of political control, population, and building placement — not individual tiles.
+A zone is a named region made up of one or more contiguous tiles. Zones are the unit of political control and population. Building types are chosen with zone-level rules, but buildings are placed on specific tiles within a zone (tile-level placement). The zone still tracks its buildings via `buildingIds`.
 
 ### Zone formation algorithm
 
@@ -194,7 +194,7 @@ Persons are placed in `state.persons` keyed by ID. The zone's `population` field
 
 ## Phase 8 — Building Placement
 
-Buildings are placed in each inhabited zone according to a **wealth-weighted probability table**. The number of buildings in a zone scales with zone size and wealth:
+Buildings are placed on tiles in each inhabited zone according to a **wealth-weighted probability table**. The number of buildings in the zone scales with zone size and wealth:
 
 ```
 buildingCount = floor(zone.generationWealth / 100 * maxBuildingsPerZone * zoneSize / avgZoneSize)
@@ -213,7 +213,18 @@ The exact per-type wealth thresholds and weights are defined in `config/<config-
 
 Tile type restrictions are applied before selection: a building whose `buildableOnTileTypes` doesn't include the zone's plurality tile type is excluded from the draw, regardless of wealth.
 
+Placement details (tile-level)
+
+- Once a building type is selected for placement in a zone, the placement phase selects a concrete `tileId` from the zone's `tileIds` using the worldgen PRNG. This choice is deterministic for a given seed and preserves testability.
+- The engine sets both `building.zoneId` (for backward compatibility and quick grouping) and an optional `building.tileId` which is authoritative for the building's precise location.
+- Use the helper `getBuildingZoneId(state, building)` to resolve a building's zone in a single place; it returns the zone of `building.tileId` if present, otherwise falls back to `building.zoneId`.
+
 Buildings are placed with no assigned agents at generation — staffing is the player's responsibility after game start. The generating organization for each building is the zone's governing org.
+
+Resource attribution and settlement
+
+- When computing building resource output and upkeep, the engine resolves each building's zone via `building.tileId` (if present) so income/upkeep are attributed to the tile's zone. This prevents unexpected cross-zone accounting where all buildings in a player's starting zone would count regardless of their tile placement.
+- The `settleResources` step aggregates income/upkeep by zone (using `getBuildingZoneId`) and applies the empire's net resource delta only for zones whose `governingOrganizationId` matches the empire's organization ID.
 
 ---
 
