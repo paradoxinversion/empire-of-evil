@@ -17,6 +17,7 @@ export interface Tile {
     typeId: string;
     zoneId: string;
     activeEffectIds: string[];
+    governingOrganizationId?: string;
 }
 
 export interface Zone {

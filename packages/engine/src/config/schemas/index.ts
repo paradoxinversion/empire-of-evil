@@ -85,6 +85,7 @@ const TileTypeDefinitionSchema = z.object({
     canBeInhabited: z.boolean(),
     wealthContribution: z.number().min(0).max(100),
     isOcean: z.boolean().optional(),
+    governingOrganizationId: z.string(),
 });
 
 export const TileTypesSchema = z.record(z.string(), TileTypeDefinitionSchema);

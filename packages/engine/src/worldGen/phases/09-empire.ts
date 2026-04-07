@@ -30,6 +30,7 @@ export interface EmpireInitResult {
     petId: string;
     hqBuildingId: string;
     resources: { money: number; science: number; infrastructure: number };
+    empireId: string;
 }
 
 /**
@@ -44,6 +45,7 @@ export interface EmpireInitResult {
  */
 export function initializeEmpire(
     empireOriginZoneId: string,
+    empireOriginTile: string,
     empireOrgId: string,
     pets: PetDefinition[],
     params: EmpireInitParams,
@@ -155,5 +157,6 @@ export function initializeEmpire(
         petId: petPerson.id,
         hqBuildingId: hq.id,
         resources,
+        empireId: empireOrgId,
     };
 }

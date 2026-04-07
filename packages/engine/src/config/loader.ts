@@ -38,6 +38,7 @@ export type TileTypeDefinition = {
     canBeInhabited: boolean;
     wealthContribution: number;
     isOcean?: boolean;
+    governingOrganizationId: string;
 };
 
 export type BuildingDefinition = {
