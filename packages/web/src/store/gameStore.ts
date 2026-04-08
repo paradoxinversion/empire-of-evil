@@ -1,9 +1,15 @@
 import { create } from "zustand";
+import {
+    reassignAgentJob as reassignAgentJobEngine,
+    fireAgent as fireAgentEngine,
+    terminatePerson as terminatePersonEngine,
+} from "@empire-of-evil/engine";
 import type {
     GameState,
     GameEvent,
     WorldGenParams,
     StandingOrder,
+    AgentJob,
 } from "@empire-of-evil/engine";
 import type { Config, ResearchProjectDefinition } from "@empire-of-evil/engine";
 
@@ -63,6 +69,9 @@ export type GameStore = {
     resumeAfterInterrupt: () => void;
     createSquad: (name: string, homeZoneId?: string) => void;
     addAgentToSquad: (squadId: string, agentId: string) => void;
+    reassignAgentJob: (agentId: string, job: AgentJob) => void;
+    fireAgent: (agentId: string) => void;
+    terminatePerson: (personId: string) => void;
     removeAgentFromSquad: (squadId: string, agentId: string) => void;
     updateSquadOrders: (squadId: string, orders: StandingOrder) => void;
     setZoneTaxRate: (zoneId: string, taxRate: number) => void;
@@ -211,6 +220,36 @@ export const useGameStore = create<GameStore>((set, get) => {
             if (person?.agentStatus) {
                 person.agentStatus.squadId = squadId;
             }
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        reassignAgentJob: (agentId, job) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const person = gameState.persons[agentId];
+            if (!person?.agentStatus) return;
+            reassignAgentJobEngine(gameState, agentId, job);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        fireAgent: (agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const person = gameState.persons[agentId];
+            if (!person?.agentStatus) return;
+
+            fireAgentEngine(gameState, agentId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        terminatePerson: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const person = gameState.persons[personId];
+            if (!person || person.dead) return;
+
+            terminatePersonEngine(gameState, personId);
+
             set((s) => ({ version: s.version + 1 }));
         },
 

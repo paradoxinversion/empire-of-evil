@@ -82,3 +82,9 @@ export {
     createEffectInstance,
     createSquad,
 } from "./factories/index.js";
+
+export {
+    reassignAgentJob,
+    fireAgent,
+    terminatePerson,
+} from "./personnel/index.js";

@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { useGameState } from "../../hooks/useGameState";
+import { useGameStore } from "../../store/gameStore";
 import { Panel } from "../../components/Panel/Panel";
 import { Tag } from "../../components/Tag/Tag";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { Tooltip } from "../../components/Tooltip/Tooltip";
 import { ActionButton } from "../../components/ActionButton/ActionButton";
+import { Modal } from "../../components/Modal/Modal";
+import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import type { TagVariant } from "../../components/Tag/Tag";
 import type { AgentJob } from "@empire-of-evil/engine";
 
@@ -22,7 +26,19 @@ interface CharacterProfileProps {
 
 export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
     const gameState = useGameState();
-    const { persons, governingOrganizations, effectInstances } = gameState;
+    const addAgentToSquad = useGameStore((s) => s.addAgentToSquad);
+    const reassignAgentJob = useGameStore((s) => s.reassignAgentJob);
+    const fireAgent = useGameStore((s) => s.fireAgent);
+    const terminatePerson = useGameStore((s) => s.terminatePerson);
+    const { persons, governingOrganizations, effectInstances, squads, zones } =
+        gameState;
+    const [isAddToSquadOpen, setIsAddToSquadOpen] = useState(false);
+    const [selectedSquadId, setSelectedSquadId] = useState<string>("");
+    const [isReassignOpen, setIsReassignOpen] = useState(false);
+    const [selectedJob, setSelectedJob] = useState<AgentJob>("unassigned");
+    const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [isFireConfirmOpen, setIsFireConfirmOpen] = useState(false);
+    const [isTerminateConfirmOpen, setIsTerminateConfirmOpen] = useState(false);
 
     const person = persons[personId];
 
@@ -48,6 +64,41 @@ export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
     const effects = person.activeEffectIds
         .map((id) => effectInstances[id])
         .filter(Boolean);
+    const availableSquads = Object.values(squads ?? {}).filter(
+        (squad) => !squad.memberIds.includes(person.id),
+    );
+
+    const openAddToSquadModal = () => {
+        const firstSquad = availableSquads[0];
+        setSelectedSquadId(firstSquad?.id ?? "");
+        setIsAddToSquadOpen(true);
+    };
+
+    const confirmAddToSquad = () => {
+        if (!selectedSquadId) return;
+        addAgentToSquad(selectedSquadId, person.id);
+        setIsAddToSquadOpen(false);
+    };
+
+    const openReassignModal = () => {
+        setSelectedJob(person.agentStatus?.job ?? "unassigned");
+        setIsReassignOpen(true);
+    };
+
+    const confirmReassign = () => {
+        reassignAgentJob(person.id, selectedJob);
+        setIsReassignOpen(false);
+    };
+
+    const confirmFire = () => {
+        fireAgent(person.id);
+        setIsFireConfirmOpen(false);
+    };
+
+    const confirmTerminate = () => {
+        terminatePerson(person.id);
+        setIsTerminateConfirmOpen(false);
+    };
 
     return (
         <div className="flex flex-col gap-3">
@@ -97,17 +148,26 @@ export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
                 <div className="flex gap-2 py-2">
                     {person.agentStatus && (
                         <>
-                            <ActionButton onClick={() => {}}>
+                            <ActionButton onClick={openReassignModal}>
                                 REASSIGN
                             </ActionButton>
-                            <ActionButton onClick={() => {}}>
+                            <ActionButton
+                                onClick={openAddToSquadModal}
+                                disabled={availableSquads.length === 0}
+                            >
                                 ADD TO SQUAD
                             </ActionButton>
-                            <ActionButton onClick={() => {}}>MOVE</ActionButton>
-                            <ActionButton onClick={() => {}}>FIRE</ActionButton>
+                            <ActionButton onClick={() => setIsMoveOpen(true)}>
+                                MOVE
+                            </ActionButton>
+                            <ActionButton
+                                onClick={() => setIsFireConfirmOpen(true)}
+                            >
+                                FIRE
+                            </ActionButton>
                             <ActionButton
                                 variant="destructive"
-                                onClick={() => {}}
+                                onClick={() => setIsTerminateConfirmOpen(true)}
                             >
                                 TERMINATE
                             </ActionButton>
@@ -115,6 +175,150 @@ export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
                     )}
                 </div>
             </Panel>
+
+            <Modal
+                isOpen={isReassignOpen}
+                onClose={() => setIsReassignOpen(false)}
+                title="REASSIGN AGENT"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsReassignOpen(false)}
+                            className="font-mono text-[11px] tracking-[0.08em] px-3 py-1.5 rounded-sm border border-border-default bg-bg-elevated text-text-primary transition-colors duration-fast hover:bg-bg-hover hover:border-border-strong"
+                        >
+                            CANCEL
+                        </button>
+                        <ActionButton onClick={confirmReassign}>
+                            CONFIRM REASSIGN
+                        </ActionButton>
+                    </>
+                }
+            >
+                <div className="space-y-2">
+                    <label
+                        htmlFor="reassign-job-select"
+                        className="font-mono text-[10px] text-text-muted tracking-[0.06em]"
+                    >
+                        DEPARTMENT
+                    </label>
+                    <select
+                        id="reassign-job-select"
+                        value={selectedJob}
+                        onChange={(e) =>
+                            setSelectedJob(e.target.value as AgentJob)
+                        }
+                        className="w-full font-mono text-[11px] bg-bg-elevated border border-border-subtle text-text-primary px-2 py-1 outline-none focus:border-accent-red"
+                    >
+                        <option value="operative">OPERATIVE</option>
+                        <option value="scientist">SCIENTIST</option>
+                        <option value="administrator">ADMINISTRATOR</option>
+                        <option value="troop">TROOP</option>
+                        <option value="unassigned">UNASSIGNED</option>
+                    </select>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={isMoveOpen}
+                onClose={() => setIsMoveOpen(false)}
+                title="MOVE AGENT"
+                description="Movement wiring is planned for a later phase."
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsMoveOpen(false)}
+                            className="font-mono text-[11px] tracking-[0.08em] px-3 py-1.5 rounded-sm border border-border-default bg-bg-elevated text-text-primary transition-colors duration-fast hover:bg-bg-hover hover:border-border-strong"
+                        >
+                            CLOSE
+                        </button>
+                        <ActionButton onClick={() => {}} disabled>
+                            MOVE NOT YET WIRED
+                        </ActionButton>
+                    </>
+                }
+            >
+                <div className="space-y-2">
+                    <div className="font-mono text-[10px] text-text-muted tracking-[0.06em]">
+                        TARGET ZONE
+                    </div>
+                    <select
+                        value={person.zoneId}
+                        disabled
+                        className="w-full font-mono text-[11px] bg-bg-elevated border border-border-subtle text-text-primary px-2 py-1 outline-none"
+                    >
+                        {Object.values(zones ?? {}).map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                                {zone.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={isAddToSquadOpen}
+                onClose={() => setIsAddToSquadOpen(false)}
+                title="ADD TO SQUAD"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsAddToSquadOpen(false)}
+                            className="font-mono text-[11px] tracking-[0.08em] px-3 py-1.5 rounded-sm border border-border-default bg-bg-elevated text-text-primary transition-colors duration-fast hover:bg-bg-hover hover:border-border-strong"
+                        >
+                            CANCEL
+                        </button>
+                        <ActionButton onClick={confirmAddToSquad}>
+                            CONFIRM ADD TO SQUAD
+                        </ActionButton>
+                    </>
+                }
+            >
+                <div className="space-y-2">
+                    <label
+                        htmlFor="add-to-squad-select"
+                        className="font-mono text-[10px] text-text-muted tracking-[0.06em]"
+                    >
+                        SQUAD
+                    </label>
+                    <select
+                        id="add-to-squad-select"
+                        value={selectedSquadId}
+                        onChange={(e) => setSelectedSquadId(e.target.value)}
+                        className="w-full font-mono text-[11px] bg-bg-elevated border border-border-subtle text-text-primary px-2 py-1 outline-none focus:border-accent-red"
+                    >
+                        {availableSquads.map((squad) => (
+                            <option key={squad.id} value={squad.id}>
+                                {squad.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </Modal>
+
+            <ConfirmationModal
+                isOpen={isFireConfirmOpen}
+                onClose={() => setIsFireConfirmOpen(false)}
+                onConfirm={confirmFire}
+                title="FIRE AGENT"
+                description={`You are about to fire ${person.name}. They will no longer serve as an agent.`}
+                consequenceSummary="Agent status will be removed, but this person will remain alive in the world."
+                confirmLabel="CONFIRM FIRE"
+            />
+
+            <ConfirmationModal
+                isOpen={isTerminateConfirmOpen}
+                onClose={() => setIsTerminateConfirmOpen(false)}
+                onConfirm={confirmTerminate}
+                title="TERMINATE AGENT"
+                description={`You are about to TERMINATE ${person.name}. This is permanent.`}
+                consequenceSummary="This person will be marked dead and removed from all active assignments."
+                confirmLabel="CONFIRM TERMINATION"
+                confirmVariant="destructive"
+                preventEnterConfirm
+            />
 
             {sortedAttrs.length > 0 && (
                 <Panel title="ATTRIBUTES">
