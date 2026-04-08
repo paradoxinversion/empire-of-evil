@@ -297,6 +297,17 @@ export const generateWorld = (
     const allPersons = { ...populationPersons, ...empireInit.persons };
     const allBuildings = { ...placedBuildings, ...empireInit.buildings };
 
+    type PlotEntry = { id: string; requirements?: { researchIds?: string[] } };
+    type ActivityEntry = { id: string; requirements?: { researchIds?: string[] } };
+
+    const starterPlotIds = (config.plots as PlotEntry[])
+        .filter(p => !p.requirements?.researchIds || p.requirements.researchIds.length === 0)
+        .map(p => p.id);
+
+    const starterActivityIds = (config.activities as ActivityEntry[])
+        .filter(a => !a.requirements?.researchIds || a.requirements.researchIds.length === 0)
+        .map(a => a.id);
+
     return {
         tiles,
         zones,
@@ -318,8 +329,8 @@ export const generateWorld = (
             resources: empireInit.resources,
             evil: { actual: 0, perceived: 0 },
             innerCircleIds: [],
-            unlockedPlotIds: [],
-            unlockedActivityIds: [],
+            unlockedPlotIds: starterPlotIds,
+            unlockedActivityIds: starterActivityIds,
             unlockedResearchIds: [],
         },
         date: 0,

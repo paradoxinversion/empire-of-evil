@@ -109,4 +109,35 @@ describe('generateWorld integration', () => {
     );
     expect(empireControlledZones).toHaveLength(1);
   });
+
+  test('empire.unlockedPlotIds contains all plots with no research prerequisites at game start', () => {
+    const state = generateWorld(smallParams, config);
+    const starterPlots = (config.plots as Array<{ id: string; requirements?: { researchIds?: string[] } }>)
+      .filter(p => !p.requirements?.researchIds || p.requirements.researchIds.length === 0)
+      .map(p => p.id);
+    expect(starterPlots.length).toBeGreaterThan(0);
+    for (const id of starterPlots) {
+      expect(state.empire.unlockedPlotIds).toContain(id);
+    }
+  });
+
+  test('research-gated plots are not unlocked at game start', () => {
+    const state = generateWorld(smallParams, config);
+    const gatedPlots = (config.plots as Array<{ id: string; requirements?: { researchIds?: string[] } }>)
+      .filter(p => p.requirements?.researchIds && p.requirements.researchIds.length > 0)
+      .map(p => p.id);
+    expect(gatedPlots.length).toBeGreaterThan(0);
+    for (const id of gatedPlots) {
+      expect(state.empire.unlockedPlotIds).not.toContain(id);
+    }
+  });
+
+  test('empire.unlockedActivityIds contains all activity IDs at game start', () => {
+    const state = generateWorld(smallParams, config);
+    const allActivityIds = (config.activities as Array<{ id: string }>).map(a => a.id);
+    expect(allActivityIds.length).toBeGreaterThan(0);
+    for (const id of allActivityIds) {
+      expect(state.empire.unlockedActivityIds).toContain(id);
+    }
+  });
 });
