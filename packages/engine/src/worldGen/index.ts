@@ -298,15 +298,26 @@ export const generateWorld = (
     const allBuildings = { ...placedBuildings, ...empireInit.buildings };
 
     type PlotEntry = { id: string; requirements?: { researchIds?: string[] } };
-    type ActivityEntry = { id: string; requirements?: { researchIds?: string[] } };
+    type ActivityEntry = {
+        id: string;
+        requirements?: { researchIds?: string[] };
+    };
 
     const starterPlotIds = (config.plots as PlotEntry[])
-        .filter(p => !p.requirements?.researchIds || p.requirements.researchIds.length === 0)
-        .map(p => p.id);
+        .filter(
+            (p) =>
+                !p.requirements?.researchIds ||
+                p.requirements.researchIds.length === 0,
+        )
+        .map((p) => p.id);
 
     const starterActivityIds = (config.activities as ActivityEntry[])
-        .filter(a => !a.requirements?.researchIds || a.requirements.researchIds.length === 0)
-        .map(a => a.id);
+        .filter(
+            (a) =>
+                !a.requirements?.researchIds ||
+                a.requirements.researchIds.length === 0,
+        )
+        .map((a) => a.id);
 
     return {
         tiles,
