@@ -137,7 +137,9 @@ describe("InnerCircleTab", () => {
 
         render(<InnerCircleTab onSelectPerson={() => {}} />);
 
-        await user.click(screen.getByRole("button", { name: /move up agent two/i }));
+        await user.click(
+            screen.getByRole("button", { name: /move up agent two/i }),
+        );
 
         expect(reorderInnerCircleMembers).toHaveBeenCalledWith(["a2", "a1"]);
     });

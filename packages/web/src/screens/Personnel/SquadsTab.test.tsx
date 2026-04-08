@@ -85,7 +85,11 @@ describe("SquadsTab", () => {
                     money: 0,
                     activeEffectIds: [],
                     dead: false,
-                    agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+                    agentStatus: {
+                        job: "operative",
+                        salary: 10,
+                        squadId: "s1",
+                    },
                 },
             },
             zones: {},
@@ -133,7 +137,11 @@ describe("SquadsTab", () => {
                     money: 0,
                     activeEffectIds: [],
                     dead: false,
-                    agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+                    agentStatus: {
+                        job: "operative",
+                        salary: 10,
+                        squadId: "s1",
+                    },
                 },
             },
             zones: {
@@ -207,7 +215,9 @@ describe("SquadsTab", () => {
         await user.click(screen.getByText("Night Shift"));
         await user.click(screen.getByRole("button", { name: /add members/i }));
         await user.click(screen.getByRole("button", { name: /agent one/i }));
-        await user.click(screen.getByRole("button", { name: /assign 1 agent/i }));
+        await user.click(
+            screen.getByRole("button", { name: /assign 1 agent/i }),
+        );
 
         expect(addAgentToSquad).toHaveBeenCalledWith("s1", "a1");
     });

@@ -14,7 +14,8 @@
         },
         "canBeInhabited": false,
         "isOcean": true,
-        "wealthContribution": 0
+        "wealthContribution": 0,
+        "governingOrganizationId": ""
     },
     "mountain": {
         "icon": "▲",
@@ -30,7 +31,8 @@
             "priority": 90
         },
         "canBeInhabited": true,
-        "wealthContribution": 15
+        "wealthContribution": 15,
+        "governingOrganizationId": ""
     },
     "coastal": {
         "icon": "≈",
@@ -46,7 +48,8 @@
             "priority": 50
         },
         "canBeInhabited": true,
-        "wealthContribution": 35
+        "wealthContribution": 35,
+        "governingOrganizationId": ""
     },
     "swamp": {
         "icon": "%",
@@ -62,7 +65,8 @@
             "priority": 60
         },
         "canBeInhabited": true,
-        "wealthContribution": 20
+        "wealthContribution": 20,
+        "governingOrganizationId": ""
     },
     "tundra": {
         "icon": "*",
@@ -78,7 +82,8 @@
             "priority": 45
         },
         "canBeInhabited": true,
-        "wealthContribution": 12
+        "wealthContribution": 12,
+        "governingOrganizationId": ""
     },
     "city": {
         "icon": "#",
@@ -94,7 +99,8 @@
             "priority": 40
         },
         "canBeInhabited": true,
-        "wealthContribution": 80
+        "wealthContribution": 80,
+        "governingOrganizationId": ""
     },
     "forest": {
         "icon": "♣",
@@ -110,7 +116,8 @@
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 30
+        "wealthContribution": 30,
+        "governingOrganizationId": ""
     },
     "plains": {
         "icon": ".",
@@ -126,7 +133,8 @@
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 45
+        "wealthContribution": 45,
+        "governingOrganizationId": ""
     },
     "desert": {
         "icon": ":",
@@ -142,7 +150,8 @@
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 10
+        "wealthContribution": 10,
+        "governingOrganizationId": ""
     },
     "wilderness": {
         "icon": "?",
@@ -158,6 +167,7 @@
             "priority": 1
         },
         "canBeInhabited": true,
-        "wealthContribution": 20
+        "wealthContribution": 20,
+        "governingOrganizationId": ""
     }
 }

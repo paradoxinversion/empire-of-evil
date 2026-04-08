@@ -256,7 +256,10 @@ export function SquadsTab({
                                     >
                                         <option value="">SELECT ZONE</option>
                                         {Object.values(zones).map((zone) => (
-                                            <option key={zone.id} value={zone.id}>
+                                            <option
+                                                key={zone.id}
+                                                value={zone.id}
+                                            >
                                                 {zone.name}
                                             </option>
                                         ))}
@@ -287,7 +290,9 @@ export function SquadsTab({
                                         {selectedSquad.memberIds
                                             .map((id) => persons[id])
                                             .filter(
-                                                (p): p is NonNullable<typeof p> =>
+                                                (
+                                                    p,
+                                                ): p is NonNullable<typeof p> =>
                                                     !!p && !p.dead,
                                             )
                                             .map((member) => (
@@ -329,7 +334,9 @@ export function SquadsTab({
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <ActionButton
-                                        onClick={() => setIsAddMembersOpen(true)}
+                                        onClick={() =>
+                                            setIsAddMembersOpen(true)
+                                        }
                                     >
                                         ADD MEMBERS
                                     </ActionButton>
