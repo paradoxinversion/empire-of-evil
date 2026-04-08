@@ -4,6 +4,7 @@ import { Tag } from "../../components/Tag/Tag";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { ActionButton } from "../../components/ActionButton/ActionButton";
 import { AgentPicker } from "../../components/AgentPicker/AgentPicker";
+import { Tooltip } from "../../components/Tooltip/Tooltip";
 import type {
     EnrichedProject,
     ResearchStatus,
@@ -246,8 +247,21 @@ export function ResearchDetailPanel({
                 {/* Active: progress */}
                 {status === "active" && activeRecord && (
                     <div className="mb-3">
-                        <div className="font-mono text-[9px] tracking-widest text-text-muted mb-1">
-                            PROGRESS
+                        <div className="mb-1 flex items-center gap-1 font-mono text-[9px] tracking-widest text-text-muted">
+                            <span>PROGRESS</span>
+                            <Tooltip
+                                variant="rich"
+                                richTitle="RESEARCH VELOCITY"
+                                content="Progress is driven by assigned scientists and their relevant skill levels."
+                            >
+                                <button
+                                    type="button"
+                                    aria-label="Research progress help"
+                                    className="inline-flex h-4 w-4 items-center justify-center rounded-sm border border-border-subtle bg-bg-hover text-[9px] text-text-secondary"
+                                >
+                                    ?
+                                </button>
+                            </Tooltip>
                         </div>
                         <div className="mb-1">
                             <ProgressBar
