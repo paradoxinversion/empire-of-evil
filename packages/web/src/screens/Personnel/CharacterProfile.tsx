@@ -3,6 +3,7 @@ import { Panel } from "../../components/Panel/Panel";
 import { Tag } from "../../components/Tag/Tag";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { Tooltip } from "../../components/Tooltip/Tooltip";
+import { ActionButton } from "../../components/ActionButton/ActionButton";
 import type { TagVariant } from "../../components/Tag/Tag";
 import type { AgentJob } from "@empire-of-evil/engine";
 
@@ -66,13 +67,15 @@ export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
                             </Tag>
                         )}
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="font-mono text-[10px] text-text-muted hover:text-text-secondary tracking-[0.06em] cursor-pointer"
-                    >
-                        ✕ CLOSE
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="font-mono text-[10px] text-text-muted hover:text-text-secondary tracking-[0.06em] cursor-pointer"
+                        >
+                            ✕ CLOSE
+                        </button>
+                    </div>
                 </div>
                 <div className="mt-2 flex gap-4 text-[11px]">
                     <div>
@@ -88,6 +91,27 @@ export function CharacterProfile({ personId, onClose }: CharacterProfileProps) {
                                 ${person.agentStatus.salary}/day
                             </span>
                         </div>
+                    )}
+                </div>
+
+                <div className="flex gap-2 py-2">
+                    {person.agentStatus && (
+                        <>
+                            <ActionButton onClick={() => {}}>
+                                REASSIGN
+                            </ActionButton>
+                            <ActionButton onClick={() => {}}>
+                                ADD TO SQUAD
+                            </ActionButton>
+                            <ActionButton onClick={() => {}}>MOVE</ActionButton>
+                            <ActionButton onClick={() => {}}>FIRE</ActionButton>
+                            <ActionButton
+                                variant="destructive"
+                                onClick={() => {}}
+                            >
+                                TERMINATE
+                            </ActionButton>
+                        </>
                     )}
                 </div>
             </Panel>
