@@ -1,10 +1,14 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { afterEach, vi } from "vitest";
 import PlotDetailPanel from "./PlotDetailPanel";
 import { useGameStore } from "../../store/gameStore";
 
 vi.mock("../../store/gameStore");
+
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 describe("PlotDetailPanel", () => {
     it("renders a detail placeholder when no plot is selected", () => {
@@ -17,7 +21,15 @@ describe("PlotDetailPanel", () => {
 
     it("shows LAUNCH PLOT for available plots and calls startPlot", async () => {
         const startPlot = vi.fn();
-        const storeState = { startPlot } as any;
+        const storeState = {
+            startPlot,
+            gameState: {
+                date: 0,
+                zones: {},
+                nations: {},
+                governingOrganizations: {},
+            },
+        } as any;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         vi.mocked(useGameStore).mockImplementation((selector: any) =>
             selector(storeState),
@@ -48,7 +60,124 @@ describe("PlotDetailPanel", () => {
         expect(startPlot).toHaveBeenCalledWith(def.id);
     });
 
-    it("shows assigned and available agents and wires assign/remove/cancel", async () => {
+    it("shows requirements help in a tooltip", () => {
+        vi.useFakeTimers();
+
+        const startPlot = vi.fn();
+        const storeState = {
+            startPlot,
+            gameState: {
+                date: 0,
+                zones: {},
+                nations: {},
+                governingOrganizations: {},
+            },
+        } as any;
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector(storeState),
+        );
+
+        const def = {
+            id: "plot-1",
+            name: "Plot One",
+            description: "x",
+            tier: 1,
+            category: "cat",
+            requirements: { agentCount: 1, researchIds: ["counterfeiter"] },
+            stages: [{ durationDays: 3 }],
+        } as any;
+
+        render(
+            <PlotDetailPanel
+                enriched={{ definition: def, status: "available" } as any}
+                unlockedResearchIds={[]}
+            />,
+        );
+
+        fireEvent.mouseOver(screen.getByLabelText("Requirements help"));
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+
+        expect(
+            screen.getByRole("tooltip", {
+                name: /Use this section to confirm agent/i,
+            }),
+        ).toBeInTheDocument();
+    });
+
+    it("requires a target zone for zone-targeted plots and launches with the selected zone", async () => {
+        const startPlot = vi.fn();
+        const storeState = {
+            startPlot,
+            gameState: {
+                date: 0,
+                zones: {
+                    "zone-1": {
+                        id: "zone-1",
+                        name: "Albion Central",
+                        nationId: "nation-1",
+                        governingOrganizationId: "org-1",
+                        intelLevel: 48,
+                    },
+                    "zone-2": {
+                        id: "zone-2",
+                        name: "Carpathia Fringe",
+                        nationId: "nation-2",
+                        governingOrganizationId: "org-2",
+                        intelLevel: 12,
+                    },
+                },
+                nations: {
+                    "nation-1": { id: "nation-1", name: "Albion" },
+                    "nation-2": { id: "nation-2", name: "Carpathia" },
+                },
+                governingOrganizations: {
+                    "org-1": { id: "org-1", name: "Civic Directorate" },
+                    "org-2": { id: "org-2", name: "Frontier Bureau" },
+                },
+            },
+        } as any;
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector(storeState),
+        );
+
+        const def = {
+            id: "plot-zone",
+            name: "Reconnaissance",
+            description: "Gather intelligence on a foreign zone.",
+            tier: 1,
+            category: "military-operations",
+            requirements: { agentCount: 1, researchIds: [], zoneCount: 1 },
+            stages: [{ durationDays: 3 }],
+        } as any;
+
+        render(
+            <PlotDetailPanel
+                enriched={{ definition: def, status: "available" } as any}
+                unlockedResearchIds={[]}
+            />,
+        );
+
+        const launchButton = screen.getByRole("button", {
+            name: /LAUNCH PLOT/i,
+        });
+        expect(launchButton).toBeDisabled();
+
+        await userEvent.selectOptions(
+            screen.getByLabelText(/Target zone/i),
+            "zone-2",
+        );
+
+        expect(screen.getByText(/Intel level LOW/i)).toBeInTheDocument();
+        expect(launchButton).not.toBeDisabled();
+
+        await userEvent.click(launchButton);
+        expect(startPlot).toHaveBeenCalledWith("plot-zone", "zone-2");
+    });
+
+    it("assigns available agents through the picker and confirms before canceling", async () => {
         const assignAgentToPlot = vi.fn();
         const removeAgentFromPlot = vi.fn();
         const cancelPlot = vi.fn();
@@ -110,18 +239,37 @@ describe("PlotDetailPanel", () => {
             person1.id,
         );
 
-        // available agent assign
-        expect(screen.getByText(/Agent Two/)).toBeInTheDocument();
-        const assignBtn = screen.getByRole("button", { name: /ASSIGN/i });
-        await userEvent.click(assignBtn);
+        // available agent assign via picker modal
+        const addAgentsBtn = screen.getByRole("button", {
+            name: /ADD AGENTS/i,
+        });
+        await userEvent.click(addAgentsBtn);
+
+        expect(
+            screen.getByRole("dialog", { name: /ADD AGENTS/i }),
+        ).toBeInTheDocument();
+        await userEvent.click(
+            screen.getByRole("button", { name: /Agent Two/i }),
+        );
+        await userEvent.click(
+            screen.getByRole("button", { name: /ASSIGN 1 AGENT/i }),
+        );
+
         expect(assignAgentToPlot).toHaveBeenCalledWith(
             activeRecord.id,
             person2.id,
         );
 
-        // cancel plot
+        // cancel plot opens confirmation first
         const cancelBtn = screen.getByRole("button", { name: /CANCEL PLOT/i });
         await userEvent.click(cancelBtn);
+        expect(cancelPlot).not.toHaveBeenCalled();
+
+        expect(
+            screen.getByRole("alertdialog", { name: /CANCEL PLOT/i }),
+        ).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole("button", { name: /CONFIRM/i }));
         expect(cancelPlot).toHaveBeenCalledWith(activeRecord.id);
     });
 });

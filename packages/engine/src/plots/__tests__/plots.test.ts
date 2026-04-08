@@ -79,6 +79,41 @@ test("startPlot creates a record and deducts money", () => {
     expect(state.empire.resources.money).toBe(900);
 });
 
+test("startPlot stores targetZoneId when provided", () => {
+    const state = makeState();
+    const config = makeConfig({
+        requirements: {
+            agentCount: 1,
+            zoneCount: 1,
+            resourceCosts: { money: 100 },
+            researchIds: [],
+        },
+    });
+
+    startPlot(state, "plot-a", config as any, "zone-9");
+
+    const records = Object.values(state.plots) as any[];
+    expect(records).toHaveLength(1);
+    expect(records[0].targetZoneId).toBe("zone-9");
+});
+
+test("startPlot is no-op when a zone-targeted plot has no target zone", () => {
+    const state = makeState();
+    const config = makeConfig({
+        requirements: {
+            agentCount: 1,
+            zoneCount: 1,
+            resourceCosts: { money: 100 },
+            researchIds: [],
+        },
+    });
+
+    startPlot(state, "plot-a", config as any);
+
+    expect(Object.keys(state.plots)).toHaveLength(0);
+    expect(state.empire.resources.money).toBe(1000);
+});
+
 test("startPlot is no-op if prerequisites not met", () => {
     const state = makeState();
     const config = makeConfig({

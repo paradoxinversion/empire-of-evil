@@ -70,6 +70,7 @@ export type GameStore = {
     cancelResearch: (researchId: string) => void;
     assignAgentToResearch: (researchId: string, agentId: string) => void;
     removeAgentFromResearch: (researchId: string, agentId: string) => void;
+    startPlot: (plotDefinitionId: string, targetZoneId?: string) => void;
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
     startActivity: (activityDefinitionId: string) => void;
@@ -284,7 +285,7 @@ export const useGameStore = create<GameStore>((set, get) => {
             );
         },
 
-        startPlot: (plotDefinitionId) => {
+        startPlot: (plotDefinitionId, targetZoneId) => {
             const { gameState } = get();
             if (!gameState) return;
             import("@empire-of-evil/engine")
@@ -294,6 +295,7 @@ export const useGameStore = create<GameStore>((set, get) => {
                             gameState,
                             plotDefinitionId,
                             BUNDLED_CONFIG,
+                            targetZoneId,
                         );
                     } else {
                         const def = (BUNDLED_CONFIG.plots as any[]).find(
@@ -312,6 +314,7 @@ export const useGameStore = create<GameStore>((set, get) => {
                             plotDefinitionId: plotDefinitionId,
                             currentStageIndex: 0,
                             assignedAgentIds: [],
+                            ...(targetZoneId ? { targetZoneId } : {}),
                             daysRemaining: days,
                             accumulatedSuccessScore: 0,
                             status: "active",
