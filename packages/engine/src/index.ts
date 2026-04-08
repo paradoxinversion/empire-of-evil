@@ -73,6 +73,13 @@ export {
 } from "./plots/index.js";
 
 export {
+    startActivity,
+    cancelActivity,
+    assignAgentToActivity,
+    removeAgentFromActivity,
+} from "./activities/index.js";
+
+export {
     createTile,
     createZone,
     createNation,

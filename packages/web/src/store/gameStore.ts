@@ -102,6 +102,10 @@ export type GameStore = {
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
     startActivity: (activityDefinitionId: string) => void;
+    startActivityWithAgent: (
+        activityDefinitionId: string,
+        agentId: string,
+    ) => void;
     cancelActivity: (activeActivityId: string) => void;
     assignAgentToActivity: (activityId: string, agentId: string) => void;
     removeAgentFromActivity: (activityId: string, agentId: string) => void;
@@ -491,6 +495,76 @@ export const useGameStore = create<GameStore>((set, get) => {
                         } as any;
                         gameState.activities[ap.id] = ap;
                     }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        startActivityWithAgent: (activityDefinitionId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    const beforeIds = new Set(
+                        Object.keys(gameState.activities ?? {}),
+                    );
+
+                    if (typeof m.startActivity === "function") {
+                        m.startActivity(
+                            gameState,
+                            activityDefinitionId,
+                            BUNDLED_CONFIG,
+                        );
+                    } else {
+                        const def = (BUNDLED_CONFIG.activities as any[]).find(
+                            (p) => p.id === activityDefinitionId,
+                        );
+                        if (!def) return;
+                        const id = `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+                        const ap = {
+                            id,
+                            activityDefinitionId,
+                            assignedAgentIds: [],
+                            daysRemaining: 1,
+                            status: "active",
+                        } as any;
+                        gameState.activities[ap.id] = ap;
+                    }
+
+                    let createdId: string | null = null;
+                    for (const [id, rec] of Object.entries(
+                        gameState.activities ?? {},
+                    )) {
+                        if (beforeIds.has(id)) continue;
+                        if (
+                            (rec as any).activityDefinitionId ===
+                            activityDefinitionId
+                        ) {
+                            createdId = id;
+                            break;
+                        }
+                    }
+
+                    if (createdId) {
+                        if (typeof m.assignAgentToActivity === "function") {
+                            m.assignAgentToActivity(
+                                gameState,
+                                createdId,
+                                agentId,
+                            );
+                        } else {
+                            const act = gameState.activities[createdId];
+                            if (
+                                act &&
+                                !act.assignedAgentIds.includes(agentId)
+                            ) {
+                                act.assignedAgentIds.push(agentId);
+                            }
+                        }
+                    }
+
                     set((s) => ({ version: s.version + 1 }));
                 })
                 .catch(() => {
