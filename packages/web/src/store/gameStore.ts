@@ -3,6 +3,17 @@ import {
     reassignAgentJob as reassignAgentJobEngine,
     fireAgent as fireAgentEngine,
     terminatePerson as terminatePersonEngine,
+    createSquadInState as createSquadInStateEngine,
+    renameSquad as renameSquadEngine,
+    setSquadHomeZone as setSquadHomeZoneEngine,
+    setSquadStandingOrder as setSquadStandingOrderEngine,
+    addAgentToSquad as addAgentToSquadEngine,
+    removeAgentFromSquad as removeAgentFromSquadEngine,
+    setSquadLeader as setSquadLeaderEngine,
+    disbandSquad as disbandSquadEngine,
+    addInnerCircleMember as addInnerCircleMemberEngine,
+    removeInnerCircleMember as removeInnerCircleMemberEngine,
+    reorderInnerCircleMembers as reorderInnerCircleMembersEngine,
 } from "@empire-of-evil/engine";
 import type {
     GameState,
@@ -69,6 +80,13 @@ export type GameStore = {
     resumeAfterInterrupt: () => void;
     createSquad: (name: string, homeZoneId?: string) => void;
     addAgentToSquad: (squadId: string, agentId: string) => void;
+    renameSquad: (squadId: string, name: string) => void;
+    setSquadHomeZone: (squadId: string, zoneId: string) => void;
+    setSquadLeader: (squadId: string, leaderId: string) => void;
+    disbandSquad: (squadId: string) => void;
+    addInnerCircleMember: (personId: string) => void;
+    removeInnerCircleMember: (personId: string) => void;
+    reorderInnerCircleMembers: (orderedIds: string[]) => void;
     reassignAgentJob: (agentId: string, job: AgentJob) => void;
     fireAgent: (agentId: string) => void;
     terminatePerson: (personId: string) => void;
@@ -200,26 +218,66 @@ export const useGameStore = create<GameStore>((set, get) => {
         createSquad: (name, homeZoneId) => {
             const { gameState } = get();
             if (!gameState) return;
-            import("@empire-of-evil/engine").then(({ createSquad }) => {
-                const squad = createSquad({
-                    name,
-                    ...(homeZoneId !== undefined ? { homeZoneId } : {}),
-                });
-                gameState.squads[squad.id] = squad;
-                set((s) => ({ version: s.version + 1 }));
-            });
+            const squad = createSquadInStateEngine(gameState, { name });
+            if (homeZoneId) {
+                setSquadHomeZoneEngine(gameState, squad.id, homeZoneId);
+            }
+            set((s) => ({ version: s.version + 1 }));
         },
 
         addAgentToSquad: (squadId, agentId) => {
             const { gameState } = get();
             if (!gameState) return;
-            const squad = gameState.squads[squadId];
-            if (!squad || squad.memberIds.includes(agentId)) return;
-            squad.memberIds.push(agentId);
-            const person = gameState.persons[agentId];
-            if (person?.agentStatus) {
-                person.agentStatus.squadId = squadId;
-            }
+            addAgentToSquadEngine(gameState, squadId, agentId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        renameSquad: (squadId, name) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            renameSquadEngine(gameState, squadId, name);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadHomeZone: (squadId, zoneId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            setSquadHomeZoneEngine(gameState, squadId, zoneId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadLeader: (squadId, leaderId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            setSquadLeaderEngine(gameState, squadId, leaderId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        disbandSquad: (squadId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            disbandSquadEngine(gameState, squadId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        addInnerCircleMember: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            addInnerCircleMemberEngine(gameState, personId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        removeInnerCircleMember: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            removeInnerCircleMemberEngine(gameState, personId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        reorderInnerCircleMembers: (orderedIds) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            reorderInnerCircleMembersEngine(gameState, orderedIds);
             set((s) => ({ version: s.version + 1 }));
         },
 
@@ -256,22 +314,14 @@ export const useGameStore = create<GameStore>((set, get) => {
         removeAgentFromSquad: (squadId, agentId) => {
             const { gameState } = get();
             if (!gameState) return;
-            const squad = gameState.squads[squadId];
-            if (!squad) return;
-            squad.memberIds = squad.memberIds.filter((id) => id !== agentId);
-            const person = gameState.persons[agentId];
-            if (person?.agentStatus?.squadId === squadId) {
-                delete person.agentStatus.squadId;
-            }
+            removeAgentFromSquadEngine(gameState, squadId, agentId);
             set((s) => ({ version: s.version + 1 }));
         },
 
         updateSquadOrders: (squadId, orders) => {
             const { gameState } = get();
             if (!gameState) return;
-            const squad = gameState.squads[squadId];
-            if (!squad) return;
-            squad.standingOrders = orders;
+            setSquadStandingOrderEngine(gameState, squadId, orders);
             set((s) => ({ version: s.version + 1 }));
         },
 

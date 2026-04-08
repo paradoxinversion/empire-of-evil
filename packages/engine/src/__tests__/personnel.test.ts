@@ -1,5 +1,20 @@
 import { expect, test } from "vitest";
-import { reassignAgentJob, fireAgent, terminatePerson } from "../index.js";
+import {
+    reassignAgentJob,
+    fireAgent,
+    terminatePerson,
+    createSquadInState,
+    renameSquad,
+    setSquadHomeZone,
+    setSquadStandingOrder,
+    addAgentToSquad,
+    removeAgentFromSquad,
+    setSquadLeader,
+    disbandSquad,
+    addInnerCircleMember,
+    removeInnerCircleMember,
+    reorderInnerCircleMembers,
+} from "../index.js";
 
 function makeState(overrides: Record<string, unknown> = {}): any {
     return {
@@ -242,4 +257,272 @@ test("terminatePerson is idempotent for already-dead persons", () => {
     });
     expect(() => terminatePerson(state, "a1")).not.toThrow();
     expect(state.persons.a1.dead).toBe(true);
+});
+
+test("createSquadInState creates and stores a new squad", () => {
+    const state = makeState();
+
+    const squad = createSquadInState(state, { name: "Night Shift" });
+
+    expect(squad.name).toBe("Night Shift");
+    expect(state.squads[squad.id]).toEqual(squad);
+    expect(squad.memberIds).toEqual([]);
+});
+
+test("renameSquad updates squad name", () => {
+    const state = makeState({
+        squads: {
+            s1: { id: "s1", name: "Old Name", memberIds: [] },
+        },
+    });
+
+    renameSquad(state, "s1", "New Name");
+
+    expect(state.squads.s1.name).toBe("New Name");
+});
+
+test("setSquadHomeZone sets valid zone id", () => {
+    const state = makeState({
+        zones: {
+            z1: {
+                id: "z1",
+                name: "Capital",
+                nationId: "n1",
+                governingOrganizationId: "empire",
+                tileIds: [],
+                buildingIds: [],
+                generationWealth: 0,
+                economicOutput: 0,
+                population: 0,
+                intelLevel: 0,
+                taxRate: 0.1,
+                activeEffectIds: [],
+            },
+        },
+        squads: {
+            s1: { id: "s1", name: "Night Shift", memberIds: [] },
+        },
+    });
+
+    setSquadHomeZone(state, "s1", "z1");
+
+    expect(state.squads.s1.homeZoneId).toBe("z1");
+});
+
+test("setSquadStandingOrder updates standing order", () => {
+    const state = makeState({
+        squads: {
+            s1: { id: "s1", name: "Night Shift", memberIds: [] },
+        },
+    });
+
+    setSquadStandingOrder(state, "s1", "RUN_RECONNAISSANCE");
+
+    expect(state.squads.s1.standingOrders).toBe("RUN_RECONNAISSANCE");
+});
+
+test("addAgentToSquad sets membership and agent squadId", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+                agentStatus: { job: "operative", salary: 10 },
+            },
+        },
+        squads: {
+            s1: { id: "s1", name: "Night Shift", memberIds: [] },
+        },
+    });
+
+    addAgentToSquad(state, "s1", "a1");
+
+    expect(state.squads.s1.memberIds).toEqual(["a1"]);
+    expect(state.persons.a1.agentStatus?.squadId).toBe("s1");
+});
+
+test("removeAgentFromSquad removes membership and clears leader and agent squadId", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+                agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+            },
+        },
+        squads: {
+            s1: {
+                id: "s1",
+                name: "Night Shift",
+                memberIds: ["a1"],
+                leaderId: "a1",
+            },
+        },
+    });
+
+    removeAgentFromSquad(state, "s1", "a1");
+
+    expect(state.squads.s1.memberIds).toEqual([]);
+    expect(state.squads.s1.leaderId).toBeUndefined();
+    expect(state.persons.a1.agentStatus?.squadId).toBeUndefined();
+});
+
+test("setSquadLeader requires existing member", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: { leadership: 70 },
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+                agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+            },
+        },
+        squads: {
+            s1: {
+                id: "s1",
+                name: "Night Shift",
+                memberIds: ["a1"],
+            },
+        },
+    });
+
+    setSquadLeader(state, "s1", "a1");
+
+    expect(state.squads.s1.leaderId).toBe("a1");
+});
+
+test("disbandSquad removes squad and clears member squad references", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+                agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+            },
+        },
+        squads: {
+            s1: {
+                id: "s1",
+                name: "Night Shift",
+                memberIds: ["a1"],
+                leaderId: "a1",
+            },
+        },
+    });
+
+    disbandSquad(state, "s1");
+
+    expect(state.squads.s1).toBeUndefined();
+    expect(state.persons.a1.agentStatus?.squadId).toBeUndefined();
+});
+
+test("addInnerCircleMember enforces uniqueness and agent requirement", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+                agentStatus: { job: "operative", salary: 10 },
+            },
+        },
+    });
+
+    addInnerCircleMember(state, "a1");
+    addInnerCircleMember(state, "a1");
+
+    expect(state.empire.innerCircleIds).toEqual(["a1"]);
+});
+
+test("removeInnerCircleMember removes existing member", () => {
+    const state = makeState({
+        empire: {
+            id: "empire",
+            overlordId: "",
+            petId: "",
+            resources: { money: 1000, science: 0, infrastructure: 0 },
+            evil: { actual: 0, perceived: 0 },
+            innerCircleIds: ["a1", "a2"],
+            unlockedPlotIds: [],
+            unlockedActivityIds: [],
+            unlockedResearchIds: [],
+        },
+    });
+
+    removeInnerCircleMember(state, "a1");
+
+    expect(state.empire.innerCircleIds).toEqual(["a2"]);
+});
+
+test("reorderInnerCircleMembers reorders list exactly", () => {
+    const state = makeState({
+        empire: {
+            id: "empire",
+            overlordId: "",
+            petId: "",
+            resources: { money: 1000, science: 0, infrastructure: 0 },
+            evil: { actual: 0, perceived: 0 },
+            innerCircleIds: ["a1", "a2", "a3"],
+            unlockedPlotIds: [],
+            unlockedActivityIds: [],
+            unlockedResearchIds: [],
+        },
+    });
+
+    reorderInnerCircleMembers(state, ["a3", "a1", "a2"]);
+
+    expect(state.empire.innerCircleIds).toEqual(["a3", "a1", "a2"]);
 });
