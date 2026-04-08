@@ -129,7 +129,6 @@ export const generateWorld = (
             zoneOrgLookup[zoneId] = orgId;
         }
     }
-    zoneOrgLookup[empireOriginZoneId] = empireOrgId;
 
     // Phase 7: Population
     const avgZoneSize =
@@ -272,12 +271,13 @@ export const generateWorld = (
         generationWealth: 0,
     });
     empireOriginZone.intelLevel = 75;
-    zones[empireOriginZoneId] = empireOriginZone;
+    zones[empireOriginZone.id] = empireOriginZone;
     // make the empire start tile a new zone
-    tiles[empireOriginTile].zoneId = empireOriginZoneId;
+    tiles[empireOriginTile].zoneId = empireOriginZone.id;
+    tiles[empireOriginTile].governingOrganizationId = empireOrgId;
     // Add empire origin's buildings (HQ) to its zone
-    if (zones[empireOriginZoneId]) {
-        zones[empireOriginZoneId]!.buildingIds.push(empireInit.hqBuildingId);
+    if (zones[empireOriginZone.id]) {
+        zones[empireOriginZone.id]!.buildingIds.push(empireInit.hqBuildingId);
     }
 
     // Assemble nations record

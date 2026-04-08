@@ -164,4 +164,27 @@ describe("generateWorld integration", () => {
             expect(state.empire.unlockedActivityIds).toContain(id);
         }
     });
+
+    test("exactly one tile resolves to Empire control at game start", () => {
+        const state = generateWorld({ ...smallParams, seed: 1 }, config);
+
+        const empireTiles = Object.values(state.tiles).filter((tile) => {
+            if (!tile.zoneId) return false;
+            const zone = state.zones[tile.zoneId];
+            return zone?.governingOrganizationId === state.empire.id;
+        });
+
+        expect(empireTiles).toHaveLength(1);
+    });
+
+    test("every zoned tile appears in its zone tileIds list", () => {
+        const state = generateWorld({ ...smallParams, seed: 1 }, config);
+
+        for (const tile of Object.values(state.tiles)) {
+            if (!tile.zoneId) continue;
+            const zone = state.zones[tile.zoneId];
+            expect(zone).toBeDefined();
+            expect(zone?.tileIds).toContain(tile.id);
+        }
+    });
 });
