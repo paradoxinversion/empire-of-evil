@@ -221,4 +221,67 @@ describe("SquadsTab", () => {
 
         expect(addAgentToSquad).toHaveBeenCalledWith("s1", "a1");
     });
+
+    it("updates standing plot when EXECUTE_STANDING_PLOT order is selected", async () => {
+        const user = userEvent.setup();
+        const setSquadStandingPlot = vi.fn();
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({ setSquadStandingPlot }),
+        );
+
+        vi.mocked(useGameState).mockReturnValue({
+            persons: {
+                a1: {
+                    id: "a1",
+                    name: "Agent One",
+                    zoneId: "z1",
+                    homeZoneId: "z1",
+                    governingOrganizationId: "empire",
+                    attributes: { leadership: 70 },
+                    skills: {},
+                    loyalties: {},
+                    intelLevel: 100,
+                    health: 100,
+                    money: 0,
+                    activeEffectIds: [],
+                    dead: false,
+                    agentStatus: { job: "operative", salary: 10 },
+                },
+            },
+            zones: {
+                z1: {
+                    id: "z1",
+                    name: "Capital",
+                },
+            },
+            plots: {
+                p1: {
+                    id: "p1",
+                    plotDefinitionId: "sabotage",
+                    currentStageIndex: 0,
+                    assignedAgentIds: [],
+                    daysRemaining: 5,
+                    accumulatedSuccessScore: 0,
+                    status: "active",
+                    targetZoneId: "z1",
+                },
+            },
+            squads: {
+                s1: {
+                    id: "s1",
+                    name: "Night Shift",
+                    memberIds: ["a1"],
+                    standingOrders: "EXECUTE_STANDING_PLOT",
+                },
+            },
+        } as any);
+
+        render(<SquadsTab onSelectPerson={() => {}} selectedPersonId={null} />);
+
+        await user.click(screen.getByText("Night Shift"));
+        await user.selectOptions(screen.getByLabelText(/standing plot/i), "p1");
+
+        expect(setSquadStandingPlot).toHaveBeenCalledWith("s1", "p1");
+    });
 });

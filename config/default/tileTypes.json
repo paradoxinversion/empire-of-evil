@@ -24,7 +24,7 @@
         "buildingRestrictions": ["bank"],
         "effects": ["heavily-slowed-movement", "defender-advantage"],
         "terrainConditions": {
-            "elevationMin": 0.70,
+            "elevationMin": 0.7,
             "elevationMax": 1.0,
             "moistureMin": 0.0,
             "moistureMax": 1.0,
@@ -59,7 +59,7 @@
         "effects": ["slowed-movement", "reduced-visibility"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.50,
+            "elevationMax": 0.5,
             "moistureMin": 0.78,
             "moistureMax": 1.0,
             "priority": 60
@@ -93,7 +93,7 @@
         "effects": ["combat-cover"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.45,
             "moistureMax": 1.0,
             "priority": 40
@@ -110,7 +110,7 @@
         "effects": ["slowed-movement", "reduced-visibility"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.55,
             "moistureMax": 0.78,
             "priority": 30
@@ -127,7 +127,7 @@
         "effects": [],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.25,
             "moistureMax": 0.55,
             "priority": 30
@@ -144,7 +144,7 @@
         "effects": ["slowed-movement"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.0,
             "moistureMax": 0.25,
             "priority": 30

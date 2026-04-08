@@ -56,7 +56,7 @@ test("settleResources applies building income/upkeep only for buildings on empir
                 zoneId: "z1",
                 tileId: "t2",
                 intelLevel: 0,
-                governingOrganizationId: "other",
+                governingOrganizationId: "empire-org",
                 activeEffectIds: [],
             },
             // Placed on tile t1 (in non-empire zone z1)

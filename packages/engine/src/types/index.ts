@@ -210,6 +210,7 @@ export interface Squad {
     leaderId?: string;
     homeZoneId?: string;
     standingOrders?: StandingOrder;
+    standingPlotId?: string;
 }
 
 // ─── GameState ────────────────────────────────────────────────────────────────

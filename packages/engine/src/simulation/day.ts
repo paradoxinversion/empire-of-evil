@@ -113,6 +113,19 @@ export const executeStandingOrders = (state: GameState): void => {
                 break;
             }
 
+            case "EXECUTE_STANDING_PLOT": {
+                const plotId = squad.standingPlotId;
+                if (!plotId) break;
+                const targetPlot = state.plots[plotId];
+                if (!targetPlot) break;
+                for (const memberId of activeMemberIds) {
+                    if (!targetPlot.assignedAgentIds.includes(memberId)) {
+                        targetPlot.assignedAgentIds.push(memberId);
+                    }
+                }
+                break;
+            }
+
             case "IDLE":
             default:
                 break;

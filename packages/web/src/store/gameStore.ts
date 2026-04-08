@@ -83,6 +83,7 @@ export type GameStore = {
     renameSquad: (squadId: string, name: string) => void;
     setSquadHomeZone: (squadId: string, zoneId: string) => void;
     setSquadLeader: (squadId: string, leaderId: string) => void;
+    setSquadStandingPlot: (squadId: string, plotId: string) => void;
     disbandSquad: (squadId: string) => void;
     addInnerCircleMember: (personId: string) => void;
     removeInnerCircleMember: (personId: string) => void;
@@ -250,6 +251,16 @@ export const useGameStore = create<GameStore>((set, get) => {
             const { gameState } = get();
             if (!gameState) return;
             setSquadLeaderEngine(gameState, squadId, leaderId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadStandingPlot: (squadId, plotId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const squad = gameState.squads[squadId];
+            if (!squad) return;
+            if (!gameState.plots[plotId]) return;
+            squad.standingPlotId = plotId;
             set((s) => ({ version: s.version + 1 }));
         },
 

@@ -57,7 +57,7 @@ test("getBuildingIncomeByZone attributes income to tile zone when tileId differs
                 zoneId: "z1",
                 tileId: "t2",
                 intelLevel: 0,
-                governingOrganizationId: "",
+                governingOrganizationId: "empire",
                 activeEffectIds: [],
             },
         },

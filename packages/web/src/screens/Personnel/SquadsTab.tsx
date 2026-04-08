@@ -51,12 +51,13 @@ export function SquadsTab({
     selectedPersonId,
 }: SquadsTabProps) {
     const gameState = useGameState();
-    const { persons, squads, zones } = gameState;
+    const { persons, squads, zones, plots } = gameState;
     const createSquad = useGameStore((s) => s.createSquad);
     const addAgentToSquad = useGameStore((s) => s.addAgentToSquad);
     const renameSquad = useGameStore((s) => s.renameSquad);
     const setSquadHomeZone = useGameStore((s) => s.setSquadHomeZone);
     const setSquadLeader = useGameStore((s) => s.setSquadLeader);
+    const setSquadStandingPlot = useGameStore((s) => s.setSquadStandingPlot);
     const updateSquadOrders = useGameStore((s) => s.updateSquadOrders);
     const disbandSquad = useGameStore((s) => s.disbandSquad);
     const removeAgentFromSquad = useGameStore((s) => s.removeAgentFromSquad);
@@ -331,6 +332,52 @@ export function SquadsTab({
                                             </option>
                                         ))}
                                     </select>
+                                    {selectedSquad.standingOrders ===
+                                    "EXECUTE_STANDING_PLOT" ? (
+                                        <>
+                                            <span className="font-mono text-[10px] text-text-muted tracking-[0.06em]">
+                                                STANDING PLOT
+                                            </span>
+                                            <label
+                                                htmlFor="squad-standing-plot"
+                                                className="sr-only"
+                                            >
+                                                Standing plot
+                                            </label>
+                                            <select
+                                                id="squad-standing-plot"
+                                                aria-label="Standing plot"
+                                                value={
+                                                    selectedSquad.standingPlotId ??
+                                                    ""
+                                                }
+                                                onChange={(e) => {
+                                                    if (!e.target.value) return;
+                                                    setSquadStandingPlot(
+                                                        selectedSquad.id,
+                                                        e.target.value,
+                                                    );
+                                                }}
+                                                className={selectClass}
+                                            >
+                                                <option value="">
+                                                    SELECT PLOT
+                                                </option>
+                                                {Object.values(plots).map(
+                                                    (plot) => (
+                                                        <option
+                                                            key={plot.id}
+                                                            value={plot.id}
+                                                        >
+                                                            {
+                                                                plot.plotDefinitionId
+                                                            }
+                                                        </option>
+                                                    ),
+                                                )}
+                                            </select>
+                                        </>
+                                    ) : null}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <ActionButton
