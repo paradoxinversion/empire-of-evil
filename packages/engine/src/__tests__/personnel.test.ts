@@ -164,3 +164,82 @@ test("terminatePerson marks dead and removes active assignments", () => {
     expect(state.plots.p1.assignedAgentIds).toEqual([]);
     expect(state.research.r1.assignedAgentIds).toEqual([]);
 });
+
+test("reassignAgentJob throws when person does not exist", () => {
+    const state = makeState();
+    expect(() => reassignAgentJob(state, "missing", "operative")).toThrow(
+        "Person not found: missing",
+    );
+});
+
+test("reassignAgentJob throws when person is not an agent", () => {
+    const state = makeState({
+        persons: {
+            c1: {
+                id: "c1",
+                name: "Civilian",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 0,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+            },
+        },
+    });
+    expect(() => reassignAgentJob(state, "c1", "operative")).toThrow(
+        "Person is not an agent: c1",
+    );
+});
+
+test("fireAgent throws when person is not an agent", () => {
+    const state = makeState({
+        persons: {
+            c1: {
+                id: "c1",
+                name: "Civilian",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 0,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: false,
+            },
+        },
+    });
+    expect(() => fireAgent(state, "c1")).toThrow("Person is not an agent: c1");
+});
+
+test("terminatePerson is idempotent for already-dead persons", () => {
+    const state = makeState({
+        persons: {
+            a1: {
+                id: "a1",
+                name: "Agent One",
+                zoneId: "z1",
+                homeZoneId: "z1",
+                governingOrganizationId: "empire",
+                attributes: {},
+                skills: {},
+                loyalties: {},
+                intelLevel: 100,
+                health: 100,
+                money: 0,
+                activeEffectIds: [],
+                dead: true,
+            },
+        },
+    });
+    expect(() => terminatePerson(state, "a1")).not.toThrow();
+    expect(state.persons.a1.dead).toBe(true);
+});
