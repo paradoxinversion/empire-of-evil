@@ -54,8 +54,161 @@ describe("SquadsTab", () => {
         render(<SquadsTab onSelectPerson={() => {}} selectedPersonId={null} />);
 
         await user.click(screen.getByText("Night Shift"));
-        await user.click(screen.getByRole("button", { name: /disband squad/i }));
+        await user.click(
+            screen.getByRole("button", { name: /disband squad/i }),
+        );
 
         expect(disbandSquad).toHaveBeenCalledWith("s1");
+    });
+
+    it("updates selected squad name", async () => {
+        const user = userEvent.setup();
+        const renameSquad = vi.fn();
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({ renameSquad }),
+        );
+
+        vi.mocked(useGameState).mockReturnValue({
+            persons: {
+                a1: {
+                    id: "a1",
+                    name: "Agent One",
+                    zoneId: "z1",
+                    homeZoneId: "z1",
+                    governingOrganizationId: "empire",
+                    attributes: { leadership: 70 },
+                    skills: {},
+                    loyalties: {},
+                    intelLevel: 100,
+                    health: 100,
+                    money: 0,
+                    activeEffectIds: [],
+                    dead: false,
+                    agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+                },
+            },
+            zones: {},
+            squads: {
+                s1: {
+                    id: "s1",
+                    name: "Night Shift",
+                    memberIds: ["a1"],
+                },
+            },
+        } as any);
+
+        render(<SquadsTab onSelectPerson={() => {}} selectedPersonId={null} />);
+
+        await user.click(screen.getByText("Night Shift"));
+        await user.clear(screen.getByLabelText("Squad name"));
+        await user.type(screen.getByLabelText("Squad name"), "Red Choir");
+        await user.click(screen.getByRole("button", { name: /save squad/i }));
+
+        expect(renameSquad).toHaveBeenCalledWith("s1", "Red Choir");
+    });
+
+    it("updates home zone and leader on selected squad", async () => {
+        const user = userEvent.setup();
+        const setSquadHomeZone = vi.fn();
+        const setSquadLeader = vi.fn();
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({ setSquadHomeZone, setSquadLeader }),
+        );
+
+        vi.mocked(useGameState).mockReturnValue({
+            persons: {
+                a1: {
+                    id: "a1",
+                    name: "Agent One",
+                    zoneId: "z1",
+                    homeZoneId: "z1",
+                    governingOrganizationId: "empire",
+                    attributes: { leadership: 70 },
+                    skills: {},
+                    loyalties: {},
+                    intelLevel: 100,
+                    health: 100,
+                    money: 0,
+                    activeEffectIds: [],
+                    dead: false,
+                    agentStatus: { job: "operative", salary: 10, squadId: "s1" },
+                },
+            },
+            zones: {
+                z1: {
+                    id: "z1",
+                    name: "Capital",
+                },
+                z2: {
+                    id: "z2",
+                    name: "Outlands",
+                },
+            },
+            squads: {
+                s1: {
+                    id: "s1",
+                    name: "Night Shift",
+                    memberIds: ["a1"],
+                },
+            },
+        } as any);
+
+        render(<SquadsTab onSelectPerson={() => {}} selectedPersonId={null} />);
+
+        await user.click(screen.getByText("Night Shift"));
+        await user.selectOptions(screen.getByLabelText(/home zone/i), "z2");
+        await user.selectOptions(screen.getByLabelText(/squad leader/i), "a1");
+
+        expect(setSquadHomeZone).toHaveBeenCalledWith("s1", "z2");
+        expect(setSquadLeader).toHaveBeenCalledWith("s1", "a1");
+    });
+
+    it("adds members to selected squad via picker modal", async () => {
+        const user = userEvent.setup();
+        const addAgentToSquad = vi.fn();
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({ addAgentToSquad }),
+        );
+
+        vi.mocked(useGameState).mockReturnValue({
+            persons: {
+                a1: {
+                    id: "a1",
+                    name: "Agent One",
+                    zoneId: "z1",
+                    homeZoneId: "z1",
+                    governingOrganizationId: "empire",
+                    attributes: { leadership: 70 },
+                    skills: {},
+                    loyalties: {},
+                    intelLevel: 100,
+                    health: 100,
+                    money: 0,
+                    activeEffectIds: [],
+                    dead: false,
+                    agentStatus: { job: "operative", salary: 10 },
+                },
+            },
+            zones: {},
+            squads: {
+                s1: {
+                    id: "s1",
+                    name: "Night Shift",
+                    memberIds: [],
+                },
+            },
+        } as any);
+
+        render(<SquadsTab onSelectPerson={() => {}} selectedPersonId={null} />);
+
+        await user.click(screen.getByText("Night Shift"));
+        await user.click(screen.getByRole("button", { name: /add members/i }));
+        await user.click(screen.getByRole("button", { name: /agent one/i }));
+        await user.click(screen.getByRole("button", { name: /assign 1 agent/i }));
+
+        expect(addAgentToSquad).toHaveBeenCalledWith("s1", "a1");
     });
 });

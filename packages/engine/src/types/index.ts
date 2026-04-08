@@ -200,7 +200,8 @@ export type StandingOrder =
     | "MAINTAIN_ACTIVITY"
     | "COUNTERINTELLIGENCE"
     | "MANAGE_STABILITY"
-    | "ESCORT_OVERLORD";
+    | "ESCORT_OVERLORD"
+    | "EXECUTE_STANDING_PLOT";
 
 export interface Squad {
     id: string;

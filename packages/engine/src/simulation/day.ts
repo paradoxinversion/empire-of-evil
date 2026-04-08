@@ -31,13 +31,16 @@ export const runDay = (state: GameState, config: Config): void => {
     // 6. Research advancement
     advanceResearch(state, config);
 
-    // 7. Resource settlement
+    // 7. Squad standing orders
+    executeStandingOrders(state);
+
+    // 8. Resource settlement
     settleResources(state, config);
 
-    // 8. CPU org actions
+    // 9. CPU org actions
     processCpuOrgs(state);
 
-    // 9. Event generation
+    // 10. Event generation
     generateEvents(state);
 };
 
@@ -46,6 +49,76 @@ export const runDay = (state: GameState, config: Config): void => {
 const tickEffects = (_state: GameState): void => {};
 
 const processBuildingOutput = (_state: GameState): void => {};
+
+export const executeStandingOrders = (state: GameState): void => {
+    for (const squad of Object.values(state.squads)) {
+        if (squad.memberIds.length === 0) continue;
+
+        const activeMemberIds = squad.memberIds.filter((memberId) => {
+            const person = state.persons[memberId];
+            return !!person && !person.dead && !!person.agentStatus;
+        });
+        if (activeMemberIds.length === 0) continue;
+
+        const fallbackZoneId = state.persons[activeMemberIds[0]]?.zoneId;
+        const zoneId = squad.homeZoneId ?? fallbackZoneId;
+        const zone = zoneId ? state.zones[zoneId] : undefined;
+        const order = squad.standingOrders ?? "IDLE";
+
+        switch (order) {
+            case "DEFEND_ZONE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 1);
+                }
+                break;
+
+            case "RUN_RECONNAISSANCE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 2);
+                }
+                break;
+
+            case "MAINTAIN_ACTIVITY": {
+                if (!zoneId) break;
+                const targetActivity = Object.values(state.activities).find(
+                    (activity) => activity.zoneId === zoneId,
+                );
+                if (!targetActivity) break;
+                for (const memberId of activeMemberIds) {
+                    if (!targetActivity.assignedAgentIds.includes(memberId)) {
+                        targetActivity.assignedAgentIds.push(memberId);
+                    }
+                }
+                break;
+            }
+
+            case "COUNTERINTELLIGENCE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 1);
+                }
+                break;
+
+            case "MANAGE_STABILITY":
+                if (zone) {
+                    zone.taxRate = Math.max(0, zone.taxRate - 0.01);
+                }
+                break;
+
+            case "ESCORT_OVERLORD": {
+                if (!zoneId) break;
+                const overlord = state.persons[state.empire.overlordId];
+                if (overlord && !overlord.dead) {
+                    overlord.zoneId = zoneId;
+                }
+                break;
+            }
+
+            case "IDLE":
+            default:
+                break;
+        }
+    }
+};
 
 export const settleResources = (state: GameState, config?: Config): void => {
     if (!config) return;

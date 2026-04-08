@@ -1,5 +1,10 @@
 import { createSquad } from "../factories/index.js";
-import type { AgentJob, GameState, Squad, StandingOrder } from "../types/index.js";
+import type {
+    AgentJob,
+    GameState,
+    Squad,
+    StandingOrder,
+} from "../types/index.js";
 import type { Person } from "../types/index.js";
 
 const getPersonOrThrow = (state: GameState, personId: string) => {
@@ -14,7 +19,8 @@ type AgentPerson = Person & {
 
 const getAgentOrThrow = (state: GameState, agentId: string): AgentPerson => {
     const person = getPersonOrThrow(state, agentId);
-    if (!person.agentStatus) throw new Error(`Person is not an agent: ${agentId}`);
+    if (!person.agentStatus)
+        throw new Error(`Person is not an agent: ${agentId}`);
     if (person.dead) throw new Error(`Person is dead: ${agentId}`);
     return person as AgentPerson;
 };
@@ -169,7 +175,9 @@ export const setSquadLeader = (
 
     const leadership = leader.attributes.leadership ?? 0;
     if (leadership < 1) {
-        throw new Error(`Leader does not meet leadership requirement: ${leaderId}`);
+        throw new Error(
+            `Leader does not meet leadership requirement: ${leaderId}`,
+        );
     }
 
     squad.leaderId = leaderId;
