@@ -14,6 +14,79 @@ export const getZone = (state: GameState, id: string): Zone => {
     return zone;
 };
 
+type ZoneSearchParams = {
+    id?: string;
+    name?: string;
+    nationId?: string;
+    governingOrganizationId?: string;
+};
+
+export const getZones = (
+    state: GameState,
+    searchParams: ZoneSearchParams,
+): Zone[] => {
+    return Object.values(state.zones).filter((zone) => {
+        if (searchParams.id && zone.id !== searchParams.id) return false;
+        if (searchParams.name && zone.name !== searchParams.name) return false;
+        if (searchParams.nationId && zone.nationId !== searchParams.nationId)
+            return false;
+        if (
+            searchParams.governingOrganizationId &&
+            zone.governingOrganizationId !==
+                searchParams.governingOrganizationId
+        )
+            return false;
+        return true;
+    });
+};
+
+export const getZoneTiles = (state: GameState, zoneId: string): string[] => {
+    return getZone(state, zoneId).tileIds;
+};
+
+export const getBuildingZoneId = (
+    state: GameState,
+    building: Building | { zoneId: string; tileId?: string },
+): string => {
+    const tileId = (building as any).tileId as string | undefined;
+    if (tileId) {
+        const tile = state.tiles[tileId];
+        if (tile && tile.zoneId) return tile.zoneId;
+    }
+    return building.zoneId;
+};
+
+type BuildingSearchParams = {
+    id?: string;
+    typeId?: string;
+    zoneId?: string;
+    tileId?: string;
+    governingOrganizationId?: string;
+};
+
+export const getBuildings = (
+    state: GameState,
+    searchParams: BuildingSearchParams,
+): Building[] => {
+    return Object.values(state.buildings).filter((b) => {
+        if (searchParams.id && b.id !== searchParams.id) return false;
+        if (searchParams.typeId && b.typeId !== searchParams.typeId)
+            return false;
+        if (searchParams.zoneId) {
+            const bZoneId = getBuildingZoneId(state, b as any);
+            if (bZoneId !== searchParams.zoneId) return false;
+        }
+        if (searchParams.tileId && b.tileId !== searchParams.tileId)
+            return false;
+        if (
+            searchParams.governingOrganizationId &&
+            b.governingOrganizationId !== searchParams.governingOrganizationId
+        )
+            return false;
+        return true;
+    });
+};
+
 export const getPersonsInZone = (state: GameState, zoneId: string): Person[] =>
     Object.values(state.persons).filter((p) => p.zoneId === zoneId && !p.dead);
 
@@ -62,8 +135,12 @@ export const getDailyBuildingIncome = (
     state: GameState,
     config: Config,
 ): number => {
+    const empireBuildings = getBuildings(state, {
+        governingOrganizationId: state.empire.id,
+    });
+
     const defs = new Map(config.buildings.map((b) => [b.id, b]));
-    return Object.values(state.buildings).reduce(
+    return empireBuildings.reduce(
         (sum, b) => sum + (defs.get(b.typeId)?.resourceOutput?.money ?? 0),
         0,
     );
@@ -75,7 +152,9 @@ export const getBuildingIncomeByZone = (
 ): Record<string, number> => {
     const defs = new Map(config.buildings.map((b) => [b.id, b]));
     const result: Record<string, number> = {};
-    for (const b of Object.values(state.buildings)) {
+    for (const b of getBuildings(state, {
+        governingOrganizationId: state.empire.id,
+    }) as Building[] as any) {
         const income = defs.get(b.typeId)?.resourceOutput?.money ?? 0;
         const zoneId = getBuildingZoneId(state, b as any);
         result[zoneId] = (result[zoneId] ?? 0) + income;
@@ -87,8 +166,11 @@ export const getDailyBuildingUpkeep = (
     state: GameState,
     config: Config,
 ): number => {
+    const empireBuildings = getBuildings(state, {
+        governingOrganizationId: state.empire.id,
+    });
     const defs = new Map(config.buildings.map((b) => [b.id, b]));
-    return Object.values(state.buildings).reduce(
+    return empireBuildings.reduce(
         (sum, b) => sum + (defs.get(b.typeId)?.upkeepPerDay ?? 0),
         0,
     );
@@ -100,24 +182,14 @@ export const getBuildingUpkeepByZone = (
 ): Record<string, number> => {
     const defs = new Map(config.buildings.map((b) => [b.id, b]));
     const result: Record<string, number> = {};
-    for (const b of Object.values(state.buildings)) {
+    for (const b of getBuildings(state, {
+        governingOrganizationId: state.empire.id,
+    }) as Building[] as any) {
         const upkeep = defs.get(b.typeId)?.upkeepPerDay ?? 0;
         const zoneId = getBuildingZoneId(state, b as any);
         result[zoneId] = (result[zoneId] ?? 0) + upkeep;
     }
     return result;
-};
-
-export const getBuildingZoneId = (
-    state: GameState,
-    building: Building | { zoneId: string; tileId?: string },
-): string => {
-    const tileId = (building as any).tileId as string | undefined;
-    if (tileId) {
-        const tile = state.tiles[tileId];
-        if (tile && tile.zoneId) return tile.zoneId;
-    }
-    return building.zoneId;
 };
 
 export const getDailyAgentSalaries = (state: GameState): number =>
@@ -201,10 +273,4 @@ export const getEmpireTiles = (state: GameState, zoneId?: string): string[] => {
         }
     }
     return Array.from(tileIds);
-};
-
-export const getZoneTiles = (state: GameState, zoneId: string): string[] => {
-    const zone = state.zones[zoneId];
-    if (!zone) throw new Error(`Zone not found: ${zoneId}`);
-    return zone.tileIds;
 };
