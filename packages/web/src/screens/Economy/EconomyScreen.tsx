@@ -8,6 +8,7 @@ import {
     Building,
 } from "@empire-of-evil/engine";
 import { useGameState } from "../../hooks/useGameState";
+import { useGameStore } from "../../store/gameStore";
 import { BUNDLED_CONFIG } from "../../store/gameStore";
 import { Panel } from "../../components/Panel/Panel";
 import { StatWidget } from "../../components/StatWidget/StatWidget";
@@ -52,6 +53,7 @@ const ZONE_ECONOMICS_COLUMNS = [
 
 export function EconomyScreen() {
     const gameState = useGameState();
+    const setZoneTaxRate = useGameStore((s) => s.setZoneTaxRate);
     const { buildings, zones, nations, empire, persons } = gameState;
 
     // ── Core calculations ──────────────────────────────────────────────────────
@@ -262,6 +264,48 @@ export function EconomyScreen() {
                             rows={taxZoneRows}
                             emptyText="No zones."
                         />
+                    )}
+
+                    {empireZones.length > 0 && (
+                        <div className="mt-3 space-y-2">
+                            <div className="font-mono text-[10px] tracking-[0.08em] text-text-muted">
+                                TAX RATE CONTROLS
+                            </div>
+                            {empireZones.map((zone) => {
+                                const taxPercent = Math.round(
+                                    zone.taxRate * 100,
+                                );
+                                return (
+                                    <label
+                                        key={zone.id}
+                                        className="flex items-center gap-2 text-[11px]"
+                                    >
+                                        <span className="min-w-20 text-text-secondary">
+                                            {zone.name}
+                                        </span>
+                                        <input
+                                            type="range"
+                                            min={0}
+                                            max={100}
+                                            step={1}
+                                            value={taxPercent}
+                                            aria-label={`Tax rate for ${zone.name}`}
+                                            onChange={(event) =>
+                                                setZoneTaxRate(
+                                                    zone.id,
+                                                    Number(event.target.value) /
+                                                        100,
+                                                )
+                                            }
+                                            className="flex-1"
+                                        />
+                                        <span className="font-mono text-text-primary w-9 text-right">
+                                            {taxPercent}%
+                                        </span>
+                                    </label>
+                                );
+                            })}
+                        </div>
                     )}
                 </Panel>
 

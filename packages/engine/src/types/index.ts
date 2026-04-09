@@ -84,6 +84,7 @@ export interface Person {
     activeEffectIds: string[];
     dead: boolean;
     agentStatus?: AgentStatus;
+    employedBuildingId?: string;
 }
 
 export interface GoverningOrganization {

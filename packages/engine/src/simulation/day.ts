@@ -2,7 +2,9 @@ import type { GameState } from "../types/index.js";
 import type { Config } from "../config/loader.js";
 import {
     getBuildingIncomeByZone,
+    getBuildingZoneId,
     getBuildingUpkeepByZone,
+    getZoneTaxIncome,
 } from "../state/queries.js";
 import { simulateCitizens } from "./citizens.js";
 import { advancePlots } from "../plots/index.js";
@@ -136,11 +138,35 @@ export const executeStandingOrders = (state: GameState): void => {
 export const settleResources = (state: GameState, config?: Config): void => {
     if (!config) return;
 
+    const EMPLOYED_OUTPUT = 10;
+    const UNEMPLOYED_OUTPUT = 5;
+
+    // Keep zone economic output aligned with current citizen employment before tax settlement.
+    for (const zone of Object.values(state.zones)) {
+        const zoneCitizens = Object.values(state.persons).filter((person) => {
+            if (person.dead || person.agentStatus) return false;
+            return person.zoneId === zone.id;
+        });
+
+        const employedCount = zoneCitizens.filter((person) => {
+            if (!person.employedBuildingId) return false;
+            const building = state.buildings[person.employedBuildingId];
+            if (!building) return false;
+            return getBuildingZoneId(state, building) === zone.id;
+        }).length;
+
+        const unemployedCount = zoneCitizens.length - employedCount;
+        zone.economicOutput =
+            employedCount * EMPLOYED_OUTPUT +
+            unemployedCount * UNEMPLOYED_OUTPUT;
+    }
+
     const incomeByZone = getBuildingIncomeByZone(state, config);
     const upkeepByZone = getBuildingUpkeepByZone(state, config);
 
     let empireIncome = 0;
     let empireUpkeep = 0;
+    let empireTaxIncome = 0;
 
     for (const [zoneId, income] of Object.entries(incomeByZone)) {
         const zone = state.zones[zoneId];
@@ -156,7 +182,13 @@ export const settleResources = (state: GameState, config?: Config): void => {
             empireUpkeep += upkeep;
     }
 
-    state.empire.resources.money += empireIncome - empireUpkeep;
+    for (const zone of Object.values(state.zones)) {
+        if (zone.governingOrganizationId !== state.empire.id) continue;
+        empireTaxIncome += getZoneTaxIncome(zone);
+    }
+
+    state.empire.resources.money +=
+        empireIncome + empireTaxIncome - empireUpkeep;
 };
 
 const processCpuOrgs = (_state: GameState): void => {};
