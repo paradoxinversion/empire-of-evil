@@ -19,6 +19,62 @@ describe("PlotDetailPanel", () => {
         ).toBeInTheDocument();
     });
 
+    it("keeps hook order stable when selection changes from empty to a plot", () => {
+        const consoleErrorSpy = vi
+            .spyOn(console, "error")
+            .mockImplementation(() => {});
+
+        const storeState = {
+            startPlot: vi.fn(),
+            cancelPlot: vi.fn(),
+            assignAgentToPlot: vi.fn(),
+            removeAgentFromPlot: vi.fn(),
+            gameState: {
+                date: 0,
+                zones: {},
+                nations: {},
+                governingOrganizations: {},
+            },
+        } as any;
+
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector(storeState),
+        );
+
+        const def = {
+            id: "plot-1",
+            name: "Plot One",
+            description: "x",
+            tier: 1,
+            category: "cat",
+            requirements: { agentCount: 1, researchIds: [] },
+            stages: [{ durationDays: 3 }],
+        } as any;
+
+        const { rerender } = render(
+            (<PlotDetailPanel enriched={null} />) as any,
+        );
+
+        rerender(
+            (
+                <PlotDetailPanel
+                    enriched={{ definition: def, status: "available" } as any}
+                />
+            ) as any,
+        );
+
+        expect(
+            screen.getByRole("button", { name: /LAUNCH PLOT/i }),
+        ).toBeInTheDocument();
+        expect(
+            consoleErrorSpy.mock.calls.some((call) =>
+                String(call[0]).includes("change in the order of Hooks"),
+            ),
+        ).toBe(false);
+
+        consoleErrorSpy.mockRestore();
+    });
+
     it("shows LAUNCH PLOT for available plots and calls startPlot", async () => {
         const startPlot = vi.fn();
         const storeState = {

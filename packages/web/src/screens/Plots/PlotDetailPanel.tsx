@@ -30,6 +30,13 @@ export default function PlotDetailPanel({
     const [isAgentPickerOpen, setIsAgentPickerOpen] = useState(false);
     const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null);
 
+    const startPlot = useGameStore((s) => s.startPlot);
+    const cancelPlot = useGameStore((s) => s.cancelPlot);
+    const assignAgentToPlot = useGameStore((s) => s.assignAgentToPlot);
+    const removeAgentFromPlot = useGameStore((s) => s.removeAgentFromPlot);
+    const gameState = useGameStore((s) => s.gameState);
+    const currentDay = gameState?.date ?? 0;
+
     if (!enriched) {
         return (
             <Panel>
@@ -42,13 +49,6 @@ export default function PlotDetailPanel({
 
     const def =
         "definition" in enriched ? enriched.definition : enriched.definition;
-
-    const startPlot = useGameStore((s) => s.startPlot);
-    const cancelPlot = useGameStore((s) => s.cancelPlot);
-    const assignAgentToPlot = useGameStore((s) => s.assignAgentToPlot);
-    const removeAgentFromPlot = useGameStore((s) => s.removeAgentFromPlot);
-    const gameState = useGameStore((s) => s.gameState);
-    const currentDay = gameState?.date ?? 0;
 
     // Precompute stage drivers and per-agent daily contribution for active plots
     const activeRecord =
