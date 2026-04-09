@@ -297,6 +297,17 @@ export const generateWorld = (
     const allPersons = { ...populationPersons, ...empireInit.persons };
     const allBuildings = { ...placedBuildings, ...empireInit.buildings };
 
+    // Rezone: persons and buildings created before the HQ zone ID was known still carry
+    // empireOriginZoneId; update them to the newly-generated HQ zone ID.
+    const hqZoneId = empireOriginZone.id;
+    for (const person of Object.values(allPersons)) {
+        if (person.zoneId === empireOriginZoneId) person.zoneId = hqZoneId;
+        if (person.homeZoneId === empireOriginZoneId)
+            person.homeZoneId = hqZoneId;
+    }
+    allBuildings[empireInit.hqBuildingId]!.zoneId = hqZoneId;
+    empireOriginZone.population = zonePops.get(empireOriginZoneId) ?? 0;
+
     type PlotEntry = { id: string; requirements?: { researchIds?: string[] } };
     type ActivityEntry = {
         id: string;

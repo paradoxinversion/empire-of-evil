@@ -2,6 +2,7 @@ import { describe, test, expect } from "vitest";
 import { join } from "node:path";
 import { generateWorld, WorldGenError } from "../index.js";
 import { loadConfig } from "../../config/loader.js";
+import { getPersonsInZone } from "../../state/queries.js";
 
 // Load the real default config once for all integration tests
 const configDir = join(process.cwd(), "../../config/default");
@@ -186,5 +187,17 @@ describe("generateWorld integration", () => {
             expect(zone).toBeDefined();
             expect(zone?.tileIds).toContain(tile.id);
         }
+    });
+
+    test("empire starting zone contains the overlord and pet", () => {
+        const state = generateWorld(smallParams, config);
+        const empireZone = Object.values(state.zones).find(
+            (z) => z.governingOrganizationId === state.empire.id,
+        );
+        expect(empireZone).toBeDefined();
+        const persons = getPersonsInZone(state, empireZone!.id);
+        const personIds = persons.map((p) => p.id);
+        expect(personIds).toContain(state.empire.overlordId);
+        expect(personIds).toContain(state.empire.petId);
     });
 });
