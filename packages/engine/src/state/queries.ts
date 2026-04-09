@@ -8,6 +8,12 @@ import type {
 } from "../types/index.js";
 import type { Config, ResearchProjectDefinition } from "../config/loader.js";
 
+type ResourceOutput = {
+    money: number;
+    science: number;
+    infrastructure: number;
+};
+
 export const getZone = (state: GameState, id: string): Zone => {
     const zone = state.zones[id];
     if (!zone) throw new Error(`Zone not found: ${id}`);
@@ -138,24 +144,87 @@ export const getDailyBuildingIncome = (
     const empireBuildings = getBuildings(state, {
         governingOrganizationId: state.empire.id,
     });
-
-    const defs = new Map(config.buildings.map((b) => [b.id, b]));
     return empireBuildings.reduce(
-        (sum, b) => sum + (defs.get(b.typeId)?.resourceOutput?.money ?? 0),
+        (sum, b) => sum + getCurrentBuildingOutput(state, config, b.id).money,
         0,
     );
+};
+
+export const getCurrentBuildingOutput = (
+    state: GameState,
+    config: Config,
+    buildingId: string,
+): ResourceOutput => {
+    const building = state.buildings[buildingId];
+    if (!building) {
+        return { money: 0, science: 0, infrastructure: 0 };
+    }
+
+    const definition = config.buildings.find((d) => d.id === building.typeId);
+    const buildingZoneId = getBuildingZoneId(state, building);
+    const base: ResourceOutput = {
+        money: definition?.resourceOutput?.money ?? 0,
+        science: definition?.resourceOutput?.science ?? 0,
+        infrastructure: definition?.resourceOutput?.infrastructure ?? 0,
+    };
+
+    const assignedAgentIds = building.assignedAgentIds ?? [];
+    const employedCitizenIds = Object.values(state.persons)
+        .filter(
+            (person) =>
+                !person.dead &&
+                !person.agentStatus &&
+                person.employedBuildingId === buildingId,
+        )
+        .map((person) => person.id);
+    const workerIds = Array.from(
+        new Set([...assignedAgentIds, ...employedCitizenIds]),
+    );
+    const workers = workerIds
+        .map((id) => state.persons[id])
+        .filter(
+            (person): person is Person =>
+                Boolean(person) &&
+                !person.dead &&
+                person.zoneId === buildingZoneId,
+        );
+
+    if (workers.length === 0) {
+        return base;
+    }
+
+    const preferredSkills = definition?.preferredSkills ?? [];
+    const totalSkillScore = workers.reduce((sum, worker) => {
+        if (preferredSkills.length === 0) {
+            return sum;
+        }
+
+        const workerSkillTotal = preferredSkills.reduce(
+            (skillSum, skill) => skillSum + (worker.skills[skill] ?? 0),
+            0,
+        );
+
+        return sum + workerSkillTotal / preferredSkills.length;
+    }, 0);
+
+    const multiplier = 1 + workers.length * 0.1 + totalSkillScore / 500;
+
+    return {
+        money: Math.round(base.money * multiplier),
+        science: Math.round(base.science * multiplier),
+        infrastructure: Math.round(base.infrastructure * multiplier),
+    };
 };
 
 export const getBuildingIncomeByZone = (
     state: GameState,
     config: Config,
 ): Record<string, number> => {
-    const defs = new Map(config.buildings.map((b) => [b.id, b]));
     const result: Record<string, number> = {};
     for (const b of getBuildings(state, {
         governingOrganizationId: state.empire.id,
     }) as Building[] as any) {
-        const income = defs.get(b.typeId)?.resourceOutput?.money ?? 0;
+        const income = getCurrentBuildingOutput(state, config, b.id).money;
         const zoneId = getBuildingZoneId(state, b as any);
         result[zoneId] = (result[zoneId] ?? 0) + income;
     }

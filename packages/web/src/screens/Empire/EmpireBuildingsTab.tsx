@@ -34,7 +34,9 @@ function formatMoney(n: number): string {
     return "$" + n.toLocaleString("en-US");
 }
 
-function formatOutputResources(resources: BuildingRecord["outputResources"]): string {
+function formatOutputResources(
+    resources: BuildingRecord["outputResources"],
+): string {
     const parts: string[] = [];
     if (resources.money > 0) {
         parts.push(`$${resources.money.toLocaleString("en-US")}`);
