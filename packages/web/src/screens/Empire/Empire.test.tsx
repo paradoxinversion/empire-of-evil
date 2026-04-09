@@ -235,4 +235,22 @@ describe("EmpireScreen", () => {
 
         expect(screen.getByText("ZONE ALPHA (2)")).toBeInTheDocument();
     });
+
+    it("shows the empty state when filters remove all buildings", async () => {
+        const user = userEvent.setup();
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+        await user.type(
+            screen.getByPlaceholderText("SEARCH BUILDINGS..."),
+            "no-match",
+        );
+
+        expect(
+            screen.getByText("No empire buildings match the current controls."),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("empire-building-row"),
+        ).not.toBeInTheDocument();
+    });
 });
