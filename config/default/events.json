@@ -1,0 +1,55 @@
+[
+    {
+        "id": "uneventful-day",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "news_feed",
+        "title": "Uneventful Day",
+        "body": "Nothing of consequence happened today. Operations continue as normal.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.05
+        }
+    },
+    {
+        "id": "citizen-recruited",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Citizen Recruited",
+        "body": "A citizen in an empire zone has been flagged as a potential recruit.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.02
+        },
+        "choices": [
+            {
+                "label": "Recruit",
+                "effects": []
+            },
+            {
+                "label": "Ignore",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "payroll-advisory",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "The Payroll Problem - Stage 1: Payroll Advisory",
+        "body": "The empire's accounts are running low. Agent salaries are at risk.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "resource_below",
+            "resource": "money",
+            "threshold": 200
+        }
+    }
+]

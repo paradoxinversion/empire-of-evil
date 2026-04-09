@@ -43,7 +43,7 @@ export const runDay = (state: GameState, config: Config): void => {
     processCpuOrgs(state);
 
     // 10. Event generation
-    generateEvents(state);
+    generateEvents(state, config);
 };
 
 // TODO: implement each phase below

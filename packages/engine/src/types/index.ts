@@ -176,7 +176,13 @@ export interface EventChoice {
 
 export interface GameEvent {
     id: string;
+    definitionId?: string;
     category: EventCategory;
+    presentationTier?: "notification" | "event" | "landmark";
+    informationTier?:
+        | "news_feed"
+        | "intelligence_report"
+        | "intercepted_communication";
     title: string;
     body: string;
     relatedEntityIds: string[];

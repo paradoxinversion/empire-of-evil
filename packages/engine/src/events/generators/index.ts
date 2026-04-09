@@ -1,5 +1,55 @@
-import type { GameState } from '../../types/index.js';
+import type { GameState } from "../../types/index.js";
+import type { Config, EventDefinition } from "../../config/loader.js";
 
-export const generateEvents = (_state: GameState): void => {
-  // TODO: evaluate event triggers, push new GameEvents to state.pendingEvents
+function triggerMatches(state: GameState, eventDef: EventDefinition): boolean {
+    switch (eventDef.trigger.type) {
+        case "daily_chance":
+            return Math.random() < eventDef.trigger.chance;
+        case "resource_below": {
+            const resourceValue =
+                state.empire.resources[eventDef.trigger.resource];
+            return resourceValue < eventDef.trigger.threshold;
+        }
+        default:
+            return false;
+    }
+}
+
+function wasAlreadyFired(state: GameState, definitionId: string): boolean {
+    const activeMatch = state.pendingEvents.some(
+        (event) => event.definitionId === definitionId,
+    );
+    if (activeMatch) return true;
+    return state.eventLog.some(
+        (record) => record.event.definitionId === definitionId,
+    );
+}
+
+export const generateEvents = (state: GameState, config: Config): void => {
+    for (const eventDef of config.events) {
+        if (
+            eventDef.recurrence === "once" &&
+            wasAlreadyFired(state, eventDef.id)
+        ) {
+            continue;
+        }
+
+        if (!triggerMatches(state, eventDef)) {
+            continue;
+        }
+
+        state.pendingEvents.push({
+            id: `${eventDef.id}-${state.date}-${state.pendingEvents.length}`,
+            definitionId: eventDef.id,
+            category: eventDef.category,
+            presentationTier: eventDef.presentationTier,
+            informationTier: eventDef.informationTier,
+            title: eventDef.title,
+            body: eventDef.body,
+            relatedEntityIds: eventDef.relatedEntityIds ?? [],
+            requiresResolution: eventDef.requiresResolution,
+            choices: eventDef.choices,
+            createdOnDate: state.date,
+        });
+    }
 };

@@ -29,6 +29,86 @@ export const BuildingsSchema = z.array(
 );
 export const CitizenActionsSchema = z.array(z.object({}).passthrough());
 export const CpuBehaviorsSchema = z.array(z.object({}).passthrough());
+
+const EventCategorySchema = z.union([
+    z.literal("combat"),
+    z.literal("death"),
+    z.literal("player_choice"),
+    z.literal("evil_tier"),
+    z.literal("informational"),
+]);
+
+const EventPresentationTierSchema = z.union([
+    z.literal("notification"),
+    z.literal("event"),
+    z.literal("landmark"),
+]);
+
+const EventInformationTierSchema = z.union([
+    z.literal("news_feed"),
+    z.literal("intelligence_report"),
+    z.literal("intercepted_communication"),
+]);
+
+const EventRecurrenceSchema = z.union([
+    z.literal("once"),
+    z.literal("recurring"),
+]);
+
+const EventEffectSchema = z
+    .object({
+        type: z.string(),
+        chance: z.number().min(0).max(1),
+        parameters: z.record(z.unknown()).optional(),
+    })
+    .strict();
+
+const EventChoiceSchema = z
+    .object({
+        label: z.string().min(1),
+        effects: z.array(EventEffectSchema),
+    })
+    .strict();
+
+const EventTriggerSchema = z.discriminatedUnion("type", [
+    z
+        .object({
+            type: z.literal("daily_chance"),
+            chance: z.number().min(0).max(1),
+        })
+        .strict(),
+    z
+        .object({
+            type: z.literal("resource_below"),
+            resource: z.union([
+                z.literal("money"),
+                z.literal("science"),
+                z.literal("infrastructure"),
+            ]),
+            threshold: z.number(),
+        })
+        .strict(),
+]);
+
+export const EventDefinitionSchema = z
+    .object({
+        id: z.string().min(1),
+        category: EventCategorySchema,
+        presentationTier: EventPresentationTierSchema,
+        informationTier: EventInformationTierSchema,
+        title: z.string().min(1),
+        body: z.string().min(1),
+        requiresResolution: z.boolean(),
+        recurrence: EventRecurrenceSchema,
+        trigger: EventTriggerSchema,
+        relatedEntityIds: z.array(z.string()).optional(),
+        choices: z.array(EventChoiceSchema).optional(),
+    })
+    .strict();
+
+export const EventsSchema = z.array(EventDefinitionSchema);
+export type EventDefinition = z.infer<typeof EventDefinitionSchema>;
+
 export const EffectsSchema = z.array(z.object({}).passthrough());
 export const EvilTiersSchema = z.array(z.object({}).passthrough());
 export const PersonAttributesSchema = z.array(

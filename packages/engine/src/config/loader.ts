@@ -9,6 +9,7 @@ import {
     BuildingsSchema,
     CitizenActionsSchema,
     CpuBehaviorsSchema,
+    EventsSchema,
     EffectsSchema,
     EvilTiersSchema,
     PersonAttributesSchema,
@@ -20,7 +21,11 @@ import {
     WorldGenConfigSchema,
 } from "./schemas/index.js";
 import type { ResearchProjectDefinition } from "./schemas/index.js";
-export type { ResearchProjectDefinition } from "./schemas/index.js";
+import type { EventDefinition } from "./schemas/index.js";
+export type {
+    ResearchProjectDefinition,
+    EventDefinition,
+} from "./schemas/index.js";
 
 export type TileTypeDefinition = {
     icon: string;
@@ -89,6 +94,7 @@ export type Config = {
     activities: unknown[];
     citizenActions: unknown[];
     cpuBehaviors: unknown[];
+    events: EventDefinition[];
     effects: unknown[];
     evilTiers: unknown[];
     personAttributes: AttributeDefinition[];
@@ -125,6 +131,9 @@ export function loadConfig(configDir: string): Config {
         cpuBehaviors: CpuBehaviorsSchema.parse(
             readJson(configDir, "cpuBehaviors.json"),
         ) as unknown[],
+        events: EventsSchema.parse(
+            readJson(configDir, "events.json"),
+        ) as EventDefinition[],
         effects: EffectsSchema.parse(
             readJson(configDir, "effects.json"),
         ) as unknown[],

@@ -14,6 +14,7 @@ import { ScienceScreen } from './screens/Science/index';
 import { PlotsScreen } from './screens/Plots/index';
 import { ActivitiesScreen } from './screens/Activities/index';
 import { EventsScreen } from './screens/Events/index';
+import { InterruptQueueModal } from './components/InterruptQueueModal/InterruptQueueModal';
 
 function ActiveScreen() {
   const activeScreen = useNavigationStore(s => s.activeScreen);
@@ -44,6 +45,7 @@ export const App = () => {
   return (
     <AppShell>
       <ActiveScreen />
+      <InterruptQueueModal />
     </AppShell>
   );
 };
