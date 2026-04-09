@@ -82,7 +82,7 @@ function makeConfig(events: Config["events"]): Config {
 }
 
 describe("generateEvents", () => {
-    test("creates an event from daily_chance trigger", () => {
+    test("creates an interrupt event from daily_chance trigger", () => {
         const state = makeState();
         const config = makeConfig([
             {
@@ -92,7 +92,7 @@ describe("generateEvents", () => {
                 informationTier: "news_feed",
                 title: "Daily Test",
                 body: "Daily event fired",
-                requiresResolution: false,
+                requiresResolution: true,
                 recurrence: "recurring",
                 trigger: {
                     type: "daily_chance",
@@ -107,6 +107,38 @@ describe("generateEvents", () => {
 
         expect(state.pendingEvents).toHaveLength(1);
         expect(state.pendingEvents[0].title).toBe("Daily Test");
+        expect(state.eventLog).toHaveLength(0);
+
+        randomSpy.mockRestore();
+    });
+
+    test("adds non-blocking events to the event log instead of pending", () => {
+        const state = makeState();
+        const config = makeConfig([
+            {
+                id: "uneventful-day",
+                category: "informational",
+                presentationTier: "notification",
+                informationTier: "news_feed",
+                title: "Uneventful Day",
+                body: "Nothing happened.",
+                requiresResolution: false,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 1,
+                },
+            },
+        ]);
+
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
+
+        generateEvents(state, config);
+
+        expect(state.pendingEvents).toHaveLength(0);
+        expect(state.eventLog).toHaveLength(1);
+        expect(state.eventLog[0].event.title).toBe("Uneventful Day");
+        expect(state.eventLog[0].resolvedOnDate).toBe(state.date);
 
         randomSpy.mockRestore();
     });
@@ -154,6 +186,81 @@ describe("generateEvents", () => {
         randomSpy.mockRestore();
     });
 
+    test("fires evil_perceived_at_least trigger when perceived evil meets threshold", () => {
+        const state = makeState({
+            empire: {
+                id: "empire",
+                overlordId: "",
+                petId: "",
+                resources: { money: 100, science: 0, infrastructure: 0 },
+                evil: { actual: 30, perceived: 25 },
+                innerCircleIds: [],
+                unlockedPlotIds: [],
+                unlockedActivityIds: [],
+                unlockedResearchIds: [],
+            },
+        });
+
+        const config = makeConfig([
+            {
+                id: "evil-tier-irritant",
+                category: "evil_tier",
+                presentationTier: "landmark",
+                informationTier: "news_feed",
+                title: "They're Calling Us What?",
+                body: "The world has noticed.",
+                requiresResolution: true,
+                recurrence: "once",
+                trigger: {
+                    type: "evil_perceived_at_least",
+                    threshold: 20,
+                },
+            },
+        ]);
+
+        generateEvents(state, config);
+
+        expect(state.pendingEvents).toHaveLength(1);
+        expect(state.pendingEvents[0].definitionId).toBe("evil-tier-irritant");
+    });
+
+    test("does not fire evil_perceived_at_least trigger when below threshold", () => {
+        const state = makeState({
+            empire: {
+                id: "empire",
+                overlordId: "",
+                petId: "",
+                resources: { money: 100, science: 0, infrastructure: 0 },
+                evil: { actual: 5, perceived: 10 },
+                innerCircleIds: [],
+                unlockedPlotIds: [],
+                unlockedActivityIds: [],
+                unlockedResearchIds: [],
+            },
+        });
+
+        const config = makeConfig([
+            {
+                id: "evil-tier-irritant",
+                category: "evil_tier",
+                presentationTier: "landmark",
+                informationTier: "news_feed",
+                title: "They're Calling Us What?",
+                body: "The world has noticed.",
+                requiresResolution: true,
+                recurrence: "once",
+                trigger: {
+                    type: "evil_perceived_at_least",
+                    threshold: 20,
+                },
+            },
+        ]);
+
+        generateEvents(state, config);
+
+        expect(state.pendingEvents).toHaveLength(0);
+    });
+
     test("fires resource_below trigger when threshold is crossed", () => {
         const state = makeState({
             empire: {
@@ -184,7 +291,7 @@ describe("generateEvents", () => {
                 informationTier: "intelligence_report",
                 title: "Low Money",
                 body: "Money is low",
-                requiresResolution: false,
+                requiresResolution: true,
                 recurrence: "recurring",
                 trigger: {
                     type: "resource_below",

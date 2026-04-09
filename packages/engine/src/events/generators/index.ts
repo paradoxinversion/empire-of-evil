@@ -10,6 +10,8 @@ function triggerMatches(state: GameState, eventDef: EventDefinition): boolean {
                 state.empire.resources[eventDef.trigger.resource];
             return resourceValue < eventDef.trigger.threshold;
         }
+        case "evil_perceived_at_least":
+            return state.empire.evil.perceived >= eventDef.trigger.threshold;
         default:
             return false;
     }
@@ -38,8 +40,8 @@ export const generateEvents = (state: GameState, config: Config): void => {
             continue;
         }
 
-        state.pendingEvents.push({
-            id: `${eventDef.id}-${state.date}-${state.pendingEvents.length}`,
+        const event = {
+            id: `${eventDef.id}-${state.date}-${state.pendingEvents.length + state.eventLog.length}`,
             definitionId: eventDef.id,
             category: eventDef.category,
             presentationTier: eventDef.presentationTier,
@@ -50,6 +52,15 @@ export const generateEvents = (state: GameState, config: Config): void => {
             requiresResolution: eventDef.requiresResolution,
             choices: eventDef.choices,
             createdOnDate: state.date,
-        });
+        };
+
+        if (event.requiresResolution) {
+            state.pendingEvents.push(event);
+        } else {
+            state.eventLog.push({
+                event,
+                resolvedOnDate: state.date,
+            });
+        }
     }
 };

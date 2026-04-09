@@ -88,6 +88,12 @@ const EventTriggerSchema = z.discriminatedUnion("type", [
             threshold: z.number(),
         })
         .strict(),
+    z
+        .object({
+            type: z.literal("evil_perceived_at_least"),
+            threshold: z.number().min(0).max(100),
+        })
+        .strict(),
 ]);
 
 export const EventDefinitionSchema = z

@@ -38,7 +38,12 @@ export type AAREntry = {
     resourceEffects: string[];
 };
 
-function mapCategoryToFeedType(category: GameEvent["category"]): FeedEntryType {
+function mapCategoryToFeedType(
+    category: GameEvent["category"],
+    informationTier?: GameEvent["informationTier"],
+): FeedEntryType {
+    if (informationTier === "intercepted_communication") return "intercept";
+    if (informationTier === "intelligence_report") return "intel";
     switch (category) {
         case "combat":
             return "combat";
@@ -64,34 +69,40 @@ export function useEvents() {
 
     const feedEntries: EventSummary[] = useMemo(
         () =>
-            [...gameState.eventLog]
-                .reverse()
-                .map((record): EventSummary => {
-                    const event = record.event;
-                    return {
-                        id: event.id,
-                        day: record.resolvedOnDate,
-                        date: formatDay(record.resolvedOnDate),
-                        type: mapCategoryToFeedType(event.category),
-                        title: event.title,
-                        text: event.body,
-                        unread: false,
-                    };
-                }),
+            [...gameState.eventLog].reverse().map((record): EventSummary => {
+                const event = record.event;
+                return {
+                    id: event.id,
+                    day: record.resolvedOnDate,
+                    date: formatDay(record.resolvedOnDate),
+                    type: mapCategoryToFeedType(
+                        event.category,
+                        event.informationTier,
+                    ),
+                    title: event.title,
+                    text: event.body,
+                    unread: false,
+                };
+            }),
         [gameState.eventLog],
     );
 
     const pendingEvents: EventSummary[] = useMemo(
         () =>
-            gameState.pendingEvents.map((event): EventSummary => ({
-                id: event.id,
-                day: event.createdOnDate,
-                date: formatDay(event.createdOnDate),
-                type: mapCategoryToFeedType(event.category),
-                title: event.title,
-                text: event.body,
-                unread: true,
-            })),
+            gameState.pendingEvents.map(
+                (event): EventSummary => ({
+                    id: event.id,
+                    day: event.createdOnDate,
+                    date: formatDay(event.createdOnDate),
+                    type: mapCategoryToFeedType(
+                        event.category,
+                        event.informationTier,
+                    ),
+                    title: event.title,
+                    text: event.body,
+                    unread: true,
+                }),
+            ),
         [gameState.pendingEvents],
     );
 
