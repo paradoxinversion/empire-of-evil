@@ -311,6 +311,35 @@ describe("EmpireScreen", () => {
         expect(screen.getByText("0 / 2 STAFFED")).toBeInTheDocument();
     });
 
+    it("renders per-resource output in list and detail", async () => {
+        const user = userEvent.setup();
+
+        const withHeadquarters = structuredClone(mockGameState);
+        (withHeadquarters.zones as any).z1.buildingIds.push("b4");
+        (withHeadquarters.buildings as any).b4 = {
+            id: "b4",
+            name: "Central HQ",
+            typeId: "headquarters",
+            zoneId: "z1",
+            tileId: "t1",
+            intelLevel: 3,
+            governingOrganizationId: "empire-1",
+            activeEffectIds: [],
+        };
+
+        vi.mocked(useGameState).mockReturnValue(withHeadquarters as GameState);
+
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+
+        expect(screen.getByText("$10 | S5 | I5")).toBeInTheDocument();
+
+        await user.click(screen.getByRole("button", { name: /Central HQ/i }));
+
+        expect(screen.getAllByText("$10 | S5 | I5")).toHaveLength(2);
+    });
+
     it("unassigns agents from the selected building", async () => {
         const user = userEvent.setup();
         const removeAgentFromBuilding = vi.fn();
