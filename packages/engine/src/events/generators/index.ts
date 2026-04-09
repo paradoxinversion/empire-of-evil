@@ -1,6 +1,33 @@
 import type { GameState } from "../../types/index.js";
 import type { Config, EventDefinition } from "../../config/loader.js";
 
+function emitEvent(state: GameState, eventDef: EventDefinition): boolean {
+    const event = {
+        id: `${eventDef.id}-${state.date}-${state.pendingEvents.length + state.eventLog.length}`,
+        definitionId: eventDef.id,
+        category: eventDef.category,
+        presentationTier: eventDef.presentationTier,
+        informationTier: eventDef.informationTier,
+        title: eventDef.title,
+        body: eventDef.body,
+        relatedEntityIds: eventDef.relatedEntityIds ?? [],
+        requiresResolution: eventDef.requiresResolution,
+        choices: eventDef.choices,
+        createdOnDate: state.date,
+    };
+
+    if (event.requiresResolution) {
+        state.pendingEvents.push(event);
+        return true;
+    }
+
+    state.eventLog.push({
+        event,
+        resolvedOnDate: state.date,
+    });
+    return true;
+}
+
 function triggerMatches(state: GameState, eventDef: EventDefinition): boolean {
     switch (eventDef.trigger.type) {
         case "daily_chance":
@@ -28,6 +55,8 @@ function wasAlreadyFired(state: GameState, definitionId: string): boolean {
 }
 
 export const generateEvents = (state: GameState, config: Config): void => {
+    let emittedCount = 0;
+
     for (const eventDef of config.events) {
         if (
             eventDef.recurrence === "once" &&
@@ -40,27 +69,28 @@ export const generateEvents = (state: GameState, config: Config): void => {
             continue;
         }
 
-        const event = {
-            id: `${eventDef.id}-${state.date}-${state.pendingEvents.length + state.eventLog.length}`,
-            definitionId: eventDef.id,
-            category: eventDef.category,
-            presentationTier: eventDef.presentationTier,
-            informationTier: eventDef.informationTier,
-            title: eventDef.title,
-            body: eventDef.body,
-            relatedEntityIds: eventDef.relatedEntityIds ?? [],
-            requiresResolution: eventDef.requiresResolution,
-            choices: eventDef.choices,
-            createdOnDate: state.date,
-        };
-
-        if (event.requiresResolution) {
-            state.pendingEvents.push(event);
-        } else {
-            state.eventLog.push({
-                event,
-                resolvedOnDate: state.date,
-            });
+        if (emitEvent(state, eventDef)) {
+            emittedCount += 1;
         }
     }
+
+    if (emittedCount > 0) {
+        return;
+    }
+
+    const uneventful = config.events.find(
+        (eventDef) => eventDef.id === "uneventful-day",
+    );
+    if (!uneventful) {
+        return;
+    }
+
+    if (
+        uneventful.recurrence === "once" &&
+        wasAlreadyFired(state, uneventful.id)
+    ) {
+        return;
+    }
+
+    emitEvent(state, uneventful);
 };

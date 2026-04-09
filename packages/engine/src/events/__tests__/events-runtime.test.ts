@@ -306,6 +306,138 @@ describe("generateEvents", () => {
         expect(state.pendingEvents).toHaveLength(1);
         expect(state.pendingEvents[0].definitionId).toBe("low-money");
     });
+
+    test("logs uneventful-day when no events trigger", () => {
+        const state = makeState();
+        const config = makeConfig([
+            {
+                id: "critical-alert",
+                category: "player_choice",
+                presentationTier: "event",
+                informationTier: "news_feed",
+                title: "Critical Alert",
+                body: "Should not fire",
+                requiresResolution: true,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 0,
+                },
+                choices: [{ label: "Acknowledge", effects: [] }],
+            },
+            {
+                id: "uneventful-day",
+                category: "informational",
+                presentationTier: "notification",
+                informationTier: "news_feed",
+                title: "Uneventful Day",
+                body: "Nothing of consequence happened today.",
+                requiresResolution: false,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 0,
+                },
+            },
+        ]);
+
+        generateEvents(state, config);
+
+        expect(state.pendingEvents).toHaveLength(0);
+        expect(state.eventLog).toHaveLength(1);
+        expect(state.eventLog[0].event.definitionId).toBe("uneventful-day");
+        expect(state.eventLog[0].event.requiresResolution).toBe(false);
+    });
+
+    test("does not log uneventful-day when another event already fired", () => {
+        const state = makeState();
+        const config = makeConfig([
+            {
+                id: "critical-alert",
+                category: "player_choice",
+                presentationTier: "event",
+                informationTier: "news_feed",
+                title: "Critical Alert",
+                body: "Fires",
+                requiresResolution: true,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 1,
+                },
+                choices: [{ label: "Acknowledge", effects: [] }],
+            },
+            {
+                id: "uneventful-day",
+                category: "informational",
+                presentationTier: "notification",
+                informationTier: "news_feed",
+                title: "Uneventful Day",
+                body: "Nothing of consequence happened today.",
+                requiresResolution: false,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 0,
+                },
+            },
+        ]);
+
+        const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
+
+        generateEvents(state, config);
+
+        expect(state.pendingEvents).toHaveLength(1);
+        expect(state.pendingEvents[0].definitionId).toBe("critical-alert");
+        expect(state.eventLog).toHaveLength(0);
+
+        randomSpy.mockRestore();
+    });
+
+    test("repeats recurring uneventful-day fallback across days", () => {
+        const state = makeState({ date: 5 });
+        const config = makeConfig([
+            {
+                id: "critical-alert",
+                category: "player_choice",
+                presentationTier: "event",
+                informationTier: "news_feed",
+                title: "Critical Alert",
+                body: "Should not fire",
+                requiresResolution: true,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 0,
+                },
+                choices: [{ label: "Acknowledge", effects: [] }],
+            },
+            {
+                id: "uneventful-day",
+                category: "informational",
+                presentationTier: "notification",
+                informationTier: "news_feed",
+                title: "Uneventful Day",
+                body: "Nothing of consequence happened today.",
+                requiresResolution: false,
+                recurrence: "recurring",
+                trigger: {
+                    type: "daily_chance",
+                    chance: 0,
+                },
+            },
+        ]);
+
+        generateEvents(state, config);
+        expect(state.eventLog).toHaveLength(1);
+        expect(state.eventLog[0].event.definitionId).toBe("uneventful-day");
+
+        state.date = 6;
+        generateEvents(state, config);
+
+        expect(state.eventLog).toHaveLength(2);
+        expect(state.eventLog[1].event.definitionId).toBe("uneventful-day");
+    });
 });
 
 describe("resolveEvent", () => {
