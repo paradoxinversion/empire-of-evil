@@ -14,7 +14,8 @@
         },
         "canBeInhabited": false,
         "isOcean": true,
-        "wealthContribution": 0
+        "wealthContribution": 0,
+        "governingOrganizationId": ""
     },
     "mountain": {
         "icon": "▲",
@@ -23,14 +24,15 @@
         "buildingRestrictions": ["bank"],
         "effects": ["heavily-slowed-movement", "defender-advantage"],
         "terrainConditions": {
-            "elevationMin": 0.70,
+            "elevationMin": 0.7,
             "elevationMax": 1.0,
             "moistureMin": 0.0,
             "moistureMax": 1.0,
             "priority": 90
         },
         "canBeInhabited": true,
-        "wealthContribution": 15
+        "wealthContribution": 15,
+        "governingOrganizationId": ""
     },
     "coastal": {
         "icon": "≈",
@@ -46,7 +48,8 @@
             "priority": 50
         },
         "canBeInhabited": true,
-        "wealthContribution": 35
+        "wealthContribution": 35,
+        "governingOrganizationId": ""
     },
     "swamp": {
         "icon": "%",
@@ -56,13 +59,14 @@
         "effects": ["slowed-movement", "reduced-visibility"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.50,
+            "elevationMax": 0.5,
             "moistureMin": 0.78,
             "moistureMax": 1.0,
             "priority": 60
         },
         "canBeInhabited": true,
-        "wealthContribution": 20
+        "wealthContribution": 20,
+        "governingOrganizationId": ""
     },
     "tundra": {
         "icon": "*",
@@ -78,7 +82,8 @@
             "priority": 45
         },
         "canBeInhabited": true,
-        "wealthContribution": 12
+        "wealthContribution": 12,
+        "governingOrganizationId": ""
     },
     "city": {
         "icon": "#",
@@ -88,13 +93,14 @@
         "effects": ["combat-cover"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.45,
             "moistureMax": 1.0,
             "priority": 40
         },
         "canBeInhabited": true,
-        "wealthContribution": 80
+        "wealthContribution": 80,
+        "governingOrganizationId": ""
     },
     "forest": {
         "icon": "♣",
@@ -104,13 +110,14 @@
         "effects": ["slowed-movement", "reduced-visibility"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.55,
             "moistureMax": 0.78,
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 30
+        "wealthContribution": 30,
+        "governingOrganizationId": ""
     },
     "plains": {
         "icon": ".",
@@ -120,13 +127,14 @@
         "effects": [],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.25,
             "moistureMax": 0.55,
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 45
+        "wealthContribution": 45,
+        "governingOrganizationId": ""
     },
     "desert": {
         "icon": ":",
@@ -136,13 +144,14 @@
         "effects": ["slowed-movement"],
         "terrainConditions": {
             "elevationMin": 0.38,
-            "elevationMax": 0.70,
+            "elevationMax": 0.7,
             "moistureMin": 0.0,
             "moistureMax": 0.25,
             "priority": 30
         },
         "canBeInhabited": true,
-        "wealthContribution": 10
+        "wealthContribution": 10,
+        "governingOrganizationId": ""
     },
     "wilderness": {
         "icon": "?",
@@ -158,6 +167,7 @@
             "priority": 1
         },
         "canBeInhabited": true,
-        "wealthContribution": 20
+        "wealthContribution": 20,
+        "governingOrganizationId": ""
     }
 }

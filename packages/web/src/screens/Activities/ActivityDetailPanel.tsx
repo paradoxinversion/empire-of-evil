@@ -1,6 +1,7 @@
 import React from "react";
 import { Panel } from "../../components/Panel/Panel";
 import { ActionButton } from "../../components/ActionButton/ActionButton";
+import { useGameStore } from "../../store/gameStore";
 import type {
     EnrichedActiveActivity,
     EnrichedAvailableActivity,
@@ -35,6 +36,40 @@ export default function ActivityDetailPanel({
         "record" in (enriched as any)
             ? (enriched as EnrichedActiveActivity).record
             : null;
+
+    const startActivity = useGameStore((s) => s.startActivity);
+    const cancelActivity = useGameStore((s) => s.cancelActivity);
+    const assignAgentToActivity = useGameStore((s) => s.assignAgentToActivity);
+    const removeAgentFromActivity = useGameStore(
+        (s) => s.removeAgentFromActivity,
+    );
+    const startActivityWithAgent = useGameStore(
+        (s) => s.startActivityWithAgent,
+    );
+
+    const handleLaunch = () => {
+        if (!def?.id) return;
+        startActivity(def.id);
+    };
+
+    const handleCancel = () => {
+        if (!activeRecord?.id) return;
+        cancelActivity(activeRecord.id);
+    };
+
+    const handleAssign = (agentId: string) => {
+        if (activeRecord?.id) {
+            assignAgentToActivity(activeRecord.id, agentId);
+            return;
+        }
+        if (!def?.id) return;
+        startActivityWithAgent(def.id, agentId);
+    };
+
+    const handleRemove = (agentId: string) => {
+        if (!activeRecord?.id) return;
+        removeAgentFromActivity(activeRecord.id, agentId);
+    };
 
     return (
         <Panel title={def?.name ?? "Activity Detail"}>
@@ -85,7 +120,7 @@ export default function ActivityDetailPanel({
                                     </div>
                                     <ActionButton
                                         variant="destructive"
-                                        onClick={() => {}}
+                                        onClick={() => handleRemove(person.id)}
                                         className="text-[9px] py-0.5 px-1.5"
                                     >
                                         REMOVE
@@ -115,7 +150,7 @@ export default function ActivityDetailPanel({
                                 </span>
                                 <ActionButton
                                     variant="default"
-                                    onClick={() => {}}
+                                    onClick={() => handleAssign(person.id)}
                                     className="text-[9px] py-0.5 px-1.5"
                                 >
                                     ASSIGN
@@ -129,7 +164,7 @@ export default function ActivityDetailPanel({
                     {"record" in (enriched as any) ? (
                         <ActionButton
                             variant="destructive"
-                            onClick={() => {}}
+                            onClick={handleCancel}
                             className="w-full"
                         >
                             CANCEL ACTIVITY
@@ -137,7 +172,7 @@ export default function ActivityDetailPanel({
                     ) : (
                         <ActionButton
                             variant="primary"
-                            onClick={() => {}}
+                            onClick={handleLaunch}
                             className="w-full"
                         >
                             LAUNCH ACTIVITY

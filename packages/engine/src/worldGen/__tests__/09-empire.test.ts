@@ -2,6 +2,7 @@ import { describe, test, expect } from "vitest";
 import { initializeEmpire } from "../phases/09-empire.js";
 import type { PetDefinition } from "../../config/loader.js";
 import type { Person } from "../../types/index.js";
+import { seedFrom } from "../prng.js";
 
 const pets: PetDefinition[] = [
     { id: "cat", name: "Cat", description: "A cat." },
@@ -44,86 +45,59 @@ const populationPersons: Record<string, Person> = Object.fromEntries(
     [...empireZoneCitizens, ...otherZoneCitizens].map((p) => [p.id, p]),
 );
 
+function initEmpire(
+    seed: number,
+    params: { petTypeId?: string; startingResources?: typeof defaultResources },
+    population: Record<string, Person> = populationPersons,
+) {
+    const { prng } = seedFrom(seed);
+    return initializeEmpire(
+        "empire-zone",
+        "empire-tile",
+        "empire-org",
+        pets,
+        params,
+        defaultResources,
+        seed,
+        population,
+        prng,
+        [],
+        [],
+    );
+}
+
 describe("initializeEmpire", () => {
     test("overlord person exists in persons result", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            42,
-            populationPersons,
-        );
+        const result = initEmpire(42, {});
         expect(result.persons[result.overlordId]).toBeDefined();
     });
 
     test("overlord has agentStatus with job unassigned", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            1,
-            populationPersons,
-        );
+        const result = initEmpire(1, {});
         const overlord = result.persons[result.overlordId]!;
         expect(overlord.agentStatus).toBeDefined();
         expect(overlord.agentStatus!.job).toBe("unassigned");
     });
 
     test("pet person exists in persons result", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            5,
-            populationPersons,
-        );
+        const result = initEmpire(5, {});
         expect(result.persons[result.petId]).toBeDefined();
     });
 
     test("pet matches petTypeId when provided", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            { petTypeId: "tiger" },
-            defaultResources,
-            3,
-            populationPersons,
-        );
+        const result = initEmpire(3, { petTypeId: "tiger" });
         const pet = result.persons[result.petId]!;
         expect(pet.name).toBe("Tiger");
     });
 
     test("pet is randomly chosen when petTypeId is not provided", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            7,
-            populationPersons,
-        );
+        const result = initEmpire(7, {});
         const pet = result.persons[result.petId]!;
         expect(["Cat", "Tiger"]).toContain(pet.name);
     });
 
     test("headquarters building is placed in the empire zone", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            2,
-            populationPersons,
-        );
+        const result = initEmpire(2, {});
         expect(result.hqBuildingId).toBeDefined();
         const hq = result.buildings[result.hqBuildingId!];
         expect(hq).toBeDefined();
@@ -137,56 +111,24 @@ describe("initializeEmpire", () => {
             science: 50,
             infrastructure: 200,
         };
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            { startingResources: customResources },
-            defaultResources,
-            1,
-            populationPersons,
-        );
+        const result = initEmpire(1, { startingResources: customResources });
         expect(result.resources).toEqual(customResources);
     });
 
     test("starting resources fall back to defaults when not provided", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            1,
-            populationPersons,
-        );
+        const result = initEmpire(1, {});
         expect(result.resources).toEqual(defaultResources);
     });
 
     test("overlord and pet are placed in the empire zone", () => {
-        const result = initializeEmpire(
-            "empire-zone",
-            "empire-org",
-            pets,
-            {},
-            defaultResources,
-            1,
-            populationPersons,
-        );
+        const result = initEmpire(1, {});
         expect(result.persons[result.overlordId]!.zoneId).toBe("empire-zone");
         expect(result.persons[result.petId]!.zoneId).toBe("empire-zone");
     });
 
     describe("subject setup", () => {
         test("starting zone citizens have governingOrganizationId set to empire org", () => {
-            const result = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                1,
-                populationPersons,
-            );
+            const result = initEmpire(1, {});
             for (const citizen of empireZoneCitizens) {
                 expect(
                     result.persons[citizen.id]!.governingOrganizationId,
@@ -195,15 +137,7 @@ describe("initializeEmpire", () => {
         });
 
         test("starting zone citizens have initial loyalty and recruited agents have elevated loyalty", () => {
-            const result = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                1,
-                populationPersons,
-            );
+            const result = initEmpire(1, {});
             for (const citizen of empireZoneCitizens) {
                 const person = result.persons[citizen.id]!;
                 if (person.agentStatus !== undefined) {
@@ -217,15 +151,7 @@ describe("initializeEmpire", () => {
         });
 
         test("citizens in other zones are not modified", () => {
-            const result = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                1,
-                populationPersons,
-            );
+            const result = initEmpire(1, {});
             for (const citizen of otherZoneCitizens) {
                 expect(result.persons[citizen.id]).toBeUndefined();
             }
@@ -234,15 +160,7 @@ describe("initializeEmpire", () => {
 
     describe("agent recruitment", () => {
         test("exactly 10 citizens are recruited as agents when zone has more than 10", () => {
-            const result = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                1,
-                populationPersons,
-            );
+            const result = initEmpire(1, {});
             const agents = empireZoneCitizens.filter(
                 (c) => result.persons[c.id]!.agentStatus !== undefined,
             );
@@ -250,15 +168,7 @@ describe("initializeEmpire", () => {
         });
 
         test("recruited agents have job unassigned and salary 0", () => {
-            const result = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                1,
-                populationPersons,
-            );
+            const result = initEmpire(1, {});
             const agents = empireZoneCitizens.filter(
                 (c) => result.persons[c.id]!.agentStatus !== undefined,
             );
@@ -278,12 +188,16 @@ describe("initializeEmpire", () => {
             );
             const result = initializeEmpire(
                 "empire-zone",
+                "empire-tile",
                 "empire-org",
                 pets,
                 {},
                 defaultResources,
                 1,
                 smallPop,
+                seedFrom(1).prng,
+                [],
+                [],
             );
             const citizens = Object.values(smallPop);
             const agents = citizens.filter(
@@ -304,36 +218,24 @@ describe("initializeEmpire", () => {
             );
             const result = initializeEmpire(
                 "empire-zone",
+                "empire-tile",
                 "empire-org",
                 pets,
                 {},
                 defaultResources,
                 1,
                 popWithDead,
+                seedFrom(1).prng,
+                [],
+                [],
             );
             expect(result.persons["dead-1"]!.agentStatus).toBeUndefined();
             expect(result.persons["dead-2"]!.agentStatus).toBeUndefined();
         });
 
         test("recruitment is deterministic for the same seed", () => {
-            const r1 = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                99,
-                populationPersons,
-            );
-            const r2 = initializeEmpire(
-                "empire-zone",
-                "empire-org",
-                pets,
-                {},
-                defaultResources,
-                99,
-                populationPersons,
-            );
+            const r1 = initEmpire(99, {});
+            const r2 = initEmpire(99, {});
             const agents1 = empireZoneCitizens
                 .filter((c) => r1.persons[c.id]!.agentStatus !== undefined)
                 .map((c) => c.id)

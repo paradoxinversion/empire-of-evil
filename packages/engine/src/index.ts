@@ -73,6 +73,18 @@ export {
 } from "./plots/index.js";
 
 export {
+    startActivity,
+    cancelActivity,
+    assignAgentToActivity,
+    removeAgentFromActivity,
+} from "./activities/index.js";
+
+export {
+    assignAgentToBuilding,
+    removeAgentFromBuilding,
+} from "./buildings/index.js";
+
+export {
     createTile,
     createZone,
     createNation,
@@ -82,3 +94,20 @@ export {
     createEffectInstance,
     createSquad,
 } from "./factories/index.js";
+
+export {
+    reassignAgentJob,
+    fireAgent,
+    terminatePerson,
+    createSquadInState,
+    renameSquad,
+    setSquadHomeZone,
+    setSquadStandingOrder,
+    addAgentToSquad,
+    removeAgentFromSquad,
+    setSquadLeader,
+    disbandSquad,
+    addInnerCircleMember,
+    removeInnerCircleMember,
+    reorderInnerCircleMembers,
+} from "./personnel/index.js";

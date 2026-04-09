@@ -27,6 +27,7 @@ export const startPlot = (
     state: GameState,
     plotDefinitionId: string,
     config: Config,
+    targetZoneId?: string,
 ): void => {
     const def = (config.plots as any[]).find((p) => p.id === plotDefinitionId);
     if (!def) throw new Error(`Plot definition not found: ${plotDefinitionId}`);
@@ -45,6 +46,8 @@ export const startPlot = (
 
     // resource cost
     const cost = def.requirements?.resourceCosts?.money ?? 0;
+    const requiredZoneCount = def.requirements?.zoneCount ?? 0;
+    if (requiredZoneCount > 0 && !targetZoneId) return;
     if (state.empire.resources.money < cost) return;
     state.empire.resources.money -= cost;
 
@@ -55,6 +58,7 @@ export const startPlot = (
         plotDefinitionId,
         currentStageIndex: 0,
         assignedAgentIds: [],
+        ...(targetZoneId ? { targetZoneId } : {}),
         daysRemaining: days,
         accumulatedSuccessScore: 0,
         status: "active",

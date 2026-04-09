@@ -2,7 +2,9 @@ import type { GameState } from "../types/index.js";
 import type { Config } from "../config/loader.js";
 import {
     getBuildingIncomeByZone,
+    getBuildingZoneId,
     getBuildingUpkeepByZone,
+    getZoneTaxIncome,
 } from "../state/queries.js";
 import { simulateCitizens } from "./citizens.js";
 import { advancePlots } from "../plots/index.js";
@@ -31,13 +33,16 @@ export const runDay = (state: GameState, config: Config): void => {
     // 6. Research advancement
     advanceResearch(state, config);
 
-    // 7. Resource settlement
+    // 7. Squad standing orders
+    executeStandingOrders(state);
+
+    // 8. Resource settlement
     settleResources(state, config);
 
-    // 8. CPU org actions
+    // 9. CPU org actions
     processCpuOrgs(state);
 
-    // 9. Event generation
+    // 10. Event generation
     generateEvents(state);
 };
 
@@ -47,14 +52,121 @@ const tickEffects = (_state: GameState): void => {};
 
 const processBuildingOutput = (_state: GameState): void => {};
 
+export const executeStandingOrders = (state: GameState): void => {
+    for (const squad of Object.values(state.squads)) {
+        if (squad.memberIds.length === 0) continue;
+
+        const activeMemberIds = squad.memberIds.filter((memberId) => {
+            const person = state.persons[memberId];
+            return !!person && !person.dead && !!person.agentStatus;
+        });
+        if (activeMemberIds.length === 0) continue;
+
+        const fallbackZoneId = state.persons[activeMemberIds[0]]?.zoneId;
+        const zoneId = squad.homeZoneId ?? fallbackZoneId;
+        const zone = zoneId ? state.zones[zoneId] : undefined;
+        const order = squad.standingOrders ?? "IDLE";
+
+        switch (order) {
+            case "DEFEND_ZONE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 1);
+                }
+                break;
+
+            case "RUN_RECONNAISSANCE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 2);
+                }
+                break;
+
+            case "MAINTAIN_ACTIVITY": {
+                if (!zoneId) break;
+                const targetActivity = Object.values(state.activities).find(
+                    (activity) => activity.zoneId === zoneId,
+                );
+                if (!targetActivity) break;
+                for (const memberId of activeMemberIds) {
+                    if (!targetActivity.assignedAgentIds.includes(memberId)) {
+                        targetActivity.assignedAgentIds.push(memberId);
+                    }
+                }
+                break;
+            }
+
+            case "COUNTERINTELLIGENCE":
+                if (zone) {
+                    zone.intelLevel = Math.min(100, zone.intelLevel + 1);
+                }
+                break;
+
+            case "MANAGE_STABILITY":
+                if (zone) {
+                    zone.taxRate = Math.max(0, zone.taxRate - 0.01);
+                }
+                break;
+
+            case "ESCORT_OVERLORD": {
+                if (!zoneId) break;
+                const overlord = state.persons[state.empire.overlordId];
+                if (overlord && !overlord.dead) {
+                    overlord.zoneId = zoneId;
+                }
+                break;
+            }
+
+            case "EXECUTE_STANDING_PLOT": {
+                const plotId = squad.standingPlotId;
+                if (!plotId) break;
+                const targetPlot = state.plots[plotId];
+                if (!targetPlot) break;
+                for (const memberId of activeMemberIds) {
+                    if (!targetPlot.assignedAgentIds.includes(memberId)) {
+                        targetPlot.assignedAgentIds.push(memberId);
+                    }
+                }
+                break;
+            }
+
+            case "IDLE":
+            default:
+                break;
+        }
+    }
+};
+
 export const settleResources = (state: GameState, config?: Config): void => {
     if (!config) return;
+
+    const EMPLOYED_OUTPUT = 10;
+    const UNEMPLOYED_OUTPUT = 5;
+
+    // Keep zone economic output aligned with current citizen employment before tax settlement.
+    for (const zone of Object.values(state.zones)) {
+        const zoneCitizens = Object.values(state.persons).filter((person) => {
+            if (person.dead || person.agentStatus) return false;
+            return person.zoneId === zone.id;
+        });
+
+        const employedCount = zoneCitizens.filter((person) => {
+            if (!person.employedBuildingId) return false;
+            const building = state.buildings[person.employedBuildingId];
+            if (!building) return false;
+            return getBuildingZoneId(state, building) === zone.id;
+        }).length;
+
+        const unemployedCount = zoneCitizens.length - employedCount;
+        zone.economicOutput =
+            employedCount * EMPLOYED_OUTPUT +
+            unemployedCount * UNEMPLOYED_OUTPUT;
+    }
 
     const incomeByZone = getBuildingIncomeByZone(state, config);
     const upkeepByZone = getBuildingUpkeepByZone(state, config);
 
     let empireIncome = 0;
     let empireUpkeep = 0;
+    let empireTaxIncome = 0;
 
     for (const [zoneId, income] of Object.entries(incomeByZone)) {
         const zone = state.zones[zoneId];
@@ -70,7 +182,13 @@ export const settleResources = (state: GameState, config?: Config): void => {
             empireUpkeep += upkeep;
     }
 
-    state.empire.resources.money += empireIncome - empireUpkeep;
+    for (const zone of Object.values(state.zones)) {
+        if (zone.governingOrganizationId !== state.empire.id) continue;
+        empireTaxIncome += getZoneTaxIncome(zone);
+    }
+
+    state.empire.resources.money +=
+        empireIncome + empireTaxIncome - empireUpkeep;
 };
 
 const processCpuOrgs = (_state: GameState): void => {};

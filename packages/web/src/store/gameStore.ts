@@ -1,9 +1,26 @@
 import { create } from "zustand";
+import {
+    reassignAgentJob as reassignAgentJobEngine,
+    fireAgent as fireAgentEngine,
+    terminatePerson as terminatePersonEngine,
+    createSquadInState as createSquadInStateEngine,
+    renameSquad as renameSquadEngine,
+    setSquadHomeZone as setSquadHomeZoneEngine,
+    setSquadStandingOrder as setSquadStandingOrderEngine,
+    addAgentToSquad as addAgentToSquadEngine,
+    removeAgentFromSquad as removeAgentFromSquadEngine,
+    setSquadLeader as setSquadLeaderEngine,
+    disbandSquad as disbandSquadEngine,
+    addInnerCircleMember as addInnerCircleMemberEngine,
+    removeInnerCircleMember as removeInnerCircleMemberEngine,
+    reorderInnerCircleMembers as reorderInnerCircleMembersEngine,
+} from "@empire-of-evil/engine";
 import type {
     GameState,
     GameEvent,
     WorldGenParams,
     StandingOrder,
+    AgentJob,
 } from "@empire-of-evil/engine";
 import type { Config, ResearchProjectDefinition } from "@empire-of-evil/engine";
 
@@ -63,6 +80,17 @@ export type GameStore = {
     resumeAfterInterrupt: () => void;
     createSquad: (name: string, homeZoneId?: string) => void;
     addAgentToSquad: (squadId: string, agentId: string) => void;
+    renameSquad: (squadId: string, name: string) => void;
+    setSquadHomeZone: (squadId: string, zoneId: string) => void;
+    setSquadLeader: (squadId: string, leaderId: string) => void;
+    setSquadStandingPlot: (squadId: string, plotId: string) => void;
+    disbandSquad: (squadId: string) => void;
+    addInnerCircleMember: (personId: string) => void;
+    removeInnerCircleMember: (personId: string) => void;
+    reorderInnerCircleMembers: (orderedIds: string[]) => void;
+    reassignAgentJob: (agentId: string, job: AgentJob) => void;
+    fireAgent: (agentId: string) => void;
+    terminatePerson: (personId: string) => void;
     removeAgentFromSquad: (squadId: string, agentId: string) => void;
     updateSquadOrders: (squadId: string, orders: StandingOrder) => void;
     setZoneTaxRate: (zoneId: string, taxRate: number) => void;
@@ -70,9 +98,21 @@ export type GameStore = {
     cancelResearch: (researchId: string) => void;
     assignAgentToResearch: (researchId: string, agentId: string) => void;
     removeAgentFromResearch: (researchId: string, agentId: string) => void;
+    startPlot: (plotDefinitionId: string, targetZoneId?: string) => void;
+    startPlotWithAgents: (
+        plotDefinitionId: string,
+        agentIds: string[],
+        targetZoneId?: string,
+    ) => void;
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
+    assignAgentToBuilding: (buildingId: string, agentId: string) => void;
+    removeAgentFromBuilding: (buildingId: string, agentId: string) => void;
     startActivity: (activityDefinitionId: string) => void;
+    startActivityWithAgent: (
+        activityDefinitionId: string,
+        agentId: string,
+    ) => void;
     cancelActivity: (activeActivityId: string) => void;
     assignAgentToActivity: (activityId: string, agentId: string) => void;
     removeAgentFromActivity: (activityId: string, agentId: string) => void;
@@ -190,48 +230,120 @@ export const useGameStore = create<GameStore>((set, get) => {
         createSquad: (name, homeZoneId) => {
             const { gameState } = get();
             if (!gameState) return;
-            import("@empire-of-evil/engine").then(({ createSquad }) => {
-                const squad = createSquad({
-                    name,
-                    ...(homeZoneId !== undefined ? { homeZoneId } : {}),
-                });
-                gameState.squads[squad.id] = squad;
-                set((s) => ({ version: s.version + 1 }));
-            });
+            const squad = createSquadInStateEngine(gameState, { name });
+            if (homeZoneId) {
+                setSquadHomeZoneEngine(gameState, squad.id, homeZoneId);
+            }
+            set((s) => ({ version: s.version + 1 }));
         },
 
         addAgentToSquad: (squadId, agentId) => {
             const { gameState } = get();
             if (!gameState) return;
+            addAgentToSquadEngine(gameState, squadId, agentId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        renameSquad: (squadId, name) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            renameSquadEngine(gameState, squadId, name);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadHomeZone: (squadId, zoneId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            setSquadHomeZoneEngine(gameState, squadId, zoneId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadLeader: (squadId, leaderId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            setSquadLeaderEngine(gameState, squadId, leaderId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        setSquadStandingPlot: (squadId, plotId) => {
+            const { gameState } = get();
+            if (!gameState) return;
             const squad = gameState.squads[squadId];
-            if (!squad || squad.memberIds.includes(agentId)) return;
-            squad.memberIds.push(agentId);
+            if (!squad) return;
+            if (!gameState.plots[plotId]) return;
+            squad.standingPlotId = plotId;
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        disbandSquad: (squadId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            disbandSquadEngine(gameState, squadId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        addInnerCircleMember: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            addInnerCircleMemberEngine(gameState, personId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        removeInnerCircleMember: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            removeInnerCircleMemberEngine(gameState, personId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        reorderInnerCircleMembers: (orderedIds) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            reorderInnerCircleMembersEngine(gameState, orderedIds);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        reassignAgentJob: (agentId, job) => {
+            const { gameState } = get();
+            if (!gameState) return;
             const person = gameState.persons[agentId];
-            if (person?.agentStatus) {
-                person.agentStatus.squadId = squadId;
-            }
+            if (!person?.agentStatus) return;
+            reassignAgentJobEngine(gameState, agentId, job);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        fireAgent: (agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const person = gameState.persons[agentId];
+            if (!person?.agentStatus) return;
+
+            fireAgentEngine(gameState, agentId);
+            set((s) => ({ version: s.version + 1 }));
+        },
+
+        terminatePerson: (personId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            const person = gameState.persons[personId];
+            if (!person || person.dead) return;
+
+            terminatePersonEngine(gameState, personId);
+
             set((s) => ({ version: s.version + 1 }));
         },
 
         removeAgentFromSquad: (squadId, agentId) => {
             const { gameState } = get();
             if (!gameState) return;
-            const squad = gameState.squads[squadId];
-            if (!squad) return;
-            squad.memberIds = squad.memberIds.filter((id) => id !== agentId);
-            const person = gameState.persons[agentId];
-            if (person?.agentStatus?.squadId === squadId) {
-                delete person.agentStatus.squadId;
-            }
+            removeAgentFromSquadEngine(gameState, squadId, agentId);
             set((s) => ({ version: s.version + 1 }));
         },
 
         updateSquadOrders: (squadId, orders) => {
             const { gameState } = get();
             if (!gameState) return;
-            const squad = gameState.squads[squadId];
-            if (!squad) return;
-            squad.standingOrders = orders;
+            setSquadStandingOrderEngine(gameState, squadId, orders);
             set((s) => ({ version: s.version + 1 }));
         },
 
@@ -284,7 +396,7 @@ export const useGameStore = create<GameStore>((set, get) => {
             );
         },
 
-        startPlot: (plotDefinitionId) => {
+        startPlot: (plotDefinitionId, targetZoneId) => {
             const { gameState } = get();
             if (!gameState) return;
             import("@empire-of-evil/engine")
@@ -294,6 +406,7 @@ export const useGameStore = create<GameStore>((set, get) => {
                             gameState,
                             plotDefinitionId,
                             BUNDLED_CONFIG,
+                            targetZoneId,
                         );
                     } else {
                         const def = (BUNDLED_CONFIG.plots as any[]).find(
@@ -312,6 +425,7 @@ export const useGameStore = create<GameStore>((set, get) => {
                             plotDefinitionId: plotDefinitionId,
                             currentStageIndex: 0,
                             assignedAgentIds: [],
+                            ...(targetZoneId ? { targetZoneId } : {}),
                             daysRemaining: days,
                             accumulatedSuccessScore: 0,
                             status: "active",
@@ -325,7 +439,72 @@ export const useGameStore = create<GameStore>((set, get) => {
                 });
         },
 
-        cancelPlot: (activePlotId) => {
+        startPlotWithAgents: (plotDefinitionId, agentIds, targetZoneId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    const beforeIds = new Set(
+                        Object.keys(gameState.plots ?? {}),
+                    );
+
+                    if (typeof m.startPlot === "function") {
+                        m.startPlot(
+                            gameState,
+                            plotDefinitionId,
+                            BUNDLED_CONFIG,
+                            targetZoneId,
+                        );
+
+                        const createdPlotId = Object.keys(
+                            gameState.plots ?? {},
+                        ).find((id) => !beforeIds.has(id));
+
+                        if (
+                            createdPlotId &&
+                            typeof m.assignAgentToPlot === "function"
+                        ) {
+                            for (const agentId of agentIds) {
+                                m.assignAgentToPlot(
+                                    gameState,
+                                    createdPlotId,
+                                    agentId,
+                                );
+                            }
+                        }
+                    } else {
+                        const def = (BUNDLED_CONFIG.plots as any[]).find(
+                            (p) => p.id === plotDefinitionId,
+                        );
+                        if (!def) return;
+                        const id = `plot-${Date.now().toString(36)}-${Math.random()
+                            .toString(36)
+                            .slice(2, 6)}`;
+                        const days =
+                            def?.stages?.[0]?.durationDays ??
+                            def?.durationDays ??
+                            1;
+                        const ap = {
+                            id,
+                            plotDefinitionId: plotDefinitionId,
+                            currentStageIndex: 0,
+                            assignedAgentIds: [...new Set(agentIds)],
+                            ...(targetZoneId ? { targetZoneId } : {}),
+                            daysRemaining: days,
+                            accumulatedSuccessScore: 0,
+                            status: "active",
+                        } as any;
+                        gameState.plots[ap.id] = ap;
+                    }
+
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        cancelPlot: (activePlotId: string) => {
             const { gameState } = get();
             if (!gameState) return;
             import("@empire-of-evil/engine")
@@ -362,6 +541,45 @@ export const useGameStore = create<GameStore>((set, get) => {
                 });
         },
 
+        assignAgentToBuilding: (buildingId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.assignAgentToBuilding === "function") {
+                        m.assignAgentToBuilding(
+                            gameState,
+                            buildingId,
+                            agentId,
+                            BUNDLED_CONFIG,
+                        );
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        removeAgentFromBuilding: (buildingId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.removeAgentFromBuilding === "function") {
+                        m.removeAgentFromBuilding(
+                            gameState,
+                            buildingId,
+                            agentId,
+                        );
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
         startActivity: (activityDefinitionId) => {
             const { gameState } = get();
             if (!gameState) return;
@@ -388,6 +606,76 @@ export const useGameStore = create<GameStore>((set, get) => {
                         } as any;
                         gameState.activities[ap.id] = ap;
                     }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        startActivityWithAgent: (activityDefinitionId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    const beforeIds = new Set(
+                        Object.keys(gameState.activities ?? {}),
+                    );
+
+                    if (typeof m.startActivity === "function") {
+                        m.startActivity(
+                            gameState,
+                            activityDefinitionId,
+                            BUNDLED_CONFIG,
+                        );
+                    } else {
+                        const def = (BUNDLED_CONFIG.activities as any[]).find(
+                            (p) => p.id === activityDefinitionId,
+                        );
+                        if (!def) return;
+                        const id = `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+                        const ap = {
+                            id,
+                            activityDefinitionId,
+                            assignedAgentIds: [],
+                            daysRemaining: 1,
+                            status: "active",
+                        } as any;
+                        gameState.activities[ap.id] = ap;
+                    }
+
+                    let createdId: string | null = null;
+                    for (const [id, rec] of Object.entries(
+                        gameState.activities ?? {},
+                    )) {
+                        if (beforeIds.has(id)) continue;
+                        if (
+                            (rec as any).activityDefinitionId ===
+                            activityDefinitionId
+                        ) {
+                            createdId = id;
+                            break;
+                        }
+                    }
+
+                    if (createdId) {
+                        if (typeof m.assignAgentToActivity === "function") {
+                            m.assignAgentToActivity(
+                                gameState,
+                                createdId,
+                                agentId,
+                            );
+                        } else {
+                            const act = gameState.activities[createdId];
+                            if (
+                                act &&
+                                !act.assignedAgentIds.includes(agentId)
+                            ) {
+                                act.assignedAgentIds.push(agentId);
+                            }
+                        }
+                    }
+
                     set((s) => ({ version: s.version + 1 }));
                 })
                 .catch(() => {

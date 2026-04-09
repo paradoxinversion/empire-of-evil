@@ -52,6 +52,7 @@ export interface Building {
     intelLevel: number;
     governingOrganizationId: string;
     activeEffectIds: string[];
+    assignedAgentIds?: string[];
 }
 
 export type AgentJob =
@@ -83,6 +84,7 @@ export interface Person {
     activeEffectIds: string[];
     dead: boolean;
     agentStatus?: AgentStatus;
+    employedBuildingId?: string;
 }
 
 export interface GoverningOrganization {
@@ -200,7 +202,8 @@ export type StandingOrder =
     | "MAINTAIN_ACTIVITY"
     | "COUNTERINTELLIGENCE"
     | "MANAGE_STABILITY"
-    | "ESCORT_OVERLORD";
+    | "ESCORT_OVERLORD"
+    | "EXECUTE_STANDING_PLOT";
 
 export interface Squad {
     id: string;
@@ -209,6 +212,7 @@ export interface Squad {
     leaderId?: string;
     homeZoneId?: string;
     standingOrders?: StandingOrder;
+    standingPlotId?: string;
 }
 
 // ─── GameState ────────────────────────────────────────────────────────────────

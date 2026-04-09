@@ -7,6 +7,7 @@ import type {
 } from "../types/index.js";
 import type { Config } from "../config/loader.js";
 import {
+    createBuilding,
     createNation,
     createZone,
     resetIdCounter,
@@ -129,7 +130,6 @@ export const generateWorld = (
             zoneOrgLookup[zoneId] = orgId;
         }
     }
-    zoneOrgLookup[empireOriginZoneId] = empireOrgId;
 
     // Phase 7: Population
     const avgZoneSize =
@@ -272,12 +272,13 @@ export const generateWorld = (
         generationWealth: 0,
     });
     empireOriginZone.intelLevel = 75;
-    zones[empireOriginZoneId] = empireOriginZone;
+    zones[empireOriginZone.id] = empireOriginZone;
     // make the empire start tile a new zone
-    tiles[empireOriginTile].zoneId = empireOriginZoneId;
+    tiles[empireOriginTile].zoneId = empireOriginZone.id;
+    tiles[empireOriginTile].governingOrganizationId = empireOrgId;
     // Add empire origin's buildings (HQ) to its zone
-    if (zones[empireOriginZoneId]) {
-        zones[empireOriginZoneId]!.buildingIds.push(empireInit.hqBuildingId);
+    if (zones[empireOriginZone.id]) {
+        zones[empireOriginZone.id]!.buildingIds.push(empireInit.hqBuildingId);
     }
 
     // Assemble nations record
@@ -296,6 +297,65 @@ export const generateWorld = (
     // Merge all persons and buildings
     const allPersons = { ...populationPersons, ...empireInit.persons };
     const allBuildings = { ...placedBuildings, ...empireInit.buildings };
+
+    // Rezone: persons and buildings created before the HQ zone ID was known still carry
+    // empireOriginZoneId; update them to the newly-generated HQ zone ID.
+    const hqZoneId = empireOriginZone.id;
+    for (const person of Object.values(allPersons)) {
+        if (person.zoneId === empireOriginZoneId) person.zoneId = hqZoneId;
+        if (person.homeZoneId === empireOriginZoneId)
+            person.homeZoneId = hqZoneId;
+    }
+    allBuildings[empireInit.hqBuildingId]!.zoneId = hqZoneId;
+    empireOriginZone.population = zonePops.get(empireOriginZoneId) ?? 0;
+
+    // Guarantee minimum empire buildings: ensure the empire starts with at least
+    // one bank, hospital, and research-lab regardless of zone wealth randomness.
+    const REQUIRED_EMPIRE_BUILDING_TYPES = [
+        "bank",
+        "hospital",
+        "research-lab",
+    ] as const;
+    for (const typeId of REQUIRED_EMPIRE_BUILDING_TYPES) {
+        const alreadyHas = Object.values(allBuildings).some(
+            (b) =>
+                b.governingOrganizationId === empireOrgId &&
+                b.typeId === typeId,
+        );
+        if (!alreadyHas) {
+            const def = config.buildings.find((b) => b.id === typeId);
+            const guaranteed = createBuilding({
+                name: def?.name ?? typeId,
+                typeId,
+                zoneId: hqZoneId,
+                governingOrganizationId: empireOrgId,
+            });
+            allBuildings[guaranteed.id] = guaranteed;
+            zones[hqZoneId]!.buildingIds.push(guaranteed.id);
+        }
+    }
+
+    type PlotEntry = { id: string; requirements?: { researchIds?: string[] } };
+    type ActivityEntry = {
+        id: string;
+        requirements?: { researchIds?: string[] };
+    };
+
+    const starterPlotIds = (config.plots as PlotEntry[])
+        .filter(
+            (p) =>
+                !p.requirements?.researchIds ||
+                p.requirements.researchIds.length === 0,
+        )
+        .map((p) => p.id);
+
+    const starterActivityIds = (config.activities as ActivityEntry[])
+        .filter(
+            (a) =>
+                !a.requirements?.researchIds ||
+                a.requirements.researchIds.length === 0,
+        )
+        .map((a) => a.id);
 
     return {
         tiles,
@@ -318,8 +378,8 @@ export const generateWorld = (
             resources: empireInit.resources,
             evil: { actual: 0, perceived: 0 },
             innerCircleIds: [],
-            unlockedPlotIds: [],
-            unlockedActivityIds: [],
+            unlockedPlotIds: starterPlotIds,
+            unlockedActivityIds: starterActivityIds,
             unlockedResearchIds: [],
         },
         date: 0,
