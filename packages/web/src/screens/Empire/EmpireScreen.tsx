@@ -1,15 +1,11 @@
 import { useState } from "react";
 import type { Building } from "@empire-of-evil/engine";
 import { useGameState } from "../../hooks/useGameState";
-import { Panel } from "../../components/Panel/Panel";
-import { StatWidget } from "../../components/StatWidget/StatWidget";
-import { DataTable } from "../../components/DataTable/DataTable";
-import { FeedEntry } from "../../components/FeedEntry/FeedEntry";
 import { Tag } from "../../components/Tag/Tag";
-import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { BUNDLED_CONFIG } from "../../store/gameStore";
 import { EmpireBuildingsTab, type BuildingRecord } from "./EmpireBuildingsTab";
+import { EmpireOverviewTab } from "./EmpireOverviewTab";
 import { getEvilTier, getEvilTierProgress } from "../../utils/evilTier";
 import type { Row } from "../../components/DataTable/DataTable";
 import {
@@ -20,8 +16,6 @@ import {
 function formatMoney(n: number): string {
     return "$" + n.toLocaleString("en-US");
 }
-
-const INFRA_CAP = 20;
 
 const OPERATIONS_COLUMNS = [
     { key: "operation", label: "OPERATION" },
@@ -163,138 +157,6 @@ export function EmpireScreen() {
     // Recent activity feed (last 5 resolved events)
     const recentEvents = eventLog.slice(-5).reverse();
 
-    const overviewContent = (
-        <>
-            <div className="font-mono text-base text-text-primary mb-4 tracking-tight">
-                EMPIRE OVERVIEW
-            </div>
-
-            {/* Row 1 — Resource bar */}
-            <div className="flex gap-px mb-3">
-                <StatWidget
-                    label="MONEY"
-                    value={formatMoney(resources.money)}
-                    subVariant="neutral"
-                />
-                <StatWidget
-                    label="SCIENCE"
-                    value={resources.science.toLocaleString()}
-                    subVariant="positive"
-                />
-                <StatWidget
-                    label="INFRASTRUCTURE"
-                    value={`${empireZones.length}/${INFRA_CAP}`}
-                    subValue={
-                        empireZones.length >= INFRA_CAP
-                            ? "AT CAPACITY"
-                            : `${Math.round((empireZones.length / INFRA_CAP) * 100)}% capacity`
-                    }
-                    subVariant={
-                        empireZones.length >= INFRA_CAP
-                            ? "negative"
-                            : empireZones.length / INFRA_CAP >= 0.8
-                              ? "warning"
-                              : "positive"
-                    }
-                />
-                <StatWidget
-                    label="EVIL"
-                    value={String(evil.perceived)}
-                    subValue={tier.name.toUpperCase() + " TIER"}
-                    subVariant="warning"
-                />
-            </div>
-
-            {/* Row 2 — Operations + Empire Status */}
-            <div className="grid grid-cols-12 gap-3 mb-3">
-                <div className="col-span-8">
-                    <Panel title="ACTIVE OPERATIONS">
-                        <DataTable
-                            columns={OPERATIONS_COLUMNS}
-                            rows={operationsRows}
-                            emptyText="No active operations."
-                        />
-                    </Panel>
-                </div>
-                <div className="col-span-4">
-                    <Panel title="EMPIRE STATUS">
-                        <div className="space-y-3 text-[12px]">
-                            <div className="flex justify-between">
-                                <span className="text-text-muted">ZONES</span>
-                                <span className="font-mono text-text-primary">
-                                    {empireZones.length}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-text-muted">AGENTS</span>
-                                <span className="font-mono text-text-primary">
-                                    {agentCount}
-                                </span>
-                            </div>
-                            <div>
-                                <div className="flex justify-between mb-1">
-                                    <span className="text-text-muted">
-                                        EVIL TIER
-                                    </span>
-                                    <span
-                                        className="font-mono"
-                                        style={{ color: tier.color }}
-                                    >
-                                        {tier.name.toUpperCase()}
-                                    </span>
-                                </div>
-                                <ProgressBar
-                                    value={tierProgress}
-                                    color="evil"
-                                    height={2}
-                                />
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-text-muted">
-                                    HERO ORG ACTIVITY
-                                </span>
-                                <span className="font-mono text-text-primary">
-                                    NONE
-                                </span>
-                            </div>
-                        </div>
-                    </Panel>
-                </div>
-            </div>
-
-            {/* Row 3 — Event feed + Zone overview */}
-            <div className="grid grid-cols-12 gap-3">
-                <div className="col-span-5">
-                    <Panel title="RECENT ACTIVITY">
-                        {recentEvents.length === 0 ? (
-                            <div className="text-text-muted text-[11px] py-2">
-                                No recent events.
-                            </div>
-                        ) : (
-                            recentEvents.map((record) => (
-                                <FeedEntry
-                                    key={record.event.id}
-                                    day={record.event.createdOnDate + 1}
-                                    text={record.event.title}
-                                    type="internal"
-                                />
-                            ))
-                        )}
-                    </Panel>
-                </div>
-                <div className="col-span-7">
-                    <Panel title="CONTROLLED ZONES">
-                        <DataTable
-                            columns={ZONES_COLUMNS}
-                            rows={zoneRows}
-                            emptyText="No controlled zones."
-                        />
-                    </Panel>
-                </div>
-            </div>
-        </>
-    );
-
     return (
         <div>
             <TabBar
@@ -303,7 +165,23 @@ export function EmpireScreen() {
                 onChange={(key) => setActiveTab(key as EmpireTab)}
             />
 
-            {activeTab === "overview" && overviewContent}
+            {activeTab === "overview" && (
+                <EmpireOverviewTab
+                    money={resources.money}
+                    science={resources.science}
+                    perceivedEvil={evil.perceived}
+                    evilTierName={tier.name}
+                    evilTierColor={tier.color}
+                    evilTierProgress={tierProgress}
+                    empireZoneCount={empireZones.length}
+                    agentCount={agentCount}
+                    operationsRows={operationsRows}
+                    zoneRows={zoneRows}
+                    recentEvents={recentEvents}
+                    operationsColumns={OPERATIONS_COLUMNS}
+                    zonesColumns={ZONES_COLUMNS}
+                />
+            )}
 
             {activeTab === "buildings" && (
                 <EmpireBuildingsTab buildings={empireBuildings} />

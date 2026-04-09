@@ -264,7 +264,7 @@ export function EmpireBuildingsTab({ buildings }: EmpireBuildingsTabProps) {
                                                         building.status ===
                                                         "SECURED"
                                                             ? "stable"
-                                                            : "warning"
+                                                            : "unrest"
                                                     }
                                                 >
                                                     {building.status}
