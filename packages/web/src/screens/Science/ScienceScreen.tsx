@@ -2,10 +2,18 @@ import { useState } from "react";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { Panel } from "../../components/Panel/Panel";
 import { StatWidget } from "../../components/StatWidget/StatWidget";
+import { useGameState } from "../../hooks/useGameState.js";
 import { useResearch } from "../../hooks/useResearch.js";
+import { BUNDLED_CONFIG } from "../../store/gameStore.js";
 import { ResearchTreeTab } from "./ResearchTreeTab.js";
 import { ActiveResearchTab } from "./ActiveResearchTab.js";
 import { ResearchDetailPanel } from "./ResearchDetailPanel.js";
+import { LaboratoriesTab } from "./LaboratoriesTab.js";
+import { LaboratoryDetailPanel } from "./LaboratoryDetailPanel.js";
+import {
+    deriveScienceLaboratories,
+    deriveScienceLaboratoryDetail,
+} from "./ScienceSelectors.js";
 
 type ScienceTab = "tree" | "active" | "laboratories";
 
@@ -20,6 +28,10 @@ export function ScienceScreen() {
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
         null,
     );
+    const [selectedLaboratoryId, setSelectedLaboratoryId] = useState<
+        string | null
+    >(null);
+    const gameState = useGameState();
 
     const {
         projectsByBranch,
@@ -30,11 +42,21 @@ export function ScienceScreen() {
     } = useResearch();
 
     const allProjects = Object.values(projectsByBranch).flat();
+    const laboratories = deriveScienceLaboratories(
+        gameState,
+        BUNDLED_CONFIG.buildings,
+    );
 
     const selectedProject = selectedProjectId
         ? (allProjects.find((ep) => ep.definition.id === selectedProjectId) ??
           null)
         : null;
+
+    const selectedLaboratory = deriveScienceLaboratoryDetail(
+        gameState,
+        selectedLaboratoryId,
+        BUNDLED_CONFIG.buildings,
+    );
 
     const handleSelectProject = (projectId: string) => {
         setSelectedProjectId(
@@ -86,6 +108,7 @@ export function ScienceScreen() {
                             onChange={(key) => {
                                 setActiveTab(key as ScienceTab);
                                 setSelectedProjectId(null);
+                                setSelectedLaboratoryId(null);
                             }}
                         />
                     </div>
@@ -106,12 +129,29 @@ export function ScienceScreen() {
                                 selectedProjectId={selectedProjectId}
                             />
                         )}
+                        {activeTab === "laboratories" && (
+                            <LaboratoriesTab
+                                laboratories={laboratories}
+                                selectedLaboratoryId={selectedLaboratoryId}
+                                onSelectLaboratory={(laboratoryId) =>
+                                    setSelectedLaboratoryId((current) =>
+                                        current === laboratoryId
+                                            ? null
+                                            : laboratoryId,
+                                    )
+                                }
+                            />
+                        )}
                     </div>
                 </div>
 
                 {/* Right — detail */}
                 <div style={{ flex: "0 0 45%" }} className="overflow-y-auto">
-                    {selectedProject ? (
+                    {activeTab === "laboratories" ? (
+                        <LaboratoryDetailPanel
+                            laboratory={selectedLaboratory}
+                        />
+                    ) : selectedProject ? (
                         <ResearchDetailPanel
                             ep={selectedProject}
                             availableScientists={availableScientists}
