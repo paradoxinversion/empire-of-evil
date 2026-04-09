@@ -3,9 +3,20 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, vi } from "vitest";
 import { EmpireScreen } from "./EmpireScreen";
 import { useGameState } from "../../hooks/useGameState";
+import { useGameStore } from "../../store/gameStore";
 import type { GameState } from "@empire-of-evil/engine";
 
 vi.mock("../../hooks/useGameState");
+vi.mock("../../store/gameStore", async () => {
+    const actual = await vi.importActual<
+        typeof import("../../store/gameStore")
+    >("../../store/gameStore");
+
+    return {
+        ...actual,
+        useGameStore: vi.fn(),
+    };
+});
 
 const mockGameState: Partial<GameState> = {
     date: 0,
@@ -77,6 +88,7 @@ const mockGameState: Partial<GameState> = {
             intelLevel: 3,
             governingOrganizationId: "empire-1",
             activeEffectIds: [],
+            assignedAgentIds: ["person-1"],
         },
         b2: {
             id: "b2",
@@ -118,6 +130,22 @@ const mockGameState: Partial<GameState> = {
             dead: false,
             agentStatus: { job: "unassigned", salary: 0 },
         },
+        "person-2": {
+            id: "person-2",
+            name: "Agent Violet",
+            zoneId: "z1",
+            homeZoneId: "z1",
+            governingOrganizationId: "empire-1",
+            attributes: {},
+            skills: { finance: 7 },
+            loyalties: {},
+            intelLevel: 0,
+            health: 100,
+            money: 0,
+            activeEffectIds: [],
+            dead: false,
+            agentStatus: { job: "administrator", salary: 10 },
+        },
     },
     pendingEvents: [],
     eventLog: [],
@@ -152,6 +180,12 @@ const mockGameState: Partial<GameState> = {
 
 beforeEach(() => {
     vi.mocked(useGameState).mockReturnValue(mockGameState as GameState);
+    vi.mocked(useGameStore).mockImplementation((selector: any) =>
+        selector({
+            assignAgentToBuilding: vi.fn(),
+            removeAgentFromBuilding: vi.fn(),
+        }),
+    );
 });
 
 describe("EmpireScreen", () => {
@@ -252,5 +286,72 @@ describe("EmpireScreen", () => {
         expect(
             screen.queryByTestId("empire-building-row"),
         ).not.toBeInTheDocument();
+    });
+
+    it("shows a placeholder until a building row is selected", async () => {
+        const user = userEvent.setup();
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+
+        expect(
+            screen.getByText("Select a building to view details."),
+        ).toBeInTheDocument();
+    });
+
+    it("shows selected building details when a row is clicked", async () => {
+        const user = userEvent.setup();
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+        await user.click(screen.getByRole("button", { name: /Bio Lab 9/i }));
+
+        expect(screen.getByText("BUILDING DETAIL")).toBeInTheDocument();
+        expect(screen.getByText("ASSIGNED AGENTS")).toBeInTheDocument();
+        expect(screen.getByText("0 / 2 STAFFED")).toBeInTheDocument();
+    });
+
+    it("unassigns agents from the selected building", async () => {
+        const user = userEvent.setup();
+        const removeAgentFromBuilding = vi.fn();
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({
+                assignAgentToBuilding: vi.fn(),
+                removeAgentFromBuilding,
+            }),
+        );
+
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+        await user.click(
+            screen.getByRole("button", { name: /Citadel Prime/i }),
+        );
+        await user.click(screen.getByRole("button", { name: /UNASSIGN/i }));
+
+        expect(removeAgentFromBuilding).toHaveBeenCalledWith("b1", "person-1");
+    });
+
+    it("assigns available agents to the selected building", async () => {
+        const user = userEvent.setup();
+        const assignAgentToBuilding = vi.fn();
+        vi.mocked(useGameStore).mockImplementation((selector: any) =>
+            selector({
+                assignAgentToBuilding,
+                removeAgentFromBuilding: vi.fn(),
+            }),
+        );
+
+        render(<EmpireScreen />);
+
+        await user.click(screen.getByRole("button", { name: "BUILDINGS" }));
+        await user.click(screen.getByRole("button", { name: /Bio Lab 9/i }));
+        await user.click(screen.getByRole("button", { name: /ASSIGN AGENT/i }));
+        await user.click(screen.getByRole("button", { name: /Agent Violet/i }));
+        await user.click(
+            screen.getByRole("button", { name: /ASSIGN 1 AGENT/i }),
+        );
+
+        expect(assignAgentToBuilding).toHaveBeenCalledWith("b2", "person-2");
     });
 });

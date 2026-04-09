@@ -2,6 +2,7 @@ import type {
     Building,
     GameEventRecord,
     GameState,
+    Person,
 } from "@empire-of-evil/engine";
 import {
     getBuildings,
@@ -12,6 +13,9 @@ import type { BuildingRecord } from "./EmpireBuildingsTab";
 type BuildingDefinitionLike = {
     id: string;
     name: string;
+    description?: string;
+    capacity?: number;
+    preferredSkills?: string[];
     resourceOutput?: {
         money?: number;
     };
@@ -44,6 +48,15 @@ export type EmpireOverviewRecord = {
     operations: EmpireOperationRecord[];
     controlledZones: EmpireControlledZoneRecord[];
     recentEvents: GameEventRecord[];
+};
+
+export type EmpireBuildingDetailRecord = BuildingRecord & {
+    buildingId: string;
+    description: string;
+    capacity: number;
+    preferredSkills: string[];
+    assignedAgents: Person[];
+    availableAgents: Person[];
 };
 
 function getBuildingStatus(intelLevel: number): "SECURED" | "EXPOSED" {
@@ -100,6 +113,90 @@ export function deriveEmpireBuildings(
                 status: getBuildingStatus(building.intelLevel),
             };
         });
+}
+
+function isAssignedToOtherBuilding(
+    gameState: GameState,
+    buildingId: string,
+    agentId: string,
+): boolean {
+    return Object.values(gameState.buildings ?? {}).some(
+        (building) =>
+            building.id !== buildingId &&
+            (building.assignedAgentIds?.includes(agentId) ?? false),
+    );
+}
+
+export function deriveEmpireBuildingDetail(
+    gameState: GameState,
+    buildingId: string | null,
+    buildingDefinitions: BuildingDefinitionLike[],
+): EmpireBuildingDetailRecord | null {
+    if (!buildingId) {
+        return null;
+    }
+
+    const building = gameState.buildings[buildingId];
+    if (!building) {
+        return null;
+    }
+
+    const summary = deriveEmpireBuildings(gameState, buildingDefinitions).find(
+        (record) => record.id === buildingId,
+    );
+    if (!summary) {
+        return null;
+    }
+
+    const definition = buildingDefinitions.find(
+        (entry) => entry.id === building.typeId,
+    );
+    const assignedAgentIds = building.assignedAgentIds ?? [];
+    const assignedAgents = assignedAgentIds
+        .map((agentId) => gameState.persons[agentId])
+        .filter((person): person is Person => Boolean(person));
+    const plotAssignedIds = new Set(
+        Object.values(gameState.plots ?? {}).flatMap(
+            (plot) => plot.assignedAgentIds ?? [],
+        ),
+    );
+    const activityAssignedIds = new Set(
+        Object.values(gameState.activities ?? {}).flatMap(
+            (activity) => activity.assignedAgentIds ?? [],
+        ),
+    );
+
+    const availableAgents = Object.values(gameState.persons ?? {}).filter(
+        (person) => {
+            if (!person.agentStatus || person.dead) {
+                return false;
+            }
+
+            if (assignedAgentIds.includes(person.id)) {
+                return false;
+            }
+
+            if (
+                plotAssignedIds.has(person.id) ||
+                activityAssignedIds.has(person.id)
+            ) {
+                return false;
+            }
+
+            return !isAssignedToOtherBuilding(gameState, buildingId, person.id);
+        },
+    );
+
+    return {
+        buildingId: building.id,
+        ...summary,
+        description:
+            definition?.description ?? "No building intelligence available.",
+        capacity: definition?.capacity ?? 0,
+        preferredSkills: definition?.preferredSkills ?? [],
+        assignedAgents,
+        availableAgents,
+    };
 }
 
 export function deriveEmpireOverview(

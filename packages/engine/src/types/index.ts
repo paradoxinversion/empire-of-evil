@@ -52,6 +52,7 @@ export interface Building {
     intelLevel: number;
     governingOrganizationId: string;
     activeEffectIds: string[];
+    assignedAgentIds?: string[];
 }
 
 export type AgentJob =

@@ -101,6 +101,8 @@ export type GameStore = {
     startPlot: (plotDefinitionId: string, targetZoneId?: string) => void;
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
+    assignAgentToBuilding: (buildingId: string, agentId: string) => void;
+    removeAgentFromBuilding: (buildingId: string, agentId: string) => void;
     startActivity: (activityDefinitionId: string) => void;
     startActivityWithAgent: (
         activityDefinitionId: string,
@@ -432,7 +434,7 @@ export const useGameStore = create<GameStore>((set, get) => {
                 });
         },
 
-        cancelPlot: (activePlotId) => {
+        cancelPlot: (activePlotId: string) => {
             const { gameState } = get();
             if (!gameState) return;
             import("@empire-of-evil/engine")
@@ -461,6 +463,45 @@ export const useGameStore = create<GameStore>((set, get) => {
                         if (!plot) return;
                         if (plot.assignedAgentIds.includes(agentId)) return;
                         plot.assignedAgentIds.push(agentId);
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        assignAgentToBuilding: (buildingId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.assignAgentToBuilding === "function") {
+                        m.assignAgentToBuilding(
+                            gameState,
+                            buildingId,
+                            agentId,
+                            BUNDLED_CONFIG,
+                        );
+                    }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        removeAgentFromBuilding: (buildingId, agentId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    if (typeof m.removeAgentFromBuilding === "function") {
+                        m.removeAgentFromBuilding(
+                            gameState,
+                            buildingId,
+                            agentId,
+                        );
                     }
                     set((s) => ({ version: s.version + 1 }));
                 })

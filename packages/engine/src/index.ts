@@ -80,6 +80,11 @@ export {
 } from "./activities/index.js";
 
 export {
+    assignAgentToBuilding,
+    removeAgentFromBuilding,
+} from "./buildings/index.js";
+
+export {
     createTile,
     createZone,
     createNation,

@@ -44,9 +44,15 @@ function sortBuildingRecords(
 
 interface EmpireBuildingsTabProps {
     buildings: BuildingRecord[];
+    selectedBuildingId: string | null;
+    onSelectBuilding: (buildingId: string) => void;
 }
 
-export function EmpireBuildingsTab({ buildings }: EmpireBuildingsTabProps) {
+export function EmpireBuildingsTab({
+    buildings,
+    selectedBuildingId,
+    onSelectBuilding,
+}: EmpireBuildingsTabProps) {
     const [buildingSearch, setBuildingSearch] = useState("");
     const [buildingStatusFilter, setBuildingStatusFilter] =
         useState<BuildingStatusFilter>("all");
@@ -233,7 +239,32 @@ export function EmpireBuildingsTab({ buildings }: EmpireBuildingsTabProps) {
                                         <tr
                                             key={building.id}
                                             data-testid="empire-building-row"
-                                            className="border-b border-bg-elevated"
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-pressed={
+                                                selectedBuildingId ===
+                                                building.id
+                                            }
+                                            onClick={() =>
+                                                onSelectBuilding(building.id)
+                                            }
+                                            onKeyDown={(event) => {
+                                                if (
+                                                    event.key === "Enter" ||
+                                                    event.key === " "
+                                                ) {
+                                                    event.preventDefault();
+                                                    onSelectBuilding(
+                                                        building.id,
+                                                    );
+                                                }
+                                            }}
+                                            className={`border-b border-bg-elevated cursor-pointer outline-none transition-colors duration-fast ${
+                                                selectedBuildingId ===
+                                                building.id
+                                                    ? "bg-bg-selected"
+                                                    : "hover:bg-bg-hover"
+                                            }`}
                                         >
                                             <td className="py-1.5 pr-2 align-middle text-text-primary">
                                                 {building.name}

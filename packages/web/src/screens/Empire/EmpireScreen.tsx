@@ -3,11 +3,16 @@ import { useGameState } from "../../hooks/useGameState";
 import { Tag } from "../../components/Tag/Tag";
 import { TabBar } from "../../components/TabBar/TabBar";
 import { BUNDLED_CONFIG } from "../../store/gameStore";
+import { BuildingDetailPanel } from "./BuildingDetailPanel";
 import { EmpireBuildingsTab } from "./EmpireBuildingsTab";
 import { EmpireOverviewTab } from "./EmpireOverviewTab";
 import { getEvilTier, getEvilTierProgress } from "../../utils/evilTier";
 import type { Row } from "../../components/DataTable/DataTable";
-import { deriveEmpireBuildings, deriveEmpireOverview } from "./EmpireSelectors";
+import {
+    deriveEmpireBuildingDetail,
+    deriveEmpireBuildings,
+    deriveEmpireOverview,
+} from "./EmpireSelectors";
 
 function formatMoney(n: number): string {
     return "$" + n.toLocaleString("en-US");
@@ -39,6 +44,9 @@ const EMPIRE_TABS = [
 
 export function EmpireScreen() {
     const [activeTab, setActiveTab] = useState<EmpireTab>("overview");
+    const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(
+        null,
+    );
 
     const gameState = useGameState();
     const { empire } = gameState;
@@ -49,6 +57,11 @@ export function EmpireScreen() {
     const overview = deriveEmpireOverview(gameState);
     const empireBuildings = deriveEmpireBuildings(
         gameState,
+        BUNDLED_CONFIG.buildings,
+    );
+    const selectedBuilding = deriveEmpireBuildingDetail(
+        gameState,
+        selectedBuildingId,
         BUNDLED_CONFIG.buildings,
     );
 
@@ -105,7 +118,28 @@ export function EmpireScreen() {
             )}
 
             {activeTab === "buildings" && (
-                <EmpireBuildingsTab buildings={empireBuildings} />
+                <div className="flex gap-3" style={{ minHeight: "640px" }}>
+                    <div
+                        style={{ flex: "0 0 48%" }}
+                        className="flex min-w-0 flex-col"
+                    >
+                        <EmpireBuildingsTab
+                            buildings={empireBuildings}
+                            selectedBuildingId={selectedBuildingId}
+                            onSelectBuilding={(buildingId) =>
+                                setSelectedBuildingId((current) =>
+                                    current === buildingId ? null : buildingId,
+                                )
+                            }
+                        />
+                    </div>
+                    <div
+                        style={{ flex: "0 0 52%" }}
+                        className="overflow-y-auto"
+                    >
+                        <BuildingDetailPanel building={selectedBuilding} />
+                    </div>
+                </div>
             )}
         </div>
     );
