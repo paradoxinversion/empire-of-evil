@@ -309,3 +309,108 @@ test("settleResources collects citizen taxes from empire-controlled zones using 
     // tax = 20 * 0.1 = 2
     expect(state.empire.resources.money).toBe(2);
 });
+
+test("settleResources uses dynamic building output so staffed skilled buildings earn more than unstaffed", () => {
+    const baseState: any = {
+        tiles: {
+            t1: {
+                id: "t1",
+                typeId: "plains",
+                zoneId: "z1",
+                activeEffectIds: [],
+            },
+        },
+        zones: {
+            z1: {
+                id: "z1",
+                name: "Empire Zone",
+                nationId: "n1",
+                governingOrganizationId: "empire-org",
+                tileIds: ["t1"],
+                buildingIds: ["b1"],
+                generationWealth: 0,
+                economicOutput: 0,
+                population: 0,
+                intelLevel: 0,
+                taxRate: 0,
+                activeEffectIds: [],
+            },
+        },
+        buildings: {
+            b1: {
+                id: "b1",
+                name: "Market One",
+                typeId: "market-stall",
+                zoneId: "z1",
+                tileId: "t1",
+                intelLevel: 0,
+                governingOrganizationId: "empire-org",
+                activeEffectIds: [],
+            },
+        },
+        persons: {},
+        governingOrganizations: {},
+        squads: {},
+        plots: {},
+        activities: {},
+        research: {},
+        captives: {},
+        effectInstances: {},
+        morgues: { byCitizen: {}, byAgent: {} },
+        empire: {
+            id: "empire-org",
+            overlordId: "",
+            petId: "",
+            resources: { money: 0, science: 0, infrastructure: 0 },
+            evil: { actual: 0, perceived: 0 },
+            innerCircleIds: [],
+            unlockedPlotIds: [],
+            unlockedActivityIds: [],
+            unlockedResearchIds: [],
+        },
+        date: 0,
+        worldSeed: 0,
+        pendingEvents: [],
+        eventLog: [],
+    };
+
+    const staffedState = structuredClone(baseState);
+    staffedState.buildings.b1.assignedAgentIds = ["a1"];
+    staffedState.persons.a1 = {
+        id: "a1",
+        name: "Agent One",
+        zoneId: "z1",
+        homeZoneId: "z1",
+        governingOrganizationId: "empire-org",
+        attributes: {},
+        skills: { finance: 50 },
+        loyalties: {},
+        intelLevel: 0,
+        health: 100,
+        money: 0,
+        activeEffectIds: [],
+        dead: false,
+        agentStatus: { job: "operative", salary: 10 },
+    };
+
+    const config: any = {
+        buildings: [
+            {
+                id: "market-stall",
+                name: "Market Stall",
+                description: "",
+                baseCost: {},
+                infrastructureLoad: 1,
+                preferredSkills: ["finance"],
+                resourceOutput: { money: 10 },
+                upkeepPerDay: 2,
+            },
+        ],
+    };
+
+    settleResources(baseState, config);
+    settleResources(staffedState, config);
+
+    expect(baseState.empire.resources.money).toBe(8);
+    expect(staffedState.empire.resources.money).toBe(10);
+});
