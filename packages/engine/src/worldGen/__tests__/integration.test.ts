@@ -200,4 +200,43 @@ describe("generateWorld integration", () => {
         expect(personIds).toContain(state.empire.overlordId);
         expect(personIds).toContain(state.empire.petId);
     });
+
+    test("empire has at least one bank owned by the empire", () => {
+        const state = generateWorld(smallParams, config);
+        const empireBuildings = Object.values(state.buildings).filter(
+            (b) => b.governingOrganizationId === state.empire.id,
+        );
+        expect(empireBuildings.some((b) => b.typeId === "bank")).toBe(true);
+    });
+
+    test("empire has at least one hospital owned by the empire", () => {
+        const state = generateWorld(smallParams, config);
+        const empireBuildings = Object.values(state.buildings).filter(
+            (b) => b.governingOrganizationId === state.empire.id,
+        );
+        expect(empireBuildings.some((b) => b.typeId === "hospital")).toBe(true);
+    });
+
+    test("empire has at least one research-lab owned by the empire", () => {
+        const state = generateWorld(smallParams, config);
+        const empireBuildings = Object.values(state.buildings).filter(
+            (b) => b.governingOrganizationId === state.empire.id,
+        );
+        expect(empireBuildings.some((b) => b.typeId === "research-lab")).toBe(
+            true,
+        );
+    });
+
+    test("guaranteed empire buildings are listed in the empire zone's buildingIds", () => {
+        const state = generateWorld(smallParams, config);
+        const empireZone = Object.values(state.zones).find(
+            (z) => z.governingOrganizationId === state.empire.id,
+        )!;
+        const zoneBuildingTypeIds = empireZone.buildingIds.map(
+            (id) => state.buildings[id]!.typeId,
+        );
+        expect(zoneBuildingTypeIds).toContain("bank");
+        expect(zoneBuildingTypeIds).toContain("hospital");
+        expect(zoneBuildingTypeIds).toContain("research-lab");
+    });
 });

@@ -7,6 +7,7 @@ import type {
 } from "../types/index.js";
 import type { Config } from "../config/loader.js";
 import {
+    createBuilding,
     createNation,
     createZone,
     resetIdCounter,
@@ -307,6 +308,32 @@ export const generateWorld = (
     }
     allBuildings[empireInit.hqBuildingId]!.zoneId = hqZoneId;
     empireOriginZone.population = zonePops.get(empireOriginZoneId) ?? 0;
+
+    // Guarantee minimum empire buildings: ensure the empire starts with at least
+    // one bank, hospital, and research-lab regardless of zone wealth randomness.
+    const REQUIRED_EMPIRE_BUILDING_TYPES = [
+        "bank",
+        "hospital",
+        "research-lab",
+    ] as const;
+    for (const typeId of REQUIRED_EMPIRE_BUILDING_TYPES) {
+        const alreadyHas = Object.values(allBuildings).some(
+            (b) =>
+                b.governingOrganizationId === empireOrgId &&
+                b.typeId === typeId,
+        );
+        if (!alreadyHas) {
+            const def = config.buildings.find((b) => b.id === typeId);
+            const guaranteed = createBuilding({
+                name: def?.name ?? typeId,
+                typeId,
+                zoneId: hqZoneId,
+                governingOrganizationId: empireOrgId,
+            });
+            allBuildings[guaranteed.id] = guaranteed;
+            zones[hqZoneId]!.buildingIds.push(guaranteed.id);
+        }
+    }
 
     type PlotEntry = { id: string; requirements?: { researchIds?: string[] } };
     type ActivityEntry = {
