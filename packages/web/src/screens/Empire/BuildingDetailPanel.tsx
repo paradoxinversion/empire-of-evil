@@ -10,6 +10,24 @@ type BuildingDetailPanelProps = {
     building: EmpireBuildingDetailRecord | null;
 };
 
+function formatOutputResources(output: {
+    money: number;
+    science: number;
+    infrastructure: number;
+}): string {
+    const parts: string[] = [];
+    if (output.money > 0) {
+        parts.push(`$${output.money.toLocaleString("en-US")}`);
+    }
+    if (output.science > 0) {
+        parts.push(`S${output.science.toLocaleString("en-US")}`);
+    }
+    if (output.infrastructure > 0) {
+        parts.push(`I${output.infrastructure.toLocaleString("en-US")}`);
+    }
+    return parts.length > 0 ? parts.join(" | ") : "$0";
+}
+
 export function BuildingDetailPanel({ building }: BuildingDetailPanelProps) {
     const [isAgentPickerOpen, setIsAgentPickerOpen] = useState(false);
     const assignAgentToBuilding = useGameStore((s) => s.assignAgentToBuilding);
@@ -92,7 +110,9 @@ export function BuildingDetailPanel({ building }: BuildingDetailPanelProps) {
                                 OUTPUT
                             </div>
                             <div className="font-mono text-text-secondary">
-                                ${building.outputMoney.toLocaleString("en-US")}
+                                {formatOutputResources(
+                                    building.outputResources,
+                                )}
                             </div>
                         </div>
                         <div>

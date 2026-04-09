@@ -8,6 +8,12 @@ export type BuildingRecord = {
     typeName: string;
     zoneName: string;
     tileLabel: string;
+    outputResources: {
+        money: number;
+        science: number;
+        infrastructure: number;
+    };
+    outputTotal: number;
     outputMoney: number;
     upkeep: number;
     intelLevel: number;
@@ -28,6 +34,20 @@ function formatMoney(n: number): string {
     return "$" + n.toLocaleString("en-US");
 }
 
+function formatOutputResources(resources: BuildingRecord["outputResources"]): string {
+    const parts: string[] = [];
+    if (resources.money > 0) {
+        parts.push(`$${resources.money.toLocaleString("en-US")}`);
+    }
+    if (resources.science > 0) {
+        parts.push(`S${resources.science.toLocaleString("en-US")}`);
+    }
+    if (resources.infrastructure > 0) {
+        parts.push(`I${resources.infrastructure.toLocaleString("en-US")}`);
+    }
+    return parts.length > 0 ? parts.join(" | ") : "$0";
+}
+
 function sortBuildingRecords(
     records: BuildingRecord[],
     sortBy: BuildingSort,
@@ -35,8 +55,8 @@ function sortBuildingRecords(
     return [...records].sort((a, b) => {
         if (sortBy === "name_asc") return a.name.localeCompare(b.name);
         if (sortBy === "name_desc") return b.name.localeCompare(a.name);
-        if (sortBy === "output_desc") return b.outputMoney - a.outputMoney;
-        if (sortBy === "output_asc") return a.outputMoney - b.outputMoney;
+        if (sortBy === "output_desc") return b.outputTotal - a.outputTotal;
+        if (sortBy === "output_asc") return a.outputTotal - b.outputTotal;
         if (sortBy === "intel_desc") return b.intelLevel - a.intelLevel;
         return a.intelLevel - b.intelLevel;
     });
@@ -279,8 +299,8 @@ export function EmpireBuildingsTab({
                                                 {building.tileLabel}
                                             </td>
                                             <td className="py-1.5 pr-2 align-middle text-text-secondary font-mono text-[11px]">
-                                                {formatMoney(
-                                                    building.outputMoney,
+                                                {formatOutputResources(
+                                                    building.outputResources,
                                                 )}
                                             </td>
                                             <td className="py-1.5 pr-2 align-middle text-text-secondary font-mono text-[11px]">

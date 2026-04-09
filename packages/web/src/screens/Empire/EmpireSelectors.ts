@@ -18,8 +18,16 @@ type BuildingDefinitionLike = {
     preferredSkills?: string[];
     resourceOutput?: {
         money?: number;
+        science?: number;
+        infrastructure?: number;
     };
     upkeepPerDay?: number;
+};
+
+type ResourceOutput = {
+    money: number;
+    science: number;
+    infrastructure: number;
 };
 
 export type EmpireOperationRecord = {
@@ -63,6 +71,71 @@ function getBuildingStatus(intelLevel: number): "SECURED" | "EXPOSED" {
     return intelLevel >= 2 ? "SECURED" : "EXPOSED";
 }
 
+function getWorkerIdsForBuilding(
+    gameState: GameState,
+    buildingId: string,
+): string[] {
+    const assignedAgentIds =
+        gameState.buildings[buildingId]?.assignedAgentIds ?? [];
+    const employedCitizenIds = Object.values(gameState.persons ?? {})
+        .filter(
+            (person) =>
+                !person.dead &&
+                !person.agentStatus &&
+                person.employedBuildingId === buildingId,
+        )
+        .map((person) => person.id);
+
+    return Array.from(new Set([...assignedAgentIds, ...employedCitizenIds]));
+}
+
+function getWorkerSkillScore(
+    person: Person,
+    preferredSkills: string[],
+): number {
+    if (preferredSkills.length === 0) return 0;
+
+    const total = preferredSkills.reduce(
+        (sum, skill) => sum + (person.skills[skill] ?? 0),
+        0,
+    );
+
+    return total / preferredSkills.length;
+}
+
+function getCurrentBuildingOutput(
+    gameState: GameState,
+    buildingId: string,
+    definition: BuildingDefinitionLike | undefined,
+): ResourceOutput {
+    const base: ResourceOutput = {
+        money: definition?.resourceOutput?.money ?? 0,
+        science: definition?.resourceOutput?.science ?? 0,
+        infrastructure: definition?.resourceOutput?.infrastructure ?? 0,
+    };
+
+    const preferredSkills = definition?.preferredSkills ?? [];
+    const workers = getWorkerIdsForBuilding(gameState, buildingId)
+        .map((id) => gameState.persons[id])
+        .filter((person): person is Person => Boolean(person) && !person.dead);
+
+    if (workers.length === 0) {
+        return base;
+    }
+
+    const totalSkillScore = workers.reduce(
+        (sum, worker) => sum + getWorkerSkillScore(worker, preferredSkills),
+        0,
+    );
+    const multiplier = 1 + workers.length * 0.1 + totalSkillScore / 500;
+
+    return {
+        money: Math.round(base.money * multiplier),
+        science: Math.round(base.science * multiplier),
+        infrastructure: Math.round(base.infrastructure * multiplier),
+    };
+}
+
 export function deriveEmpireBuildings(
     gameState: GameState,
     buildingDefinitions: BuildingDefinitionLike[],
@@ -100,6 +173,15 @@ export function deriveEmpireBuildings(
             const zoneId = zoneIdFromTile ?? building.zoneId;
             const zone = zones[zoneId];
             const definition = buildingDefsById.get(building.typeId);
+            const outputResources = getCurrentBuildingOutput(
+                gameState,
+                building.id,
+                definition,
+            );
+            const outputTotal =
+                outputResources.money +
+                outputResources.science +
+                outputResources.infrastructure;
 
             return {
                 id: building.id,
@@ -107,7 +189,9 @@ export function deriveEmpireBuildings(
                 typeName: definition?.name ?? building.typeId,
                 zoneName: zone?.name ?? zoneId,
                 tileLabel: building.tileId ?? "—",
-                outputMoney: definition?.resourceOutput?.money ?? 0,
+                outputResources,
+                outputTotal,
+                outputMoney: outputResources.money,
                 upkeep: definition?.upkeepPerDay ?? 0,
                 intelLevel: building.intelLevel,
                 status: getBuildingStatus(building.intelLevel),

@@ -236,6 +236,12 @@ describe("EmpireSelectors", () => {
                 typeName: "Market Stall",
                 zoneName: "Zone Alpha",
                 tileLabel: "t1",
+                outputResources: {
+                    money: 5,
+                    science: 0,
+                    infrastructure: 0,
+                },
+                outputTotal: 5,
                 outputMoney: 5,
                 upkeep: 1,
                 intelLevel: 3,
@@ -247,6 +253,12 @@ describe("EmpireSelectors", () => {
                 typeName: "Bank",
                 zoneName: "Zone Alpha",
                 tileLabel: "t2",
+                outputResources: {
+                    money: 30,
+                    science: 0,
+                    infrastructure: 0,
+                },
+                outputTotal: 30,
                 outputMoney: 30,
                 upkeep: 8,
                 intelLevel: 1,
@@ -294,5 +306,70 @@ describe("EmpireSelectors", () => {
         expect(
             overview.recentEvents.map((record) => record.event.title),
         ).toEqual(["Latest Event", "Earlier Event"]);
+    });
+
+    it("derives dynamic per-resource output from assigned agents and employed citizens", () => {
+        const state = structuredClone(mockState);
+        state.buildings.b1.assignedAgentIds = ["p1"];
+        state.persons.p1.skills = { finance: 40 };
+        state.persons.p2.skills = { finance: 60 };
+        state.persons.p2.employedBuildingId = "b1";
+
+        const defs = [
+            {
+                id: "market-stall",
+                name: "Market Stall",
+                resourceOutput: { money: 10, science: 4 },
+                preferredSkills: ["finance"],
+                upkeepPerDay: 1,
+            },
+            {
+                id: "bank",
+                name: "Bank",
+                resourceOutput: { money: 30 },
+                preferredSkills: ["finance"],
+                upkeepPerDay: 8,
+            },
+        ];
+
+        const buildings = deriveEmpireBuildings(state, defs as any);
+        const target = buildings.find((b) => b.id === "b1");
+
+        expect(target?.outputResources).toEqual({
+            money: 14,
+            science: 6,
+            infrastructure: 0,
+        });
+    });
+
+    it("derives outputTotal from all resource channels, including science-only buildings", () => {
+        const state = structuredClone(mockState);
+        state.buildings.b1.typeId = "research-lab";
+        state.buildings.b1.assignedAgentIds = ["p1"];
+        state.persons.p1.skills = { biology: 50 };
+
+        const defs = [
+            {
+                id: "research-lab",
+                name: "Research Lab",
+                resourceOutput: { science: 10 },
+                preferredSkills: ["biology"],
+                upkeepPerDay: 1,
+            },
+            {
+                id: "bank",
+                name: "Bank",
+                resourceOutput: { money: 30 },
+                preferredSkills: ["finance"],
+                upkeepPerDay: 8,
+            },
+        ];
+
+        const buildings = deriveEmpireBuildings(state, defs as any);
+        const lab = buildings.find((b) => b.id === "b1");
+
+        expect(lab?.outputMoney).toBe(0);
+        expect(lab?.outputResources.science).toBeGreaterThan(0);
+        expect(lab?.outputTotal).toBe(lab?.outputResources.science);
     });
 });
