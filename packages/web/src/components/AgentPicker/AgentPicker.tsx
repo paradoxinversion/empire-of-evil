@@ -24,6 +24,7 @@ export interface AgentPickerProps {
     title?: string;
     relevantSkillKey?: string;
     getLocationLabel?: (person: Person) => string;
+    minSelectionCount?: number;
 }
 
 export function AgentPicker({
@@ -34,6 +35,7 @@ export function AgentPicker({
     title = "ADD AGENTS",
     relevantSkillKey,
     getLocationLabel,
+    minSelectionCount = 1,
 }: AgentPickerProps) {
     const [search, setSearch] = useState("");
     const [department, setDepartment] = useState<AgentJob | "all">("all");
@@ -122,7 +124,7 @@ export function AgentPicker({
                     <ActionButton
                         variant="primary"
                         onClick={handleConfirm}
-                        disabled={selectedCount === 0}
+                        disabled={selectedCount < minSelectionCount}
                     >
                         {confirmLabel}
                     </ActionButton>

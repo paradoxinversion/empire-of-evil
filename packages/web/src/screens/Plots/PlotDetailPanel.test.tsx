@@ -75,10 +75,10 @@ describe("PlotDetailPanel", () => {
         consoleErrorSpy.mockRestore();
     });
 
-    it("shows LAUNCH PLOT for available plots and calls startPlot", async () => {
-        const startPlot = vi.fn();
+    it("opens launch agent modal and auto-starts after required agents are selected", async () => {
+        const startPlotWithAgents = vi.fn();
         const storeState = {
-            startPlot,
+            startPlotWithAgents,
             gameState: {
                 date: 0,
                 zones: {},
@@ -104,16 +104,46 @@ describe("PlotDetailPanel", () => {
             definition: def,
             status: "available" as const,
         } as any;
+        const person1 = {
+            id: "p1",
+            name: "Agent One",
+            agentStatus: {},
+        } as any;
 
         render(
             (
-                <PlotDetailPanel enriched={enriched} unlockedResearchIds={[]} />
+                <PlotDetailPanel
+                    enriched={enriched}
+                    availableAgents={[person1]}
+                    unlockedResearchIds={[]}
+                />
             ) as any,
         );
 
         const btn = screen.getByRole("button", { name: /LAUNCH PLOT/i });
         await userEvent.click(btn);
-        expect(startPlot).toHaveBeenCalledWith(def.id);
+
+        expect(
+            screen.getByRole("dialog", { name: /ADD AGENTS TO LAUNCH/i }),
+        ).toBeInTheDocument();
+
+        const confirmButton = screen.getByRole("button", {
+            name: /ASSIGN 0 AGENTS/i,
+        });
+        expect(confirmButton).toBeDisabled();
+
+        await userEvent.click(
+            screen.getByRole("button", { name: /Agent One/i }),
+        );
+        await userEvent.click(
+            screen.getByRole("button", { name: /ASSIGN 1 AGENT/i }),
+        );
+
+        expect(startPlotWithAgents).toHaveBeenCalledWith(
+            def.id,
+            ["p1"],
+            undefined,
+        );
     });
 
     it("shows requirements help in a tooltip", () => {
@@ -162,10 +192,10 @@ describe("PlotDetailPanel", () => {
         ).toBeInTheDocument();
     });
 
-    it("requires a target zone for zone-targeted plots and launches with the selected zone", async () => {
-        const startPlot = vi.fn();
+    it("requires a target zone for zone-targeted plots and launches through modal with selected zone", async () => {
+        const startPlotWithAgents = vi.fn();
         const storeState = {
-            startPlot,
+            startPlotWithAgents,
             gameState: {
                 date: 0,
                 zones: {
@@ -208,10 +238,16 @@ describe("PlotDetailPanel", () => {
             requirements: { agentCount: 1, researchIds: [], zoneCount: 1 },
             stages: [{ durationDays: 3 }],
         } as any;
+        const person1 = {
+            id: "p1",
+            name: "Agent One",
+            agentStatus: {},
+        } as any;
 
         render(
             <PlotDetailPanel
                 enriched={{ definition: def, status: "available" } as any}
+                availableAgents={[person1]}
                 unlockedResearchIds={[]}
             />,
         );
@@ -230,7 +266,22 @@ describe("PlotDetailPanel", () => {
         expect(launchButton).not.toBeDisabled();
 
         await userEvent.click(launchButton);
-        expect(startPlot).toHaveBeenCalledWith("plot-zone", "zone-2");
+
+        expect(
+            screen.getByRole("dialog", { name: /ADD AGENTS TO LAUNCH/i }),
+        ).toBeInTheDocument();
+        await userEvent.click(
+            screen.getByRole("button", { name: /Agent One/i }),
+        );
+        await userEvent.click(
+            screen.getByRole("button", { name: /ASSIGN 1 AGENT/i }),
+        );
+
+        expect(startPlotWithAgents).toHaveBeenCalledWith(
+            "plot-zone",
+            ["p1"],
+            "zone-2",
+        );
     });
 
     it("assigns available agents through the picker and confirms before canceling", async () => {

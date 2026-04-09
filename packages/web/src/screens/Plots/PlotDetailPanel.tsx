@@ -28,9 +28,12 @@ export default function PlotDetailPanel({
 }: Props) {
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isAgentPickerOpen, setIsAgentPickerOpen] = useState(false);
+    const [isLaunchAgentPickerOpen, setIsLaunchAgentPickerOpen] =
+        useState(false);
     const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null);
 
     const startPlot = useGameStore((s) => s.startPlot);
+    const startPlotWithAgents = useGameStore((s) => s.startPlotWithAgents);
     const cancelPlot = useGameStore((s) => s.cancelPlot);
     const assignAgentToPlot = useGameStore((s) => s.assignAgentToPlot);
     const removeAgentFromPlot = useGameStore((s) => s.removeAgentFromPlot);
@@ -91,6 +94,9 @@ export default function PlotDetailPanel({
             : null;
     const requiredZoneCount = def?.requirements?.zoneCount ?? 0;
     const requiresTargetZone = requiredZoneCount > 0;
+    const requiredAgentCount = def?.requirements?.agentCount ?? 0;
+    const insufficientAgentsForLaunch =
+        requiredAgentCount > 0 && availableAgents.length < requiredAgentCount;
     const zoneOptions = Object.values(gameState?.zones ?? {}).map((zone) => ({
         id: zone.id,
         name: zone.name,
@@ -120,6 +126,30 @@ export default function PlotDetailPanel({
                 (enriched as EnrichedActivePlot).record.id,
                 agentId,
             );
+        }
+    };
+
+    const handleStartPlot = (agentIds: string[]) => {
+        if ("record" in (enriched as any)) {
+            return;
+        }
+
+        if (!def?.id) {
+            return;
+        }
+
+        if (agentIds.length < requiredAgentCount) {
+            return;
+        }
+
+        const targetZoneId = requiresTargetZone
+            ? (selectedZoneId ?? undefined)
+            : undefined;
+
+        if (typeof startPlotWithAgents === "function") {
+            startPlotWithAgents(def.id, agentIds, targetZoneId);
+        } else {
+            startPlot(def.id, targetZoneId);
         }
     };
 
@@ -289,6 +319,12 @@ export default function PlotDetailPanel({
                                 />
                             </div>
                         ) : null}
+                        {!("record" in (enriched as any)) &&
+                        insufficientAgentsForLaunch ? (
+                            <div className="mt-2 text-[10px] text-text-muted">
+                                {`Need ${requiredAgentCount} available agents to launch this plot. Only ${availableAgents.length} available.`}
+                            </div>
+                        ) : null}
                     </div>
 
                     {"record" in (enriched as any) && (
@@ -367,6 +403,14 @@ export default function PlotDetailPanel({
                                 <ActionButton
                                     variant="primary"
                                     onClick={() => {
+                                        if (
+                                            (def?.requirements?.agentCount ??
+                                                0) > 0
+                                        ) {
+                                            setIsLaunchAgentPickerOpen(true);
+                                            return;
+                                        }
+
                                         if (requiresTargetZone) {
                                             startPlot(
                                                 def?.id ?? "",
@@ -378,7 +422,9 @@ export default function PlotDetailPanel({
                                         startPlot(def?.id ?? "");
                                     }}
                                     disabled={
-                                        requiresTargetZone && !selectedZoneId
+                                        (requiresTargetZone &&
+                                            !selectedZoneId) ||
+                                        insufficientAgentsForLaunch
                                     }
                                     className="w-full"
                                 >
@@ -416,6 +462,15 @@ export default function PlotDetailPanel({
                 onConfirm={handleAssignAgents}
                 agents={availableAgents}
                 relevantSkillKey={stageDrivers[0]}
+                getLocationLabel={(person) => person.zoneId}
+            />
+            <AgentPicker
+                isOpen={isLaunchAgentPickerOpen}
+                onClose={() => setIsLaunchAgentPickerOpen(false)}
+                onConfirm={handleStartPlot}
+                agents={availableAgents}
+                title="ADD AGENTS TO LAUNCH"
+                minSelectionCount={requiredAgentCount}
                 getLocationLabel={(person) => person.zoneId}
             />
         </>

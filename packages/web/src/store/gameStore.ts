@@ -99,6 +99,11 @@ export type GameStore = {
     assignAgentToResearch: (researchId: string, agentId: string) => void;
     removeAgentFromResearch: (researchId: string, agentId: string) => void;
     startPlot: (plotDefinitionId: string, targetZoneId?: string) => void;
+    startPlotWithAgents: (
+        plotDefinitionId: string,
+        agentIds: string[],
+        targetZoneId?: string,
+    ) => void;
     assignAgentToPlot: (plotId: string, agentId: string) => void;
     removeAgentFromPlot: (plotId: string, agentId: string) => void;
     assignAgentToBuilding: (buildingId: string, agentId: string) => void;
@@ -427,6 +432,71 @@ export const useGameStore = create<GameStore>((set, get) => {
                         } as any;
                         gameState.plots[ap.id] = ap;
                     }
+                    set((s) => ({ version: s.version + 1 }));
+                })
+                .catch(() => {
+                    /* ignore */
+                });
+        },
+
+        startPlotWithAgents: (plotDefinitionId, agentIds, targetZoneId) => {
+            const { gameState } = get();
+            if (!gameState) return;
+            import("@empire-of-evil/engine")
+                .then((m) => {
+                    const beforeIds = new Set(
+                        Object.keys(gameState.plots ?? {}),
+                    );
+
+                    if (typeof m.startPlot === "function") {
+                        m.startPlot(
+                            gameState,
+                            plotDefinitionId,
+                            BUNDLED_CONFIG,
+                            targetZoneId,
+                        );
+
+                        const createdPlotId = Object.keys(
+                            gameState.plots ?? {},
+                        ).find((id) => !beforeIds.has(id));
+
+                        if (
+                            createdPlotId &&
+                            typeof m.assignAgentToPlot === "function"
+                        ) {
+                            for (const agentId of agentIds) {
+                                m.assignAgentToPlot(
+                                    gameState,
+                                    createdPlotId,
+                                    agentId,
+                                );
+                            }
+                        }
+                    } else {
+                        const def = (BUNDLED_CONFIG.plots as any[]).find(
+                            (p) => p.id === plotDefinitionId,
+                        );
+                        if (!def) return;
+                        const id = `plot-${Date.now().toString(36)}-${Math.random()
+                            .toString(36)
+                            .slice(2, 6)}`;
+                        const days =
+                            def?.stages?.[0]?.durationDays ??
+                            def?.durationDays ??
+                            1;
+                        const ap = {
+                            id,
+                            plotDefinitionId: plotDefinitionId,
+                            currentStageIndex: 0,
+                            assignedAgentIds: [...new Set(agentIds)],
+                            ...(targetZoneId ? { targetZoneId } : {}),
+                            daysRemaining: days,
+                            accumulatedSuccessScore: 0,
+                            status: "active",
+                        } as any;
+                        gameState.plots[ap.id] = ap;
+                    }
+
                     set((s) => ({ version: s.version + 1 }));
                 })
                 .catch(() => {
