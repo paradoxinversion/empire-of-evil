@@ -1,22 +1,25 @@
-import { useState } from 'react';
-import { TabBar } from '../../components/TabBar/TabBar';
-import { Panel } from '../../components/Panel/Panel';
-import { StatWidget } from '../../components/StatWidget/StatWidget';
-import { useResearch } from '../../hooks/useResearch.js';
-import { ResearchTreeTab } from './ResearchTreeTab.js';
-import { ActiveResearchTab } from './ActiveResearchTab.js';
-import { ResearchDetailPanel } from './ResearchDetailPanel.js';
+import { useState } from "react";
+import { TabBar } from "../../components/TabBar/TabBar";
+import { Panel } from "../../components/Panel/Panel";
+import { StatWidget } from "../../components/StatWidget/StatWidget";
+import { useResearch } from "../../hooks/useResearch.js";
+import { ResearchTreeTab } from "./ResearchTreeTab.js";
+import { ActiveResearchTab } from "./ActiveResearchTab.js";
+import { ResearchDetailPanel } from "./ResearchDetailPanel.js";
 
-type ScienceTab = 'tree' | 'active';
+type ScienceTab = "tree" | "active" | "laboratories";
 
 const TABS = [
-    { key: 'tree',   label: 'RESEARCH TREE' },
-    { key: 'active', label: 'ACTIVE' },
+    { key: "tree", label: "RESEARCH TREE" },
+    { key: "active", label: "ACTIVE" },
+    { key: "laboratories", label: "LABORATORIES" },
 ];
 
 export function ScienceScreen() {
-    const [activeTab, setActiveTab] = useState<ScienceTab>('tree');
-    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<ScienceTab>("tree");
+    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+        null,
+    );
 
     const {
         projectsByBranch,
@@ -29,11 +32,14 @@ export function ScienceScreen() {
     const allProjects = Object.values(projectsByBranch).flat();
 
     const selectedProject = selectedProjectId
-        ? allProjects.find(ep => ep.definition.id === selectedProjectId) ?? null
+        ? (allProjects.find((ep) => ep.definition.id === selectedProjectId) ??
+          null)
         : null;
 
     const handleSelectProject = (projectId: string) => {
-        setSelectedProjectId(projectId === selectedProjectId ? null : projectId);
+        setSelectedProjectId(
+            projectId === selectedProjectId ? null : projectId,
+        );
     };
 
     return (
@@ -61,18 +67,23 @@ export function ScienceScreen() {
                 <StatWidget
                     label="SCIENTISTS IDLE"
                     value={String(availableScientists.length)}
-                    subVariant={availableScientists.length > 0 ? 'warning' : 'neutral'}
+                    subVariant={
+                        availableScientists.length > 0 ? "warning" : "neutral"
+                    }
                 />
             </div>
 
-            <div className="flex gap-3" style={{ minHeight: '640px' }}>
+            <div className="flex gap-3" style={{ minHeight: "640px" }}>
                 {/* Left — list */}
-                <div style={{ flex: '0 0 55%' }} className="flex flex-col gap-3 min-w-0">
+                <div
+                    style={{ flex: "0 0 55%" }}
+                    className="flex flex-col gap-3 min-w-0"
+                >
                     <div className="border-b border-border-subtle">
                         <TabBar
                             tabs={TABS}
                             activeTab={activeTab}
-                            onChange={key => {
+                            onChange={(key) => {
                                 setActiveTab(key as ScienceTab);
                                 setSelectedProjectId(null);
                             }}
@@ -80,7 +91,7 @@ export function ScienceScreen() {
                     </div>
 
                     <div className="overflow-y-auto">
-                        {activeTab === 'tree' && (
+                        {activeTab === "tree" && (
                             <ResearchTreeTab
                                 projectsByBranch={projectsByBranch}
                                 onSelectProject={handleSelectProject}
@@ -88,7 +99,7 @@ export function ScienceScreen() {
                                 allProjects={allProjects}
                             />
                         )}
-                        {activeTab === 'active' && (
+                        {activeTab === "active" && (
                             <ActiveResearchTab
                                 activeResearches={activeResearches}
                                 onSelectProject={handleSelectProject}
@@ -99,7 +110,7 @@ export function ScienceScreen() {
                 </div>
 
                 {/* Right — detail */}
-                <div style={{ flex: '0 0 45%' }} className="overflow-y-auto">
+                <div style={{ flex: "0 0 45%" }} className="overflow-y-auto">
                     {selectedProject ? (
                         <ResearchDetailPanel
                             ep={selectedProject}
