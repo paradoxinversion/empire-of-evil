@@ -1,7 +1,24 @@
 import type { GameState } from "../../types/index.js";
 import type { Config, EventDefinition } from "../../config/loader.js";
 
+function normalizeChoices(eventDef: EventDefinition) {
+    if (!eventDef.choices) {
+        return undefined;
+    }
+
+    return eventDef.choices.map((choice) => ({
+        label: choice.label,
+        effects: choice.effects.map((effect) => ({
+            type: effect.type,
+            chance: effect.chance,
+            ...(effect.parameters ? { parameters: effect.parameters } : {}),
+        })),
+    }));
+}
+
 function emitEvent(state: GameState, eventDef: EventDefinition): boolean {
+    const choices = normalizeChoices(eventDef);
+
     const event = {
         id: `${eventDef.id}-${state.date}-${state.pendingEvents.length + state.eventLog.length}`,
         definitionId: eventDef.id,
@@ -12,7 +29,7 @@ function emitEvent(state: GameState, eventDef: EventDefinition): boolean {
         body: eventDef.body,
         relatedEntityIds: eventDef.relatedEntityIds ?? [],
         requiresResolution: eventDef.requiresResolution,
-        choices: eventDef.choices,
+        ...(choices ? { choices } : {}),
         createdOnDate: state.date,
     };
 
