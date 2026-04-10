@@ -1,5 +1,9 @@
 import type { GameState } from "../types/index.js";
-import { applyEffect, type EffectDeclaration } from "../effects/apply.js";
+import {
+    applyEffect,
+    type EffectDeclaration,
+    type EffectContext,
+} from "../effects/apply.js";
 
 export function startActivity(
     state: GameState,
@@ -69,14 +73,14 @@ export const executeActivities = (state: GameState, config?: any): void => {
             for (const actorId of rec.assignedAgentIds ?? []) {
                 const actor = state.persons[actorId];
                 for (const eff of def.effects as EffectDeclaration[]) {
+                    const zone = rec.targetZoneId
+                        ? state.zones[rec.targetZoneId]
+                        : undefined;
+                    const context: EffectContext = zone
+                        ? { state, actor, zone }
+                        : { state, actor };
                     try {
-                        applyEffect(eff, {
-                            state,
-                            actor,
-                            zone: rec.targetZoneId
-                                ? state.zones[rec.targetZoneId]
-                                : undefined,
-                        });
+                        applyEffect(eff, context);
                     } catch (err) {
                         // Unknown effect types or resolver errors are ignored for now
                     }
@@ -92,9 +96,13 @@ export const executeActivities = (state: GameState, config?: any): void => {
             delete state.activities[id];
             state.pendingEvents = state.pendingEvents || [];
             state.pendingEvents.push({
+                id: `activity-complete-${state.date}-${rec.id}`,
                 category: "informational",
                 title: `Activity ${rec.activityDefinitionId} completed`,
+                body: "",
+                relatedEntityIds: [rec.id],
                 requiresResolution: false,
+                createdOnDate: state.date,
             });
         }
     }

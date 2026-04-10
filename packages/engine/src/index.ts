@@ -36,7 +36,7 @@ export type {
 } from "./config/loader.js";
 export { applyEffect } from "./effects/apply.js";
 export type { EffectDeclaration } from "./effects/apply.js";
-export type { EffectContext, EffectResolver } from "./effects/resolvers.js";
+export type { EffectContext, EffectResolver } from "./effects/types.js";
 
 export {
     getZone,
