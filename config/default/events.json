@@ -78,7 +78,7 @@
         "recurrence": "recurring",
         "trigger": {
             "type": "daily_chance",
-            "chance": 0.008
+            "chance": 1
         },
         "choices": [
             {

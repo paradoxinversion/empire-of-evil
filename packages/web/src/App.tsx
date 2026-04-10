@@ -9,6 +9,7 @@ import { EmpireScreen } from "./screens/Empire/EmpireScreen";
 // Placeholder screens for future implementation
 import { IntelScreen } from "./screens/Intel/index";
 import { PersonnelScreen } from "./screens/Personnel/index";
+import { CaptivesScreen } from "./screens/Captives/index";
 import { EconomyScreen } from "./screens/Economy/index";
 import { ScienceScreen } from "./screens/Science/index";
 import { PlotsScreen } from "./screens/Plots/index";
@@ -25,6 +26,8 @@ function ActiveScreen() {
             return <IntelScreen />;
         case "personnel":
             return <PersonnelScreen />;
+        case "captives":
+            return <CaptivesScreen />;
         case "economy":
             return <EconomyScreen />;
         case "science":
