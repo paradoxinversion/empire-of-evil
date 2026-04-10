@@ -3,6 +3,7 @@ import type {
     EffectContext,
     EffectDeclaration,
     EffectResolver,
+    EventEffectDeclaration,
     EventEffectType,
 } from "../effects/types.js";
 import { EVENT_EFFECT_TYPES } from "../effects/types.js";
@@ -227,7 +228,23 @@ export const resolveEvent = (
     ) {
         const choice = event.choices[choiceIndex];
         for (const effect of choice.effects) {
-            applyEffect(effect, { state });
+            if (!isEventEffectType(effect.type)) {
+                throw new Error(`Unknown effect type: "${effect.type}"`);
+            }
+
+            const effectDecl: EventEffectDeclaration =
+                effect.parameters === undefined
+                    ? {
+                          type: effect.type,
+                          chance: effect.chance,
+                      }
+                    : {
+                          type: effect.type,
+                          chance: effect.chance,
+                          parameters: effect.parameters,
+                      };
+
+            applyEffect(effectDecl, { state });
         }
     }
 

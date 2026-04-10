@@ -33,3 +33,7 @@ export interface EffectDeclaration {
     chance: number;
     parameters?: Record<string, unknown>;
 }
+
+export interface EventEffectDeclaration extends EffectDeclaration {
+    type: EventEffectType;
+}
