@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { runDay } from "../day.js";
 import type { Config } from "../../config/loader.js";
 import type { GameState } from "../../types/index.js";
+import { tickEffects } from "../../effects/tick.js";
 
 function makeConfig(): Config {
     return {
@@ -335,5 +336,203 @@ describe("runDay passive person effects", () => {
 
         expect(state.persons.p1!.loyalties.empire).toBe(49);
         expect(state.persons.p1!.loyalties.rival).toBe(11);
+    });
+
+    test("party-animal can spread to one other citizen in the same zone", () => {
+        const state = makeState({
+            persons: {
+                p1: {
+                    ...makeState().persons.p1,
+                    activeEffectIds: ["e1"],
+                },
+                p2: {
+                    ...makeState().persons.p1,
+                    id: "p2",
+                    name: "Citizen 2",
+                    activeEffectIds: [],
+                },
+                agent: {
+                    ...makeState().persons.p1,
+                    id: "agent",
+                    name: "Agent",
+                    activeEffectIds: [],
+                    agentStatus: {
+                        job: "operative",
+                        salary: 10,
+                    },
+                },
+                overlord: makeState().persons.overlord,
+                pet: makeState().persons.pet,
+            },
+            effectInstances: {
+                e1: {
+                    id: "e1",
+                    effectId: "party-animal",
+                    targetId: "p1",
+                    targetType: "person",
+                    duration: 3,
+                    appliedOnDate: 0,
+                },
+            },
+        });
+
+        tickEffects(state, {
+            random: () => 0,
+        } as any);
+
+        const p2EffectIds = state.persons.p2!.activeEffectIds;
+        expect(p2EffectIds).toHaveLength(1);
+        const spreadInstance = state.effectInstances[p2EffectIds[0]!];
+        expect(spreadInstance).toBeDefined();
+        expect(spreadInstance!.effectId).toBe("party-animal");
+        expect(spreadInstance!.targetId).toBe("p2");
+        expect(state.persons.agent!.activeEffectIds).toHaveLength(0);
+    });
+
+    test("conspiracy-theories can spread to one other person in the same zone", () => {
+        const state = makeState({
+            persons: {
+                p1: {
+                    ...makeState().persons.p1,
+                    activeEffectIds: ["e1"],
+                },
+                p2: {
+                    ...makeState().persons.p1,
+                    id: "p2",
+                    name: "Citizen 2",
+                    activeEffectIds: [],
+                },
+                overlord: makeState().persons.overlord,
+                pet: makeState().persons.pet,
+            },
+            effectInstances: {
+                e1: {
+                    id: "e1",
+                    effectId: "conspiracy-theories",
+                    targetId: "p1",
+                    targetType: "person",
+                    duration: 3,
+                    appliedOnDate: 0,
+                },
+            },
+        });
+
+        tickEffects(state, {
+            random: () => 0,
+        } as any);
+
+        const p2EffectIds = state.persons.p2!.activeEffectIds;
+        expect(p2EffectIds).toHaveLength(1);
+        const spreadInstance = state.effectInstances[p2EffectIds[0]!];
+        expect(spreadInstance).toBeDefined();
+        expect(spreadInstance!.effectId).toBe("conspiracy-theories");
+        expect(spreadInstance!.targetId).toBe("p2");
+    });
+
+    test("party-animal does not spread to persons in a different zone", () => {
+        const state = makeState({
+            zones: {
+                z1: {
+                    id: "z1",
+                    name: "Zone 1",
+                    nationId: "n1",
+                    governingOrganizationId: "empire",
+                    tileIds: [],
+                    buildingIds: [],
+                    generationWealth: 0,
+                    economicOutput: 0,
+                    population: 1,
+                    intelLevel: 0,
+                    taxRate: 0.1,
+                    activeEffectIds: [],
+                },
+                z2: {
+                    id: "z2",
+                    name: "Zone 2",
+                    nationId: "n1",
+                    governingOrganizationId: "empire",
+                    tileIds: [],
+                    buildingIds: [],
+                    generationWealth: 0,
+                    economicOutput: 0,
+                    population: 1,
+                    intelLevel: 0,
+                    taxRate: 0.1,
+                    activeEffectIds: [],
+                },
+            },
+            persons: {
+                p1: {
+                    ...makeState().persons.p1,
+                    zoneId: "z1",
+                    activeEffectIds: ["e1"],
+                },
+                p2: {
+                    ...makeState().persons.p1,
+                    id: "p2",
+                    name: "Remote Citizen",
+                    zoneId: "z2",
+                    homeZoneId: "z2",
+                    activeEffectIds: [],
+                },
+                overlord: makeState().persons.overlord,
+                pet: makeState().persons.pet,
+            },
+            effectInstances: {
+                e1: {
+                    id: "e1",
+                    effectId: "party-animal",
+                    targetId: "p1",
+                    targetType: "person",
+                    duration: 3,
+                    appliedOnDate: 0,
+                },
+            },
+        });
+
+        tickEffects(state, { random: () => 0 } as any);
+
+        expect(state.persons.p2!.activeEffectIds).toHaveLength(0);
+    });
+
+    test("already-infected person does not receive a second party-animal instance", () => {
+        const state = makeState({
+            persons: {
+                p1: {
+                    ...makeState().persons.p1,
+                    activeEffectIds: ["e1"],
+                },
+                p2: {
+                    ...makeState().persons.p1,
+                    id: "p2",
+                    name: "Citizen 2",
+                    activeEffectIds: ["e2"],
+                },
+                overlord: makeState().persons.overlord,
+                pet: makeState().persons.pet,
+            },
+            effectInstances: {
+                e1: {
+                    id: "e1",
+                    effectId: "party-animal",
+                    targetId: "p1",
+                    targetType: "person",
+                    duration: 3,
+                    appliedOnDate: 0,
+                },
+                e2: {
+                    id: "e2",
+                    effectId: "party-animal",
+                    targetId: "p2",
+                    targetType: "person",
+                    duration: 3,
+                    appliedOnDate: 0,
+                },
+            },
+        });
+
+        tickEffects(state, { random: () => 0 } as any);
+
+        expect(state.persons.p2!.activeEffectIds).toHaveLength(1);
     });
 });
