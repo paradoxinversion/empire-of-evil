@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { mkdtempSync, cpSync, writeFileSync } from "node:fs";
+import { mkdtempSync, cpSync, writeFileSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -39,6 +39,64 @@ describe("events config schema", () => {
         const parsed = EventsSchema.parse([VALID_EVENT]);
         expect(parsed).toHaveLength(1);
         expect(parsed[0].id).toBe("citizen-recruited");
+    });
+
+    test("accepts event effects that are currently supported by resolvers", () => {
+        const parsed = EventsSchema.parse([
+            {
+                ...VALID_EVENT,
+                choices: [
+                    {
+                        label: "Apply Effects",
+                        effects: [
+                            {
+                                type: "gain_evil",
+                                chance: 1,
+                                parameters: { amount: 1 },
+                            },
+                            {
+                                type: "gain_resource",
+                                chance: 1,
+                                parameters: {
+                                    resource: "money",
+                                    minAmount: -10,
+                                    maxAmount: -10,
+                                },
+                            },
+                            {
+                                type: "create_captive",
+                                chance: 1,
+                                parameters: {},
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
+
+        expect(parsed).toHaveLength(1);
+    });
+
+    test("rejects unknown event effect types", () => {
+        expect(() =>
+            EventsSchema.parse([
+                {
+                    ...VALID_EVENT,
+                    choices: [
+                        {
+                            label: "Broken",
+                            effects: [
+                                {
+                                    type: "unknown_effect_type",
+                                    chance: 1,
+                                    parameters: {},
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ]),
+        ).toThrow();
     });
 
     test("rejects unknown top-level fields", () => {
@@ -96,5 +154,37 @@ describe("config loader events integration", () => {
         );
 
         expect(() => loadConfig(tempDir)).toThrow();
+    });
+
+    test("fails loadConfig when an event effect type is unknown", () => {
+        const tempDir = mkdtempSync(join(tmpdir(), "eoe-events-config-"));
+        cpSync(defaultConfigDir, tempDir, { recursive: true });
+
+        const eventsPath = join(tempDir, "events.json");
+        const events = JSON.parse(readFileSync(eventsPath, "utf-8")) as Array<{
+            choices?: Array<{
+                effects: Array<{ type: string; chance: number }>;
+            }>;
+        }>;
+
+        const eventWithChoices = events.find(
+            (event) => event.choices && event.choices.length > 0,
+        );
+        if (!eventWithChoices || !eventWithChoices.choices) {
+            throw new Error(
+                "Expected default events config to include choices",
+            );
+        }
+
+        eventWithChoices.choices[0].effects = [
+            {
+                type: "unknown_effect_type",
+                chance: 1,
+            },
+        ];
+
+        writeFileSync(eventsPath, JSON.stringify(events), "utf-8");
+
+        expect(() => loadConfig(tempDir)).toThrow(/unknown_effect_type/);
     });
 });

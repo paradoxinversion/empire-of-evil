@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { applyEffect } from "../../effects/apply.js";
+import { EVENT_EFFECT_TYPES } from "../../effects/types.js";
 import { effectResolvers, resolveEvent } from "../resolve.js";
 import type { GameState, Person, Zone } from "../../types/index.js";
 
@@ -76,6 +77,13 @@ function makeActor(overrides: Partial<Person> = {}): Person {
 }
 
 describe("event resolver registry ownership", () => {
+    test("resolver keys stay aligned with declared event effect types", () => {
+        const resolverKeys = Object.keys(effectResolvers).sort();
+        const declaredEffectTypes = [...EVENT_EFFECT_TYPES].sort();
+
+        expect(resolverKeys).toEqual(declaredEffectTypes);
+    });
+
     test("exports effect resolver map from events/resolve", () => {
         expect(effectResolvers.gain_resource).toBeTypeOf("function");
         expect(effectResolvers.civilian_combat_encounter).toBeTypeOf(

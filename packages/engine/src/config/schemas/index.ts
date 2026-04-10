@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EVENT_EFFECT_TYPES } from "../../effects/types.js";
 
 // One schema per JSON config file in config/.
 // Most are stubs (passthrough) until their config files are finalized.
@@ -55,9 +56,11 @@ const EventRecurrenceSchema = z.union([
     z.literal("recurring"),
 ]);
 
+const EventEffectTypeSchema = z.enum(EVENT_EFFECT_TYPES);
+
 const EventEffectSchema = z
     .object({
-        type: z.string(),
+        type: EventEffectTypeSchema,
         chance: z.number().min(0).max(1),
         parameters: z.record(z.unknown()).optional(),
     })

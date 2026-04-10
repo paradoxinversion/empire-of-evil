@@ -3,14 +3,20 @@ import type {
     EffectContext,
     EffectDeclaration,
     EffectResolver,
+    EventEffectType,
 } from "../effects/types.js";
+import { EVENT_EFFECT_TYPES } from "../effects/types.js";
 import { createPerson } from "../factories/index.js";
 
 function randBetween(min: number, max: number) {
     return min + Math.random() * (max - min);
 }
 
-export const effectResolvers: Record<string, EffectResolver> = {
+function isEventEffectType(value: string): value is EventEffectType {
+    return (EVENT_EFFECT_TYPES as readonly string[]).includes(value);
+}
+
+export const effectResolvers: Record<EventEffectType, EffectResolver> = {
     gain_resource: (ctx, params) => {
         const resource = String(params.resource ?? "money");
         const minA = Number(params.minAmount ?? 0);
@@ -195,8 +201,10 @@ export const applyEffect = (
     context: EffectContext,
 ): void => {
     if (Math.random() > effectDecl.chance) return;
+    if (!isEventEffectType(effectDecl.type)) {
+        throw new Error(`Unknown effect type: "${effectDecl.type}"`);
+    }
     const resolver = effectResolvers[effectDecl.type];
-    if (!resolver) throw new Error(`Unknown effect type: "${effectDecl.type}"`);
     resolver(context, effectDecl.parameters ?? {});
 };
 
