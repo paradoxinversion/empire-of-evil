@@ -4,6 +4,7 @@ import type {
     EffectDeclaration,
     EffectResolver,
 } from "../effects/types.js";
+import { createPerson } from "../factories/index.js";
 
 function randBetween(min: number, max: number) {
     return min + Math.random() * (max - min);
@@ -163,6 +164,29 @@ export const effectResolvers: Record<string, EffectResolver> = {
             ctx.state.empire.resources.money =
                 (ctx.state.empire.resources.money ?? 0) + amt;
         }
+    },
+
+    create_captive: (ctx, _params) => {
+        const empireZone = Object.values(ctx.state.zones).find(
+            (z) => z.governingOrganizationId === ctx.state.empire.id,
+        );
+        if (!empireZone) return;
+
+        const person = createPerson({
+            name: "Foreign Operative",
+            zoneId: empireZone.id,
+            homeZoneId: empireZone.id,
+            governingOrganizationId: empireZone.governingOrganizationId,
+        });
+        ctx.state.persons[person.id] = person;
+
+        const captiveId = `captive-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+        ctx.state.captives[captiveId] = {
+            id: captiveId,
+            personId: person.id,
+            capturedOnDate: ctx.state.date,
+            zoneId: empireZone.id,
+        };
     },
 };
 

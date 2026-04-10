@@ -93,7 +93,13 @@
             },
             {
                 "label": "Keep Captive",
-                "effects": []
+                "effects": [
+                    {
+                        "type": "create_captive",
+                        "chance": 1,
+                        "parameters": {}
+                    }
+                ]
             },
             {
                 "label": "Release",
