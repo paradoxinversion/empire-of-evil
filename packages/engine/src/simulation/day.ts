@@ -11,6 +11,7 @@ import { advancePlots } from "../plots/index.js";
 import { executeActivities } from "../activities/index.js";
 import { generateEvents } from "../events/generators/index.js";
 import { advanceResearch } from "./research.js";
+import { tickEffects as tickGameEffects } from "../effects/tick.js";
 
 export const runDay = (state: GameState, config: Config): void => {
     state.date += 1;
@@ -48,7 +49,9 @@ export const runDay = (state: GameState, config: Config): void => {
 
 // TODO: implement each phase below
 
-const tickEffects = (_state: GameState): void => {};
+const tickEffects = (state: GameState): void => {
+    tickGameEffects(state);
+};
 
 const processBuildingOutput = (_state: GameState): void => {};
 

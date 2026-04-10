@@ -2,7 +2,7 @@
 
 Defines effect types — what a named effect **is** (its category, display name, and description). This file does not define behavior; behavior is handled by `effectResolvers` in the engine. Active instances of effects on entities are `EffectInstance` objects stored in `state.effectInstances`.
 
-New effect types that need runtime behavior require a matching resolver in `packages/engine/src/effects/resolvers.ts`. New effects that are purely decorative (displayed on entities but cause no mechanical change) only need an entry here.
+New effect types that need runtime behavior require a matching resolver in `packages/engine/src/events/resolve.ts` (dispatched through `packages/engine/src/effects/apply.ts`). New effects that are purely decorative (displayed on entities but cause no mechanical change) only need an entry here.
 
 ---
 
@@ -25,6 +25,14 @@ An array of effect definition objects.
 
 - `id` values must be globally unique within this file — the engine rejects duplicate IDs at startup.
 - The `category` field is informational and used for UI grouping; the engine does not prevent an effect from being applied to the wrong entity type at runtime, so resolvers must validate context themselves.
+
+### World generation startup behavior
+
+- During world generation, citizens (non-overlord and non-pet persons) are assigned a random number of startup effects from the `"person"` category.
+- Each eligible person gets `0` to `2` effects.
+- If a person gets two effects, they are unique (no duplicate effect IDs on that person).
+- Assignment is deterministic for a given world seed.
+- Startup assignments are materialized as `EffectInstance` records in `state.effectInstances`, and each person stores only the linked IDs in `activeEffectIds`.
 
 ---
 

@@ -25,6 +25,7 @@ import { generateGoverningOrgs } from "./phases/06-orgs.js";
 import { seedPopulation } from "./phases/07-population.js";
 import { placeBuildings } from "./phases/08-buildings.js";
 import { initializeEmpire } from "./phases/09-empire.js";
+import { assignInitialPersonEffects } from "./phases/10-person-effects.js";
 
 export { WorldGenError } from "./error.js";
 
@@ -298,6 +299,26 @@ export const generateWorld = (
     const allPersons = { ...populationPersons, ...empireInit.persons };
     const allBuildings = { ...placedBuildings, ...empireInit.buildings };
 
+    const personEffectIds = (
+        config.effects as Array<{ id?: unknown; category?: unknown }>
+    )
+        .filter(
+            (effect) =>
+                effect.category === "person" && typeof effect.id === "string",
+        )
+        .map((effect) => effect.id as string);
+
+    const initialPersonEffectInstances = assignInitialPersonEffects({
+        persons: allPersons,
+        excludedPersonIds: new Set<string>([
+            empireInit.overlordId,
+            empireInit.petId,
+        ]),
+        personEffectIds,
+        prng,
+        appliedOnDate: 0,
+    });
+
     // Rezone: persons and buildings created before the HQ zone ID was known still carry
     // empireOriginZoneId; update them to the newly-generated HQ zone ID.
     const hqZoneId = empireOriginZone.id;
@@ -369,7 +390,7 @@ export const generateWorld = (
         activities: {},
         research: {},
         captives: {},
-        effectInstances: {},
+        effectInstances: initialPersonEffectInstances,
         morgues: { byCitizen: {}, byAgent: {} },
         empire: {
             id: empireOrgId,
