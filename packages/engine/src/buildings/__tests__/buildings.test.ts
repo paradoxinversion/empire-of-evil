@@ -21,6 +21,7 @@ function createConfig(): Config {
         activities: [],
         citizenActions: [],
         cpuBehaviors: [],
+        events: [],
         effects: [],
         evilTiers: [],
         personAttributes: [],

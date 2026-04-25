@@ -1,0 +1,969 @@
+[
+    {
+        "id": "uneventful-day",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "news_feed",
+        "title": "Uneventful Day",
+        "body": "Nothing of any importance happens. The empire continues to function within normal parameters.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.05
+        }
+    },
+    {
+        "id": "citizen-recruited",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Citizen Recruited",
+        "body": "A citizen in an empire zone has been flagged as a potential recruit. Their full stat block is displayed.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.02
+        },
+        "choices": [
+            {
+                "label": "Recruit",
+                "effects": []
+            },
+            {
+                "label": "Ignore",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "angry-admin",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Angry Admin",
+        "body": "The empire's most effective Administrator has decided to resign in a manner that is difficult to characterize as professional.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        },
+        "choices": [
+            {
+                "label": "TERMINATE",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 3 }
+                    }
+                ]
+            },
+            {
+                "label": "Do Nothing",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "attempted-espionage",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Attempted Espionage",
+        "body": "Authorities have apprehended a foreign operative engaged in espionage activities within the empire's borders.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 1
+        },
+        "choices": [
+            {
+                "label": "TERMINATE",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 5 }
+                    }
+                ]
+            },
+            {
+                "label": "Keep Captive",
+                "effects": [
+                    {
+                        "type": "create_captive",
+                        "chance": 1,
+                        "parameters": {}
+                    }
+                ]
+            },
+            {
+                "label": "Release",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": -2 }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "can-of-soup",
+        "category": "informational",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "A Can of Soup... Or Something",
+        "body": "An agent has been struck by a projectile thrown by a discontented citizen. The projectile's exact nature is unclear. The agent's dignity is not.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        },
+        "choices": [
+            {
+                "label": "Acknowledge",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "scientific-breakthrough",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "news_feed",
+        "title": "Scientific Breakthrough",
+        "body": "The research team has achieved an incremental milestone.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.04
+        }
+    },
+    {
+        "id": "gone-too-far",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Gone Too Far",
+        "body": "An agent with insufficient empathy has exceeded their authority in the most permanent way possible. A civilian is dead.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.005
+        },
+        "choices": [
+            {
+                "label": "Physical Punishment",
+                "effects": []
+            },
+            {
+                "label": "TERMINATE Agent",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 2 }
+                    }
+                ]
+            },
+            {
+                "label": "Fire Agent",
+                "effects": []
+            },
+            {
+                "label": "Give Bonus",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 1 }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "immigration",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "news_feed",
+        "title": "Immigration",
+        "body": "A citizen of another nation has arrived in empire territory seeking... something. Their motivations are their own.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.02
+        },
+        "choices": [
+            {
+                "label": "Allow entry",
+                "effects": []
+            },
+            {
+                "label": "Turn away",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "sickness",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "news_feed",
+        "title": "Sickness",
+        "body": "A disease has emerged in an empire zone. Citizens have begun accumulating the Sick status effect.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.005
+        },
+        "choices": [
+            {
+                "label": "Quarantine zone",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -50,
+                            "maxAmount": -50
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Do nothing",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "peoples-revolution",
+        "category": "player_choice",
+        "presentationTier": "landmark",
+        "informationTier": "news_feed",
+        "title": "The People's Revolution",
+        "body": "The citizens of the empire have collectively decided that enough is enough. This is inconvenient.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.001
+        },
+        "choices": [
+            {
+                "label": "Suppress",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 8 }
+                    }
+                ]
+            },
+            {
+                "label": "Negotiate",
+                "effects": []
+            },
+            {
+                "label": "Ignore",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "the-great-fire",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "news_feed",
+        "title": "The Great Fire",
+        "body": "A devastating fire has broken out in an empire zone. The cause is unclear. The damage is not.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.005
+        },
+        "choices": [
+            {
+                "label": "Send agents to help",
+                "effects": []
+            },
+            {
+                "label": "Do nothing",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "evil-outing",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "news_feed",
+        "title": "EVIL Outing",
+        "body": "The Overlord has organized a morale outing for select agents. Records indicate a good time was had.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.03
+        }
+    },
+    {
+        "id": "intercepted-comm",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intercepted_communication",
+        "title": "[Intercepted Communication]",
+        "body": "An intercepted message from foreign citizens, agents, or organizations. Content reflects the current state of world opinion of the empire.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.04
+        }
+    },
+    {
+        "id": "payroll-advisory",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "The Payroll Problem - Stage 1: Payroll Advisory",
+        "body": "The empire's accounts are running low. Agent salaries are at risk.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "resource_below",
+            "resource": "money",
+            "threshold": 200
+        }
+    },
+    {
+        "id": "payroll-grumbling",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "The Payroll Problem - Stage 2: The Troops Are Grumbling",
+        "body": "Several agents have gone unpaid. Morale is suffering in ways that are beginning to affect operational readiness.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "resource_below",
+            "resource": "money",
+            "threshold": 100
+        },
+        "choices": [
+            {
+                "label": "Emergency payment",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -75,
+                            "maxAmount": -75
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Promise payment",
+                "effects": []
+            },
+            {
+                "label": "Do nothing",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "payroll-mutiny",
+        "category": "player_choice",
+        "presentationTier": "landmark",
+        "informationTier": "intelligence_report",
+        "title": "The Payroll Problem - Stage 3: Mutiny in the Ranks",
+        "body": "This is no longer a payroll problem. Named agents and squads are acting on their grievances.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "resource_below",
+            "resource": "money",
+            "threshold": 50
+        },
+        "choices": [
+            {
+                "label": "Emergency lockdown",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -100,
+                            "maxAmount": -100
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Negotiate",
+                "effects": []
+            },
+            {
+                "label": "Let it burn",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "workplace-incident",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "Workplace Incident Report",
+        "body": "A low-empathy agent has done something uncomfortable. Not criminal. Just uncomfortable.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.02
+        }
+    },
+    {
+        "id": "building-neglect",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "Building Neglect Notice",
+        "body": "A building in an empire zone has been understaffed long enough that its output is degrading noticeably.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        }
+    },
+    {
+        "id": "structural-failure",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Structural Failure",
+        "body": "A neglected building has partially collapsed. This is being treated as a facilities management issue.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.003
+        },
+        "choices": [
+            {
+                "label": "Fund repairs",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -80,
+                            "maxAmount": -80
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Demolish",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 1 }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "the-exceptional-one",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "The Exceptional One",
+        "body": "A citizen in an empire zone has been displaying unusual capability. Their attributes are notably above average. They are currently filing reports. This seems like a waste.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.008
+        },
+        "choices": [
+            {
+                "label": "Recruit immediately",
+                "effects": []
+            },
+            {
+                "label": "Flag for Inner Circle",
+                "effects": []
+            },
+            {
+                "label": "Ignore",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "the-rivalry",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "The Rivalry",
+        "body": "Two agents in the same squad are engaged in a professionally destabilizing competition.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.007
+        }
+    },
+    {
+        "id": "the-romance",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "The Romance",
+        "body": "Two agents have developed a personal attachment. HR has no official policy on this. HR is reconsidering that position.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.007
+        }
+    },
+    {
+        "id": "pet-incident-cat",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "news_feed",
+        "title": "Pet Incident - Cat",
+        "body": "The Emperor's cat has knocked something important off a desk. The cat has no comment.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.05
+        }
+    },
+    {
+        "id": "pet-incident-tiger",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Pet Incident - Tiger",
+        "body": "An agent has attempted to pet the Emperor's tiger. This was not approved. The tiger was not consulted.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        },
+        "choices": [
+            {
+                "label": "Medical attention",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -30,
+                            "maxAmount": -30
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Walk it off",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "the-informant",
+        "category": "player_choice",
+        "presentationTier": "landmark",
+        "informationTier": "intelligence_report",
+        "title": "The Informant",
+        "body": "An Inner Circle member has been passing information to a foreign organization. The duration of this arrangement is unclear. The damage may not be.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.003
+        },
+        "choices": [
+            {
+                "label": "TERMINATE",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 6 }
+                    }
+                ]
+            },
+            {
+                "label": "Turn them",
+                "effects": []
+            },
+            {
+                "label": "Imprison",
+                "effects": []
+            },
+            {
+                "label": "Confront quietly",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -150,
+                            "maxAmount": -150
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "the-secret-child",
+        "category": "player_choice",
+        "presentationTier": "landmark",
+        "informationTier": "news_feed",
+        "title": "The Secret Child",
+        "body": "A young person has arrived at empire headquarters claiming to be the Overlord's child. The claim is... plausible.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 40
+        },
+        "choices": [
+            {
+                "label": "Welcome them",
+                "effects": []
+            },
+            {
+                "label": "Test the claim",
+                "effects": []
+            },
+            {
+                "label": "Send them away",
+                "effects": []
+            },
+            {
+                "label": "Absorb quietly",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": -2 }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "evil-tier-irritant",
+        "category": "evil_tier",
+        "presentationTier": "landmark",
+        "informationTier": "intercepted_communication",
+        "title": "They're Calling Us What?",
+        "body": "The world has noticed the empire. It finds the empire mildly annoying. Three intercepted communications arrive simultaneously: a bureaucratic Ministry memo describing the empire as a 'localized criminal organization requiring routine monitoring'; a citizen conversation joking about the empire over drinks; a field report recommending 'standard surveillance protocols'; and a news transcript where the empire earns three sentences between a trade dispute and a weather event.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 20
+        },
+        "choices": [
+            {
+                "label": "Noted",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "evil-tier-threat",
+        "category": "evil_tier",
+        "presentationTier": "landmark",
+        "informationTier": "intercepted_communication",
+        "title": "The Emergency Session",
+        "body": "The jokes have stopped. An intercepted security briefing transcript shows the empire as the primary agenda item. An intelligence memo provides a detailed summary of empire capabilities. An intercepted citizen conversation — no jokes, just worry. The empire gets the headline.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 40
+        },
+        "choices": [
+            {
+                "label": "Acknowledged",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "evil-tier-menace",
+        "category": "evil_tier",
+        "presentationTier": "landmark",
+        "informationTier": "intercepted_communication",
+        "title": "The Resolution",
+        "body": "The world has formally decided the empire is a problem. An intercepted copy of an international resolution document arrives — bureaucratic in form, devastating in implications. Clause 3: intelligence sharing. Clause 7: 'proportional responsive measures.' Two minor orgs abstained — potential diplomatic targets.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 60
+        },
+        "choices": [
+            {
+                "label": "Acknowledged",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "evil-tier-supervillain",
+        "category": "evil_tier",
+        "presentationTier": "landmark",
+        "informationTier": "intercepted_communication",
+        "title": "Supervillain",
+        "body": "Three things arrive simultaneously: a classified foreign threat assessment describing the Overlord in terms usually reserved for natural disasters; a message from an unknown untraceable sender — possibly Null/Void — addressed directly to the Overlord: 'We see you.'; and a personnel report noting three minor administrators in peripheral zones have quietly resigned in the past week. No forwarding addresses.",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 80
+        },
+        "choices": [
+            {
+                "label": "Acknowledged",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "unusual-troop-movement",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intelligence_report",
+        "title": "Unusual Troop Movement",
+        "body": "Agent activity consistent with pre-operation staging has been observed near empire territory.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        }
+    },
+    {
+        "id": "under-attack",
+        "category": "combat",
+        "presentationTier": "event",
+        "informationTier": "news_feed",
+        "title": "Under Attack",
+        "body": "A CPU organization has initiated a military operation against an empire zone.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.005
+        },
+        "choices": [
+            {
+                "label": "Defend",
+                "effects": []
+            },
+            {
+                "label": "Withdraw",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "lamplight-publication",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "news_feed",
+        "title": "Lamplight Society - The Publication",
+        "body": "The Lamplight Society has published something. It is accurate. It has sources.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.008
+        },
+        "choices": [
+            {
+                "label": "Discredit",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 1 }
+                    }
+                ]
+            },
+            {
+                "label": "Suppress distribution",
+                "effects": []
+            },
+            {
+                "label": "Do nothing",
+                "effects": []
+            }
+        ]
+    },
+    {
+        "id": "null-void-leak",
+        "category": "informational",
+        "presentationTier": "notification",
+        "informationTier": "intercepted_communication",
+        "title": "Null/Void - The Leak",
+        "body": "An unattributed transmission has been detected referencing active empire operations. Origin untraceable.",
+        "requiresResolution": false,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.01
+        }
+    },
+    {
+        "id": "adjudicators-arrive",
+        "category": "player_choice",
+        "presentationTier": "landmark",
+        "informationTier": "news_feed",
+        "title": "The Adjudicators Arrive",
+        "body": "No warning. No intercepted comms. A formal document appears in the empire's intelligence feed: 'Notice of Mandate: The Imperial Adjudication Authority, acting under Resolution 7 of the International Security Accord, hereby formally designates the organization known as [Empire Name] and its leadership as subject to active interdiction. This notice is provided as a professional courtesy. Compliance is not expected.'",
+        "requiresResolution": true,
+        "recurrence": "once",
+        "trigger": {
+            "type": "evil_perceived_at_least",
+            "threshold": 80
+        },
+        "choices": [
+            {
+                "label": "Assess the threat",
+                "effects": []
+            },
+            {
+                "label": "Begin Operation Clean Hands",
+                "effects": []
+            },
+            {
+                "label": "Increase security posture",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -60,
+                            "maxAmount": -60
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "intelligence-breach",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Intelligence Breach",
+        "body": "A foreign agent has successfully extracted information from an empire zone.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.005
+        },
+        "choices": [
+            {
+                "label": "Damage control",
+                "effects": []
+            },
+            {
+                "label": "Feed false information",
+                "effects": []
+            },
+            {
+                "label": "TERMINATE the breach agent",
+                "effects": [
+                    {
+                        "type": "gain_evil",
+                        "chance": 1,
+                        "parameters": { "amount": 4 }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "agent-captured",
+        "category": "player_choice",
+        "presentationTier": "event",
+        "informationTier": "intelligence_report",
+        "title": "Our Agent Has Been Captured",
+        "body": "An empire agent operating in a foreign zone has been apprehended.",
+        "requiresResolution": true,
+        "recurrence": "recurring",
+        "trigger": {
+            "type": "daily_chance",
+            "chance": 0.006
+        },
+        "choices": [
+            {
+                "label": "Extraction plot",
+                "effects": []
+            },
+            {
+                "label": "Disavow",
+                "effects": []
+            },
+            {
+                "label": "Negotiate release",
+                "effects": [
+                    {
+                        "type": "gain_resource",
+                        "chance": 1,
+                        "parameters": {
+                            "resource": "money",
+                            "minAmount": -80,
+                            "maxAmount": -80
+                        }
+                    }
+                ]
+            },
+            {
+                "label": "Leave them",
+                "effects": []
+            }
+        ]
+    }
+]

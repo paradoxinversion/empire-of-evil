@@ -32,6 +32,7 @@ import worldgenDefaults from "../../../../config/default/worldgen.json";
 import activities from "../../../../config/default/activities.json";
 import citizenActions from "../../../../config/default/citizenActions.json";
 import cpuBehaviors from "../../../../config/default/cpuBehaviors.json";
+import events from "../../../../config/default/events.json";
 import effects from "../../../../config/default/effects.json";
 import evilTiers from "../../../../config/default/evilTiers.json";
 import personAttributes from "../../../../config/default/personAttributes.json";
@@ -48,12 +49,13 @@ export const BUNDLED_CONFIG: Config = {
     activities: activities as unknown[],
     citizenActions: citizenActions as unknown[],
     cpuBehaviors: cpuBehaviors as unknown[],
+    events: events as Config["events"],
     effects: effects as unknown[],
     evilTiers: evilTiers as unknown[],
-    personAttributes: personAttributes as unknown[],
+    personAttributes: personAttributes as Config["personAttributes"],
     plots: plots as unknown[],
     researchProjects: researchProjects as ResearchProjectDefinition[],
-    skills: skills as unknown[],
+    skills: skills as Config["skills"],
 };
 
 export type SimulationStatus =

@@ -22,6 +22,61 @@ const smallParams = {
 };
 
 describe("generateWorld integration", () => {
+    test("non-overlord and non-pet persons get linked startup effects with valid targets", () => {
+        const state = generateWorld(
+            {
+                ...smallParams,
+                seed: 123,
+                populationDensity: 0.05,
+            },
+            config,
+        );
+
+        const personEffectIds = (
+            config.effects as Array<{ id: string; category?: string }>
+        )
+            .filter((effect) => effect.category === "person")
+            .map((effect) => effect.id);
+
+        const excludedIds = new Set([
+            state.empire.overlordId,
+            state.empire.petId,
+        ]);
+
+        expect(
+            state.persons[state.empire.overlordId]!.activeEffectIds,
+        ).toHaveLength(0);
+        expect(state.persons[state.empire.petId]!.activeEffectIds).toHaveLength(
+            0,
+        );
+
+        let totalAssigned = 0;
+
+        for (const person of Object.values(state.persons)) {
+            if (excludedIds.has(person.id)) {
+                continue;
+            }
+
+            expect(person.activeEffectIds.length).toBeLessThanOrEqual(2);
+            expect(new Set(person.activeEffectIds).size).toBe(
+                person.activeEffectIds.length,
+            );
+
+            totalAssigned += person.activeEffectIds.length;
+
+            for (const effectInstanceId of person.activeEffectIds) {
+                const instance = state.effectInstances[effectInstanceId];
+                expect(instance).toBeDefined();
+                expect(instance!.targetId).toBe(person.id);
+                expect(instance!.targetType).toBe("person");
+                expect(personEffectIds).toContain(instance!.effectId);
+            }
+        }
+
+        expect(Object.keys(state.effectInstances).length).toBe(totalAssigned);
+        expect(totalAssigned).toBeGreaterThan(0);
+    });
+
     test("returns GameState with date 0", () => {
         const state = generateWorld(smallParams, config);
         expect(state.date).toBe(0);

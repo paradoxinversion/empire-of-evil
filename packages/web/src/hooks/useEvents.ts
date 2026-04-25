@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import type { GameEvent } from "@empire-of-evil/engine";
+import { useGameState } from "./useGameState";
 
 export type FeedEntryType =
     | "intel"
@@ -36,76 +38,75 @@ export type AAREntry = {
     resourceEffects: string[];
 };
 
+function mapCategoryToFeedType(
+    category: GameEvent["category"],
+    informationTier?: GameEvent["informationTier"],
+): FeedEntryType {
+    if (informationTier === "intercepted_communication") return "intercept";
+    if (informationTier === "intelligence_report") return "intel";
+    switch (category) {
+        case "combat":
+            return "combat";
+        case "evil_tier":
+            return "landmark";
+        case "death":
+            return "internal";
+        case "player_choice":
+            return "internal";
+        case "informational":
+        default:
+            return "news";
+    }
+}
+
+function formatDay(day: number): string {
+    return `DAY ${day}`;
+}
+
 export function useEvents() {
+    const gameState = useGameState();
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
     const feedEntries: EventSummary[] = useMemo(
-        () => [
-            {
-                id: "feed-1",
-                day: 50,
-                date: "17 MARCH, YEAR 1",
-                type: "internal",
-                title: "Empire Established",
-                text: "The empire has been formally established. A small ceremony took place at the central command.",
-                unread: false,
-            },
-            {
-                id: "feed-2",
-                day: 49,
-                date: "16 MARCH, YEAR 1",
-                type: "research",
-                title: "Research Complete — Hypno Disco Ball",
-                text: "The research division completed the Hypno Disco Ball project. Further testing recommended.",
-                unread: true,
-            },
-        ],
-        [],
+        () =>
+            [...gameState.eventLog].reverse().map((record): EventSummary => {
+                const event = record.event;
+                return {
+                    id: event.id,
+                    day: record.resolvedOnDate,
+                    date: formatDay(record.resolvedOnDate),
+                    type: mapCategoryToFeedType(
+                        event.category,
+                        event.informationTier,
+                    ),
+                    title: event.title,
+                    text: event.body,
+                    unread: false,
+                };
+            }),
+        [gameState.eventLog],
     );
 
     const pendingEvents: EventSummary[] = useMemo(
-        () => [
-            {
-                id: "pending-1",
-                day: 51,
-                date: "18 MARCH, YEAR 1",
-                type: "combat",
-                title: "Combat Engagement — Zone 12",
-                text: "Forces reported contact with hostile organization in Zone 12. Immediate response required.",
-                unread: true,
-            },
-        ],
-        [],
+        () =>
+            gameState.pendingEvents.map(
+                (event): EventSummary => ({
+                    id: event.id,
+                    day: event.createdOnDate,
+                    date: formatDay(event.createdOnDate),
+                    type: mapCategoryToFeedType(
+                        event.category,
+                        event.informationTier,
+                    ),
+                    title: event.title,
+                    text: event.body,
+                    unread: true,
+                }),
+            ),
+        [gameState.pendingEvents],
     );
 
-    const aarEntries: AAREntry[] = useMemo(
-        () => [
-            {
-                id: "aar-1",
-                subject: "Operation Nightfall",
-                date: "DAY 46 — 13 MARCH, YEAR 1",
-                status: "SUCCESS",
-                executiveSummary:
-                    "Operation Nightfall secured the objective with minimal collateral.",
-                operationalLog: [
-                    "Deploy squad",
-                    "Engage enemy",
-                    "Secure objective",
-                    "Exfiltrate to base",
-                ],
-                personnelReport: [
-                    {
-                        name: "Agent K",
-                        role: "Operative",
-                        status: "Injured",
-                        notes: "Shrapnel wound to left arm",
-                    },
-                ],
-                resourceEffects: ["+ $1,200", "+ EVIL: +4"],
-            },
-        ],
-        [],
-    );
+    const aarEntries: AAREntry[] = useMemo(() => [], []);
 
     function selectEvent(id: string | null) {
         setSelectedEventId(id);
