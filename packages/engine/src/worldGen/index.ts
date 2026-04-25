@@ -165,7 +165,7 @@ export const generateWorld = (
 
     // Phase 9: Empire initialization
     const defaultResources = params.startingResources ?? {
-        money: 500,
+        money: 50000,
         science: 0,
         infrastructure: 100,
     };
